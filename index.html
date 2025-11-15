@@ -432,18 +432,16 @@
 
     <p>Explorez les sections spirituelles, éducatives et interactives pour enrichir votre expérience.</p>
 
-    <input type="text" id="searchInput" placeholder="🔍 Rechercher une section..." onkeyup="rechercher()">
-
-    <div class="stats" style="display:flex;gap:20px;margin-top:12px;flex-wrap:wrap;">
-      <span>⭐ Points : <span id="points">0</span></span>
-      <span>✅ Sections visitées : <span id="completed">0</span></span>
-      <span id="streakBadge" class="streak-badge" style="display:none;">🔥 <span id="streakDays">0</span> jours</span>
+    <div id="verseOfDay" class="verse-box" style="display:none; text-align:center; max-width:700px; margin:20px auto;">
+      <h3 style="margin:0 0 15px 0; color:#ffeb3b;">📖 Verset du jour</h3>
+      <p id="verseText" style="font-style:italic; margin:15px 0; font-size:17px; line-height:1.6;"></p>
+      <p id="verseRef" style="opacity:0.9; margin:10px 0 0 0; font-weight:600; color:#ffeb3b;"></p>
     </div>
 
-    <div id="verseOfDay" class="verse-box" style="display:none;">
-      <h3 style="margin:0 0 10px 0; color:#ffeb3b;">📖 Verset du jour</h3>
-      <p id="verseText" style="font-style:italic; margin:10px 0;"></p>
-      <p id="verseRef" style="opacity:0.8; margin:0; text-align:right;"></p>
+    <input type="text" id="searchInput" placeholder="🔍 Rechercher une section..." onkeyup="rechercher()">
+
+    <div class="stats" style="display:flex;gap:20px;margin-top:12px;flex-wrap:wrap;justify-content:center;">
+      <span id="streakBadge" class="streak-badge" style="display:none;">🔥 <span id="streakDays">0</span> jours</span>
     </div>
 
     <div class="sections">
@@ -618,12 +616,10 @@
     function initializeApp(){
       document.getElementById('userProfile').style.display = 'block';
       document.getElementById('userDisplayName').textContent = currentUser.username;
-      document.getElementById('userEmail').textContent = currentUser.email;
       document.getElementById('sidebarProfile').style.display = 'block';
       document.getElementById('sidebarUsername').textContent = currentUser.username;
       document.getElementById('sidebarEmail').textContent = currentUser.email;
       points = currentUser.points || 0; completed = currentUser.completed || 0;
-      document.getElementById('points').textContent = points; document.getElementById('completed').textContent = completed;
       updateStreak();
       showVerseOfDay();
       showToast('🙏 Bienvenue ' + currentUser.username + ' !');
@@ -668,9 +664,7 @@
 
     function afficher(section){
       // update stats
-      completed++; points += 10; 
-      document.getElementById('points').textContent = points; 
-      document.getElementById('completed').textContent = completed;
+      completed++; points += 10;
       if(currentUser){ 
         currentUser.points = points; 
         currentUser.completed = completed; 

@@ -140,8 +140,7 @@ function renderVideos() {
     <div class="video-card" onclick="window.open('${video.url}', '_blank')">
       <img src="https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg" 
            alt="${video.titre}" 
-           class="video-thumbnail"
-           onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'480\' height=\'360\'%3E%3Crect fill=\'%23333\' width=\'480\' height=\'360\'/%3E%3Ctext fill=\'%23fff\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'64\'%3E🎬%3C/text%3E%3C/svg%3E'">
+           class="video-thumbnail">
       <div class="video-info">
         <span class="category-badge">${video.categorie}</span>
         <h3>${video.titre}</h3>
