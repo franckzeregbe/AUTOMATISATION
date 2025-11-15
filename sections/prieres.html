@@ -1,0 +1,100 @@
+<style>
+  .section-heading { display:flex; align-items:center; gap:10px; }
+  .section-heading .icon-svg { width:28px; height:28px; transition: transform 0.18s ease; }
+  .section-heading:hover .icon-svg { transform: scale(1.12); }
+  .prayer-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #6a11cb; }
+  .prayer-card h3 { margin: 0 0 10px 0; color: #ffeb3b; }
+  .prayer-card p { margin: 8px 0; line-height: 1.6; }
+  .prayer-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+  .prayer-tab { padding: 10px 20px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: white; cursor: pointer; transition: all 0.3s; }
+  .prayer-tab:hover { background: rgba(255,255,255,0.2); }
+  .prayer-tab.active { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+</style>
+
+<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-prayer"></use></svg> <span>Prières du jour</span></h2>
+<p>Fortifiez votre foi avec nos prières quotidiennes</p>
+
+<div class="prayer-tabs">
+  <button class="prayer-tab active" onclick="showPrayerCategory('matin')">🌅 Matin</button>
+  <button class="prayer-tab" onclick="showPrayerCategory('soir')">🌙 Soir</button>
+  <button class="prayer-tab" onclick="showPrayerCategory('famille')">👨👩👧 Famille</button>
+  <button class="prayer-tab" onclick="showPrayerCategory('travail')">💼 Travail</button>
+  <button class="prayer-tab" onclick="showPrayerCategory('guerison')">🏥 Guérison</button>
+  <button class="prayer-tab" onclick="showPrayerCategory('protection')">🛡️ Protection</button>
+  <button class="prayer-tab" onclick="showPrayerCategory('delivrance')">⚔️ Délivrance</button>
+  <button class="prayer-tab" onclick="showPrayerCategory('finances')">💰 Finances</button>
+</div>
+
+<div id="prayerContent"></div>
+
+<script>
+const prayers = {
+  matin: [
+    { title: "Prière du matin", text: "Seigneur Jésus, merci pour cette nouvelle journée. Guide mes pas et que ta lumière éclaire mon chemin. Que ta volonté soit faite dans ma vie aujourd'hui. Amen." },
+    { title: "Louange matinale", text: "Père céleste, je te loue pour ta fidélité. Tu renouvelles tes compassions chaque matin. Remplis-moi de ta joie et de ta force pour ce jour. Au nom de Jésus, Amen." },
+    { title: "Consécration du jour", text: "Éternel Dieu, je consacre cette journée à ta gloire. Que mes paroles, mes pensées et mes actions te glorifient. Utilise-moi comme instrument de ta paix. Amen." },
+    { title: "Sagesse divine", text: "Seigneur, accorde-moi ta sagesse pour ce jour. Que ton Esprit me guide dans toutes mes décisions. Éclaire mon intelligence et fortifie mon cœur. Amen." }
+  ],
+  soir: [
+    { title: "Prière du soir", text: "Seigneur, merci pour ta protection aujourd'hui. Pardonne mes fautes et accorde-moi un repos paisible. Veille sur ma famille cette nuit. Amen." },
+    { title: "Reconnaissance", text: "Père, je te remercie pour toutes tes bénédictions. Tu as été fidèle tout au long de cette journée. Que ton nom soit glorifié. Amen." },
+    { title: "Repos en Dieu", text: "Éternel, je remets mon esprit entre tes mains. Accorde-moi un sommeil réparateur et des rêves paisibles. Que tes anges montent la garde autour de moi. Amen." },
+    { title: "Pardon et paix", text: "Seigneur Jésus, pardonne-moi pour mes erreurs d'aujourd'hui. Purifie mon cœur et renouvelle mon esprit. Que je m'endorme dans ta paix parfaite. Amen." }
+  ],
+  famille: [
+    { title: "Bénédiction familiale", text: "Seigneur Jésus, bénis ma famille. Protège mes enfants, fortifie mon mariage, et que ta paix règne dans notre foyer. Que nous marchions ensemble dans ta lumière. Amen." },
+    { title: "Unité familiale", text: "Père céleste, crée l'unité dans ma famille. Guéris les blessures, restaure les relations brisées, et fais de notre maison un lieu de ton amour. Amen." },
+    { title: "Protection des enfants", text: "Seigneur, couvre mes enfants de ton sang précieux. Protège-les du mal, guide leurs pas, et fais d'eux des instruments de ta gloire. Qu'ils grandissent dans ta sagesse. Amen." },
+    { title: "Harmonie conjugale", text: "Père, fortifie mon mariage. Que l'amour, le respect et la compréhension règnent entre nous. Fais de notre union un témoignage de ton amour. Amen." }
+  ],
+  travail: [
+    { title: "Faveur au travail", text: "Seigneur, accorde-moi ta faveur dans mon travail. Donne-moi la sagesse pour prendre de bonnes décisions et la force pour accomplir mes tâches. Que je sois une lumière pour mes collègues. Amen." },
+    { title: "Prospérité", text: "Père, ouvre les portes de la prospérité dans ma carrière. Que mes efforts portent du fruit et que je puisse être une bénédiction pour d'autres. Au nom de Jésus, Amen." },
+    { title: "Excellence professionnelle", text: "Éternel, donne-moi l'esprit d'excellence dans mon travail. Que je sois diligent, créatif et intègre. Fais de moi un exemple de ton caractère. Amen." },
+    { title: "Promotion divine", text: "Seigneur, tu es celui qui élève et qui abaisse. Accorde-moi la promotion qui vient de toi. Ouvre des portes que personne ne peut fermer. Amen." }
+  ],
+  guerison: [
+    { title: "Prière de guérison", text: "Seigneur Jésus, tu es le médecin des médecins. Touche mon corps de ta main guérisseuse. Par tes meurtrissures, je suis guéri. Restaure ma santé complètement. Amen." },
+    { title: "Force dans la maladie", text: "Père céleste, donne-moi la force dans cette épreuve. Que ta présence me console et que ta puissance me relève. Je crois en ta capacité de guérir. Amen." },
+    { title: "Guérison totale", text: "Au nom de Jésus, je déclare la guérison sur mon corps. Que toute maladie disparaisse, que toute douleur s'en aille. Je suis guéri par le sang de Jésus. Amen." },
+    { title: "Santé divine", text: "Seigneur, tu as promis que tu es l'Éternel qui me guérit. Je réclame cette promesse aujourd'hui. Restaure ma santé et renouvelle mes forces. Amen." }
+  ],
+  protection: [
+    { title: "Bouclier divin", text: "Seigneur, tu es mon bouclier et ma forteresse. Protège-moi de tout mal, de tout danger visible et invisible. Que tes anges campent autour de moi. Amen." },
+    { title: "Sang de Jésus", text: "Je couvre ma vie, ma famille et mes biens du sang précieux de Jésus. Aucune arme forgée contre moi ne prospérera. Je suis protégé par le Tout-Puissant. Amen." },
+    { title: "Protection sur les routes", text: "Père céleste, protège-moi sur les routes. Que tes anges me précèdent et me suivent. Accorde-moi un voyage sûr et paisible. Amen." },
+    { title: "Sécurité divine", text: "Éternel, tu es mon refuge et ma citadelle. Je me cache sous l'ombre de tes ailes. Garde-moi de tout accident, de toute attaque de l'ennemi. Amen." }
+  ],
+  delivrance: [
+    { title: "Liberté en Christ", text: "Seigneur Jésus, tu es venu pour libérer les captifs. Brise toute chaîne dans ma vie. Délivre-moi de toute oppression, de toute addiction, de tout lien maléfique. Amen." },
+    { title: "Victoire spirituelle", text: "Au nom de Jésus, je renonce à toute œuvre des ténèbres. Je brise tout pacte maléfique. Je suis libre par le sang de l'Agneau. Amen." },
+    { title: "Purification", text: "Seigneur, purifie mon cœur, mon esprit et mon âme. Lave-moi de toute souillure. Remplis-moi de ton Esprit Saint. Que ta lumière chasse toute ténèbre. Amen." },
+    { title: "Autorité en Christ", text: "Père, tu m'as donné autorité sur toute puissance de l'ennemi. Je lie toute force démoniaque. Je déclare ma victoire totale en Jésus-Christ. Amen." }
+  ],
+  finances: [
+    { title: "Prospérité financière", text: "Seigneur, tu es Jéhovah Jiré, mon pourvoyeur. Ouvre les écluses des cieux et déverse ta bénédiction financière sur ma vie. Que je ne manque de rien. Amen." },
+    { title: "Sagesse financière", text: "Père, donne-moi la sagesse pour gérer mes finances. Aide-moi à être un bon intendant de ce que tu me confies. Multiplie mes ressources. Amen." },
+    { title: "Percée financière", text: "Éternel, je déclare une percée financière dans ma vie. Ouvre des sources de revenus inattendues. Que ta faveur m'accompagne dans mes affaires. Amen." },
+    { title: "Libération des dettes", text: "Seigneur, libère-moi de toute dette. Donne-moi la capacité de rembourser ce que je dois. Fais de moi un prêteur et non un emprunteur. Amen." }
+  ]
+};
+
+function showPrayerCategory(category) {
+  document.querySelectorAll('.prayer-tab').forEach(tab => tab.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const content = document.getElementById('prayerContent');
+  const categoryPrayers = prayers[category];
+  
+  content.innerHTML = categoryPrayers.map(prayer => `
+    <div class="prayer-card">
+      <h3>${prayer.title}</h3>
+      <p>${prayer.text}</p>
+    </div>
+  `).join('');
+}
+
+showPrayerCategory('matin');
+</script>
+
+<p style="margin-top: 30px; text-align: center; opacity: 0.7;"><strong>✨ Jésus revient bientôt</strong></p>

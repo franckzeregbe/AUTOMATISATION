@@ -1,0 +1,305 @@
+<style>
+  .section-heading { display:flex; align-items:center; gap:10px; }
+  .section-heading .icon-svg { width:28px; height:28px; transition: transform 0.18s ease; }
+  .section-heading:hover .icon-svg { transform: scale(1.12); }
+  .bible-book-item { transition: transform 0.12s ease, background 0.12s ease; }
+  .bible-book-item:hover { transform: translateX(6px); background: rgba(255,255,255,0.06); }
+</style>
+<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-bible"></use></svg> <span>Bible</span></h2>
+<p>Consulter les versets de Genèse à Apocalypse</p>
+
+<style>
+  .bible-container { display: flex; gap: 15px; max-height: 600px; }
+  .bible-books { width: 250px; overflow-y: auto; }
+  .bible-book-item { padding: 8px; margin: 5px 0; background: #f0f0f0; cursor: pointer; border-radius: 5px; }
+  .bible-book-item:hover { background: #e0e0ff; }
+  .bible-book-item.active { background: #6C63FF; color: white; }
+  .bible-viewer { flex: 1; overflow-y: auto; padding: 10px; font-size: 0.95rem; line-height: 1.6; }
+</style>
+
+<div style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px;">
+  <p style="margin: 0;"><strong>📝 Note :</strong> Texte biblique en anglais (King James Version). Connexion Internet requise.</p>
+</div>
+
+<div id="audioControls" style="display: none; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.08); border-radius: 10px;">
+  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+    <button id="playBtn" onclick="toggleAudio()" style="padding: 10px 20px; background: linear-gradient(135deg, #6a11cb, #2575fc); border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 14px;">
+      🔊 Lire le chapitre
+    </button>
+    <button id="pauseBtn" onclick="pauseAudio()" style="display: none; padding: 10px 20px; background: #ff9800; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 14px;">
+      ⏸️ Pause
+    </button>
+    <button id="stopBtn" onclick="stopAudio()" style="padding: 10px 20px; background: #f44336; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 14px;">
+      ⏹️ Arrêter
+    </button>
+    <div style="flex: 1; min-width: 200px;">
+      <label style="font-size: 12px; opacity: 0.8;">Vitesse:</label>
+      <input type="range" id="speedControl" min="0.5" max="2" step="0.1" value="1" onchange="updateSpeed()" style="width: 100%; margin-top: 5px;">
+      <span id="speedValue" style="font-size: 12px;">1x</span>
+    </div>
+  </div>
+  <div id="audioStatus" style="margin-top: 10px; font-size: 13px; opacity: 0.8;"></div>
+</div>
+
+<div class="bible-container" style="margin-top: 15px;">
+  <div class="bible-books" id="bibleBooksContainer"></div>
+  <div class="bible-viewer" id="bibleViewer">Sélectionnez un livre...</div>
+</div>
+
+<script>
+  const bibleBooks = [
+    { id: 'GEN', fr: 'Genèse', chapters: 50 },
+    { id: 'EXO', fr: 'Exode', chapters: 40 },
+    { id: 'LEV', fr: 'Lévitique', chapters: 27 },
+    { id: 'NUM', fr: 'Nombres', chapters: 36 },
+    { id: 'DEU', fr: 'Deutéronome', chapters: 34 },
+    { id: 'JOS', fr: 'Josué', chapters: 24 },
+    { id: 'JDG', fr: 'Juges', chapters: 21 },
+    { id: 'RUT', fr: 'Ruth', chapters: 4 },
+    { id: '1SA', fr: '1 Samuel', chapters: 31 },
+    { id: '2SA', fr: '2 Samuel', chapters: 24 },
+    { id: '1KI', fr: '1 Rois', chapters: 22 },
+    { id: '2KI', fr: '2 Rois', chapters: 25 },
+    { id: '1CH', fr: '1 Chroniques', chapters: 29 },
+    { id: '2CH', fr: '2 Chroniques', chapters: 36 },
+    { id: 'EZR', fr: 'Esdras', chapters: 10 },
+    { id: 'NEH', fr: 'Néhémie', chapters: 13 },
+    { id: 'EST', fr: 'Esther', chapters: 10 },
+    { id: 'JOB', fr: 'Job', chapters: 42 },
+    { id: 'PSA', fr: 'Psaumes', chapters: 150 },
+    { id: 'PRO', fr: 'Proverbes', chapters: 31 },
+    { id: 'ECC', fr: 'Ecclésiaste', chapters: 12 },
+    { id: 'SNG', fr: 'Cantique', chapters: 8 },
+    { id: 'ISA', fr: 'Ésaïe', chapters: 66 },
+    { id: 'JER', fr: 'Jérémie', chapters: 52 },
+    { id: 'LAM', fr: 'Lamentations', chapters: 5 },
+    { id: 'EZK', fr: 'Ézéchiel', chapters: 48 },
+    { id: 'DAN', fr: 'Daniel', chapters: 12 },
+    { id: 'HOS', fr: 'Osée', chapters: 14 },
+    { id: 'JOL', fr: 'Joël', chapters: 3 },
+    { id: 'AMO', fr: 'Amos', chapters: 9 },
+    { id: 'OBA', fr: 'Abdias', chapters: 1 },
+    { id: 'JON', fr: 'Jonas', chapters: 4 },
+    { id: 'MIC', fr: 'Michée', chapters: 7 },
+    { id: 'NAM', fr: 'Nahum', chapters: 3 },
+    { id: 'HAB', fr: 'Habacuc', chapters: 3 },
+    { id: 'ZEP', fr: 'Sophonie', chapters: 3 },
+    { id: 'HAG', fr: 'Aggée', chapters: 2 },
+    { id: 'ZEC', fr: 'Zacharie', chapters: 14 },
+    { id: 'MAL', fr: 'Malachie', chapters: 4 },
+    { id: 'MAT', fr: 'Matthieu', chapters: 28 },
+    { id: 'MRK', fr: 'Marc', chapters: 16 },
+    { id: 'LUK', fr: 'Luc', chapters: 24 },
+    { id: 'JHN', fr: 'Jean', chapters: 21 },
+    { id: 'ACT', fr: 'Actes', chapters: 28 },
+    { id: 'ROM', fr: 'Romains', chapters: 16 },
+    { id: '1CO', fr: '1 Corinthiens', chapters: 16 },
+    { id: '2CO', fr: '2 Corinthiens', chapters: 13 },
+    { id: 'GAL', fr: 'Galates', chapters: 6 },
+    { id: 'EPH', fr: 'Éphésiens', chapters: 6 },
+    { id: 'PHP', fr: 'Philippiens', chapters: 4 },
+    { id: 'COL', fr: 'Colossiens', chapters: 4 },
+    { id: '1TH', fr: '1 Thessaloniciens', chapters: 5 },
+    { id: '2TH', fr: '2 Thessaloniciens', chapters: 3 },
+    { id: '1TI', fr: '1 Timothée', chapters: 6 },
+    { id: '2TI', fr: '2 Timothée', chapters: 4 },
+    { id: 'TIT', fr: 'Tite', chapters: 3 },
+    { id: 'PHM', fr: 'Philémon', chapters: 1 },
+    { id: 'HEB', fr: 'Hébreux', chapters: 13 },
+    { id: 'JAS', fr: 'Jacques', chapters: 5 },
+    { id: '1PE', fr: '1 Pierre', chapters: 5 },
+    { id: '2PE', fr: '2 Pierre', chapters: 3 },
+    { id: '1JN', fr: '1 Jean', chapters: 5 },
+    { id: '2JN', fr: '2 Jean', chapters: 1 },
+    { id: '3JN', fr: '3 Jean', chapters: 1 },
+    { id: 'JUD', fr: 'Jude', chapters: 1 },
+    { id: 'REV', fr: 'Apocalypse', chapters: 22 }
+  ];
+
+  let bibleCurrBook = null;
+  let bibleCurrChapter = 1;
+  let speechSynthesis = window.speechSynthesis;
+  let currentUtterance = null;
+  let isPaused = false;
+  let currentText = '';
+
+  function renderBibleBooks() {
+    const container = document.getElementById('bibleBooksContainer');
+    container.innerHTML = '';
+    bibleBooks.forEach((book, idx) => {
+      const btn = document.createElement('div');
+      btn.className = 'bible-book-item';
+      btn.textContent = book.fr;
+      btn.onclick = () => loadBibleBook(idx);
+      container.appendChild(btn);
+    });
+  }
+
+  function changeBibleVersion() {
+    if (bibleCurrBook !== null) {
+      loadBibleBook(bibleCurrBook);
+    }
+  }
+
+  async function loadBibleBook(index) {
+    bibleCurrBook = index;
+    bibleCurrChapter = 1;
+    const book = bibleBooks[index];
+    const viewer = document.getElementById('bibleViewer');
+    viewer.innerHTML = '<em>Chargement...</em>';
+
+    try {
+      const response = await fetch(`https://bible-api.com/${book.id}+${bibleCurrChapter}?translation=kjv`);
+      const data = await response.json();
+      
+      let html = `<div style="margin-bottom: 20px;"><strong style="font-size: 20px;">${book.fr}</strong></div>`;
+      
+      // Sélecteur de chapitres
+      html += '<div style="margin: 15px 0;"><label><strong>Chapitre: </strong></label><select id="chapterSelect" onchange="changeChapter()" style="padding: 8px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">';
+      for(let i = 1; i <= book.chapters; i++) {
+        html += `<option value="${i}" ${i === bibleCurrChapter ? 'selected' : ''}>${i}</option>`;
+      }
+      html += '</select></div>';
+      
+      // Contenu du chapitre
+      html += '<div style="line-height: 1.8; margin-top: 20px;">';
+      data.verses.forEach(verse => {
+        html += `<p style="margin: 10px 0;"><strong>${verse.verse}</strong> ${verse.text}</p>`;
+      });
+      html += '</div>';
+      
+      viewer.innerHTML = html;
+      updateActiveBibleBook(index);
+      
+      // Store text for audio
+      currentText = data.verses.map(v => v.text).join(' ');
+      document.getElementById('audioControls').style.display = 'block';
+      stopAudio();
+    } catch(err) {
+      viewer.innerHTML = `⚠️ Erreur de chargement. Vérifiez votre connexion Internet.<br><small>${err.message}</small>`;
+      document.getElementById('audioControls').style.display = 'none';
+    }
+  }
+
+  async function changeChapter() {
+    const chapter = parseInt(document.getElementById('chapterSelect').value);
+    bibleCurrChapter = chapter;
+    const book = bibleBooks[bibleCurrBook];
+    const viewer = document.getElementById('bibleViewer');
+    
+    const currentScroll = viewer.scrollTop;
+    viewer.innerHTML = '<em>Chargement...</em>';
+
+    try {
+      const response = await fetch(`https://bible-api.com/${book.id}+${chapter}?translation=kjv`);
+      const data = await response.json();
+      
+      let html = `<div style="margin-bottom: 20px;"><strong style="font-size: 20px;">${book.fr} - Chapitre ${chapter}</strong></div>`;
+      
+      html += '<div style="margin: 15px 0;"><label><strong>Chapitre: </strong></label><select id="chapterSelect" onchange="changeChapter()" style="padding: 8px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">';
+      for(let i = 1; i <= book.chapters; i++) {
+        html += `<option value="${i}" ${i === chapter ? 'selected' : ''}>${i}</option>`;
+      }
+      html += '</select></div>';
+      
+      html += '<div style="line-height: 1.8; margin-top: 20px;">';
+      data.verses.forEach(verse => {
+        html += `<p style="margin: 10px 0;"><strong>${verse.verse}</strong> ${verse.text}</p>`;
+      });
+      html += '</div>';
+      
+      viewer.innerHTML = html;
+      
+      // Store text for audio
+      currentText = data.verses.map(v => v.text).join(' ');
+      stopAudio();
+    } catch(err) {
+      viewer.innerHTML = `⚠️ Erreur de chargement.<br><small>${err.message}</small>`;
+    }
+  }
+
+  function updateActiveBibleBook(index) {
+    document.querySelectorAll('.bible-book-item').forEach((el, i) => {
+      el.classList.toggle('active', i === index);
+    });
+  }
+
+  renderBibleBooks();
+
+  // Audio functions
+  function toggleAudio() {
+    if (!currentText) {
+      alert('Veuillez d\'abord sélectionner un chapitre');
+      return;
+    }
+
+    if (isPaused) {
+      speechSynthesis.resume();
+      isPaused = false;
+      document.getElementById('playBtn').style.display = 'none';
+      document.getElementById('pauseBtn').style.display = 'inline-block';
+      document.getElementById('audioStatus').textContent = '🔊 Lecture en cours...';
+      return;
+    }
+
+    if (speechSynthesis.speaking) {
+      return;
+    }
+
+    currentUtterance = new SpeechSynthesisUtterance(currentText);
+    currentUtterance.lang = 'en-US';
+    currentUtterance.rate = parseFloat(document.getElementById('speedControl').value);
+    
+    currentUtterance.onstart = () => {
+      document.getElementById('playBtn').style.display = 'none';
+      document.getElementById('pauseBtn').style.display = 'inline-block';
+      document.getElementById('audioStatus').textContent = '🔊 Lecture en cours...';
+    };
+
+    currentUtterance.onend = () => {
+      document.getElementById('playBtn').style.display = 'inline-block';
+      document.getElementById('pauseBtn').style.display = 'none';
+      document.getElementById('audioStatus').textContent = '✅ Lecture terminée';
+      isPaused = false;
+    };
+
+    currentUtterance.onerror = (e) => {
+      document.getElementById('audioStatus').textContent = '⚠️ Erreur: ' + e.error;
+      document.getElementById('playBtn').style.display = 'inline-block';
+      document.getElementById('pauseBtn').style.display = 'none';
+    };
+
+    speechSynthesis.speak(currentUtterance);
+  }
+
+  function pauseAudio() {
+    if (speechSynthesis.speaking && !isPaused) {
+      speechSynthesis.pause();
+      isPaused = true;
+      document.getElementById('playBtn').style.display = 'inline-block';
+      document.getElementById('pauseBtn').style.display = 'none';
+      document.getElementById('audioStatus').textContent = '⏸️ En pause';
+    }
+  }
+
+  function stopAudio() {
+    speechSynthesis.cancel();
+    isPaused = false;
+    document.getElementById('playBtn').style.display = 'inline-block';
+    document.getElementById('pauseBtn').style.display = 'none';
+    document.getElementById('audioStatus').textContent = '';
+  }
+
+  function updateSpeed() {
+    const speed = document.getElementById('speedControl').value;
+    document.getElementById('speedValue').textContent = speed + 'x';
+    if (currentUtterance && speechSynthesis.speaking) {
+      // Restart with new speed
+      const wasPlaying = !isPaused;
+      stopAudio();
+      if (wasPlaying) {
+        setTimeout(toggleAudio, 100);
+      }
+    }
+  }
+</script>

@@ -1,0 +1,284 @@
+<style>
+  .section-heading { display:flex; align-items:center; gap:10px; }
+  .section-heading .icon-svg { width:28px; height:28px; transition: transform 0.18s ease; }
+  .section-heading:hover .icon-svg { transform: scale(1.12); }
+  
+  @keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(20deg); } 75% { transform: rotate(-20deg); } }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(106,17,203,0.5); } 50% { box-shadow: 0 0 40px rgba(106,17,203,0.8); } }
+  
+  .agent-avatar { 
+    width: 120px; height: 120px; 
+    background: linear-gradient(135deg, #6a11cb, #2575fc); 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 60px; 
+    margin: 20px auto;
+    animation: bounce 2s infinite, glow 2s infinite;
+  }
+  
+  .greeting-box {
+    background: linear-gradient(135deg, rgba(106,17,203,0.2), rgba(37,117,252,0.2));
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 4px solid #6a11cb;
+    animation: fadeInUp 0.8s;
+  }
+  
+  .input-container { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+  
+  #priereInput { 
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 16px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  #priereInput::placeholder { color: rgba(255,255,255,0.6); }
+  #priereInput:focus { 
+    outline: none;
+    border-color: #6a11cb;
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 12px rgba(106,17,203,0.3);
+  }
+  
+  button { 
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  button:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
+  }
+  
+  .voice-btn {
+    background: linear-gradient(135deg, #ff5252, #ff7043);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  
+  .voice-btn.recording {
+    animation: pulse 1s infinite;
+  }
+  
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+  
+  #reponse {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,255,255,0.08);
+    border-left: 4px solid #6a11cb;
+    border-radius: 8px;
+    display: none;
+  }
+  #reponse.active { display: block; }
+  #reponse p { margin: 8px 0; }
+  #reponse em { font-style: italic; color: #ffeb3b; }
+  #reponse .signature { 
+    font-size: 11px; 
+    color: rgba(255,255,255,0.5); 
+    margin-top: 12px; 
+    padding-top: 10px; 
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  #reponse .compassion { 
+    color: #ffeb3b; 
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+</style>
+
+<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-agent"></use></svg> <span>🤖 Intercesseur JOHN</span></h2>
+
+<div id="greetingBox" class="greeting-box">
+  <div class="agent-avatar">🤖</div>
+  <h3 style="text-align: center; color: #ffeb3b; margin: 10px 0;">Bonjour ! Je suis JOHN</h3>
+  <p style="text-align: center; line-height: 1.6;">
+    Je suis votre assistant spirituel, prêt à vous accompagner dans vos prières. 
+    Partagez votre cœur avec moi, par texte ou par voix, et je vous guiderai avec la Parole de Dieu. 🙏
+  </p>
+  <p style="text-align: center; margin-top: 15px;">
+    <button onclick="startConversation()">✨ Commencer</button>
+  </p>
+</div>
+
+<div id="conversationBox" style="display: none;">
+  <p>Entrez votre intention de prière :</p>
+  <div class="input-container">
+    <input type="text" id="priereInput" placeholder="Ex: Seigneur Jésus, guéris mon enfant">
+    <button onclick="envoyerPriere()">📤 Envoyer</button>
+    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Message vocal">🎤</button>
+  </div>
+  <p id="voiceStatus" style="color: #ff5252; display: none; margin: 10px 0;">🔴 Enregistrement en cours...</p>
+  <div id="reponse"></div>
+</div>
+
+<script>
+let recognition = null;
+let isRecording = false;
+
+function startConversation() {
+  document.getElementById('greetingBox').style.display = 'none';
+  document.getElementById('conversationBox').style.display = 'block';
+  localStorage.setItem('agentGreeted', 'true');
+}
+
+if (localStorage.getItem('agentGreeted') === 'true') {
+  startConversation();
+}
+
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('❌ Votre navigateur ne supporte pas la reconnaissance vocale. Utilisez Chrome ou Edge.');
+    return;
+  }
+
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
+function startRecording() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'fr-FR';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    document.getElementById('voiceBtn').classList.add('recording');
+    document.getElementById('voiceStatus').style.display = 'block';
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    document.getElementById('priereInput').value = transcript;
+    stopRecording();
+  };
+
+  recognition.onerror = () => {
+    alert('❌ Erreur lors de l\'enregistrement. Réessayez.');
+    stopRecording();
+  };
+
+  recognition.onend = () => {
+    stopRecording();
+  };
+
+  recognition.start();
+}
+
+function stopRecording() {
+  if (recognition) {
+    recognition.stop();
+  }
+  isRecording = false;
+  document.getElementById('voiceBtn').classList.remove('recording');
+  document.getElementById('voiceStatus').style.display = 'none';
+}
+
+function envoyerPriere() {
+  const input = document.getElementById("priereInput").value.trim().toLowerCase();
+
+  const reponses = {
+    guerison: [
+      "Jésus est le médecin des médecins, Il guérit toute maladie (Matthieu 8:17).",
+      "Par les meurtrissures de Jésus, tu es guéri (Ésaïe 53:5).",
+      "Jésus a guéri les malades et Il agit encore aujourd'hui."
+    ],
+    famille: [
+      "Jésus est le fondement de ta maison (Josué 24:15).",
+      "Crois au Seigneur Jésus, et tu seras sauvé, toi et ta famille (Actes 16:31).",
+      "Jésus protège et bénit ta famille."
+    ],
+    foi: [
+      "Jésus est l'auteur et le consommateur de ta foi (Hébreux 12:2).",
+      "Celui qui croit en Jésus vivra, même s'il meurt (Jean 11:25).",
+      "Jésus dit : Si tu peux croire, tout est possible (Marc 9:23)."
+    ],
+    combat: [
+      "Jésus a vaincu le diable à la croix (Colossiens 2:15).",
+      "Revêts-toi de l'armure de Dieu en Jésus-Christ (Éphésiens 6:11).",
+      "Jésus est ton bouclier et ta victoire."
+    ],
+    paix: [
+      "Jésus est le Prince de la paix (Ésaïe 9:6).",
+      "Ma paix je vous donne, dit Jésus (Jean 14:27).",
+      "Jésus calme la tempête dans ton cœur."
+    ]
+  };
+
+  let theme = "foi";
+  if (input.includes("guéri") || input.includes("maladie") || input.includes("santé")) theme = "guerison";
+  else if (input.includes("famille") || input.includes("enfant") || input.includes("mariage")) theme = "famille";
+  else if (input.includes("combat") || input.includes("ennemi") || input.includes("lutte")) theme = "combat";
+  else if (input.includes("paix") || input.includes("calme") || input.includes("repos")) theme = "paix";
+
+  const paroles = reponses[theme];
+  const parole = paroles[Math.floor(Math.random() * paroles.length)];
+  
+  const guides = {
+    guerison: [
+      `Ce verset rappelle que la guérison est possible et que Dieu voit ta douleur. <br>Garde confiance aujourd'hui; fais un petit pas concret vers le soin (repos, médecin, prière).`,
+      `Ce passage affirme que la souffrance n'est pas ton dernier mot. <br>Porte cette espérance dans ton cœur et accepte l'aide autour de toi.`
+    ],
+    famille: [
+      `Ce verset t'encourage à placer Jésus au centre de ta maison. <br>Recherche la paix en pratiquant le pardon et en priant ensemble.`,
+      `La parole renforce les liens familiaux lorsqu'on s'appuie sur la foi. <br>Parle avec douceur, aime intentionnellement et demande la bénédiction de Dieu.`
+    ],
+    foi: [
+      `Ce verset te rappelle que la foi soutient les jours difficiles. <br>Tiens-toi ferme dans la prière et avance par petits pas de confiance.`,
+      `La foi ouvre des chemins là où tu vois des barrières. <br>Confie tes peurs à Dieu et agis avec espérance aujourd'hui.`
+    ],
+    combat: [
+      `Ce passage te rappelle que tu n'es pas seul dans la bataille. <br>Revêts-toi de courage, prie pour force, et appuie-toi sur les promesses de Dieu.`,
+      `La victoire est déjà proclamée par la croix; tiens-toi ferme. <br>Affirme la parole, refuse la peur et cherche le soutien des frères et sœurs.`
+    ],
+    paix: [
+      `Ce verset apporte une paix qui dépasse la compréhension. <br>Respire profondément, confie tes inquiétudes à Jésus et accueille sa paix.`,
+      `La paix est un don; laisse-la habiter ton cœur aujourd'hui. <br>Prends un moment pour te recueillir et permettre à Dieu de calmer ta tempête.`
+    ]
+  };
+
+  function makeMessage(theme, verse) {
+    const arr = guides[theme] || guides['foi'];
+    const guide = arr[Math.floor(Math.random() * arr.length)];
+    return `
+      <p class="compassion">🙏 J'ai entendu ton cœur, et je comprends ta charge.</p>
+      <p><em>${verse}</em></p>
+      <p>${guide}</p>
+      <p class="signature">✨ Jésus revient bientôt</p>
+    `;
+  }
+
+  if (input) {
+    const reponseDiv = document.getElementById("reponse");
+    reponseDiv.innerHTML = makeMessage(theme, parole);
+    reponseDiv.classList.add("active");
+    document.getElementById("priereInput").value = '';
+  } else {
+    alert("Veuillez entrer une prière.");
+  }
+}
+</script>

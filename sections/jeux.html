@@ -1,0 +1,255 @@
+<style>
+  .section-heading { display:flex; align-items:center; gap:10px; }
+  .section-heading .icon-svg { width:28px; height:28px; transition: transform 0.18s ease; }
+  .section-heading:hover .icon-svg { transform: scale(1.12); }
+  .options button { transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  .options button:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.14); }
+</style>
+<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-game"></use></svg> <span>Quiz Biblique Évolutif</span></h2>
+
+<style>
+  .quiz-container {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+  }
+  .question {
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    transition: all 0.3s;
+    font-size: 14px;
+  }
+  .options button:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.4);
+  }
+  .options button:active {
+    background: rgba(100,200,255,0.4);
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+    background: rgba(26,188,156,0.2);
+    border-radius: 8px;
+  }
+  .progress-bar {
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    margin: 15px 0;
+    height: 20px;
+    overflow: hidden;
+  }
+  .progress {
+    height: 100%;
+    background: linear-gradient(90deg, #1abc9c, #16a085);
+    width: 0%;
+    transition: width 0.3s;
+  }
+  #restartBtn {
+    margin-top: 15px;
+    padding: 12px 30px;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s;
+  }
+  #restartBtn:hover {
+    transform: scale(1.05);
+  }
+</style>
+
+<div class="quiz-container">
+  <div id="quiz"></div>
+  <div class="progress-bar"><div id="progress" class="progress"></div></div>
+  <div id="result"></div>
+  <button id="restartBtn" onclick="restartQuiz()" style="display:none;">Rejouer</button>
+</div>
+
+<script>
+  // Niveau 1 : 10 questions
+  const niveau1 = [
+    {question:"Qui a construit l'arche ?", options:["Moïse","Noé","Abraham","David"], answer:1},
+    {question:"Combien de jours pour la création ?", options:["3","5","6","7"], answer:2},
+    {question:"Qui a renié Jésus trois fois ?", options:["Jean","Pierre","Jacques","Thomas"], answer:1},
+    {question:"Premier livre de la Bible ?", options:["Exode","Genèse","Psaumes","Matthieu"], answer:1},
+    {question:"Qui a tué Goliath ?", options:["Saül","David","Samuel","Josué"], answer:1},
+    {question:"Qui a reçu les 10 commandements ?", options:["Moïse","Aaron","Josué","Élie"], answer:0},
+    {question:"Où Jésus est né ?", options:["Nazareth","Bethléem","Jérusalem","Capharnaüm"], answer:1},
+    {question:"Combien de disciples ?", options:["10","11","12","13"], answer:2},
+    {question:"Qui a écrit la plupart des Psaumes ?", options:["Moïse","David","Salomon","Ésaïe"], answer:1},
+    {question:"Qui a été avalé par un grand poisson ?", options:["Jonas","Élie","Paul","Pierre"], answer:0}
+  ];
+
+  // Niveau 2 : 15 questions
+  const niveau2 = [
+    ...niveau1,
+    {question:"Qui est la mère de Jésus ?", options:["Marie","Élisabeth","Rachel","Sara"], answer:0},
+    {question:"Quel roi était connu pour sa sagesse ?", options:["Saül","David","Salomon","Ézéchias"], answer:2},
+    {question:"Qui a trahi Jésus ?", options:["Pierre","Judas","Jean","Thomas"], answer:1},
+    {question:"Quel prophète a défié les prophètes de Baal ?", options:["Ésaïe","Élie","Ézéchiel","Daniel"], answer:1},
+    {question:"Combien de livres dans la Bible ?", options:["60","61","66","70"], answer:2}
+  ];
+
+  // Niveau 3 : 30 questions
+  const niveau3 = [
+    ...niveau2,
+    {question:"Qui a été jeté dans la fosse aux lions ?", options:["Daniel","Joseph","Élie","Paul"], answer:0},
+    {question:"Qui a interprété les rêves de Pharaon ?", options:["Moïse","Joseph","Aaron","David"], answer:1},
+    {question:"Quel apôtre a écrit la plupart des lettres du Nouveau Testament ?", options:["Pierre","Paul","Jean","Jacques"], answer:1},
+    {question:"Qui a marché sur l'eau vers Jésus ?", options:["Pierre","Jean","Jacques","Thomas"], answer:0},
+    {question:"Quel est le dernier livre de la Bible ?", options:["Apocalypse","Actes","Romains","Hébreux"], answer:0},
+    {question:"Qui a été transformé en statue de sel ?", options:["Femme de Lot","Sara","Rachel","Marie"], answer:0},
+    {question:"Qui a vu une échelle reliant ciel et terre ?", options:["Jacob","Joseph","Moïse","Ésaïe"], answer:0},
+    {question:"Qui a écrit l'Apocalypse ?", options:["Jean","Pierre","Paul","Jacques"], answer:0},
+    {question:"Quel prophète a vu des ossements revivre ?", options:["Ézéchiel","Ésaïe","Daniel","Jérémie"], answer:0},
+    {question:"Qui a été vendu par ses frères ?", options:["Joseph","Benjamin","Moïse","David"], answer:0},
+    {question:"Qui a prié trois fois par jour ?", options:["Daniel","David","Paul","Pierre"], answer:0},
+    {question:"Qui a été roi après Saül ?", options:["David","Salomon","Josué","Ézéchias"], answer:0},
+    {question:"Qui a écrit les Proverbes ?", options:["Moïse","David","Salomon","Ésaïe"], answer:2},
+    {question:"Qui a été sauvé dans la fournaise ardente ?", options:["Shadrac, Méschac et Abed-Nego","Daniel","Joseph","Élie"], answer:0},
+    {question:"Qui a été appelé 'ami de Dieu' ?", options:["Moïse","Abraham","David","Josué"], answer:1}
+  ];
+
+  // Niveau 4 : 40 questions
+  const niveau4 = [
+    ...niveau3,
+    {question:"Qui a écrit l'Évangile selon Luc ?", options:["Luc","Jean","Marc","Matthieu"], answer:0},
+    {question:"Qui a été le premier martyr chrétien ?", options:["Étienne","Jacques","Jean","Paul"], answer:0},
+    {question:"Qui a baptisé Jésus ?", options:["Jean-Baptiste","Pierre","Paul","Jacques"], answer:0},
+    {question:"Qui a été roi après David ?", options:["Salomon","Saül","Josué","Ézéchias"], answer:0},
+    {question:"Qui a vu Jésus ressuscité en premier ?", options:["Pierre","Jean","Marie-Madeleine","Thomas"], answer:2},
+    {question:"Qui a écrit l'épître aux Hébreux ?", options:["Paul","Auteur inconnu","Pierre","Jean"], answer:1},
+    {question:"Quel prophète a prophétisé l'exil à Babylone ?", options:["Daniel","Ésaïe","Ézéchiel","Jérémie"], answer:2},
+    {question:"Qui a été roi quand Jésus est né ?", options:["Hérode","César","Pilate","Néron"], answer:0},
+    {question:"Qui a été appelé 'fils du tonnerre' ?", options:["Jean et Jacques","Pierre et André","Paul et Barnabas","Timothée et Tite"], answer:0},
+    {question:"Qui a écrit le Cantique des Cantiques ?", options:["David","Salomon","Moïse","Ésaïe"], answer:1}
+  ];
+
+  let niveaux = [niveau1, niveau2, niveau3, niveau4];
+  let currentLevel = 0;
+  let currentQuestion = 0;
+  let score = 0;
+  let levelScores = [];
+
+  function showQuestion() {
+    const quizDiv = document.getElementById("quiz");
+    quizDiv.innerHTML = "";
+
+    let questions = niveaux[currentLevel];
+    if(currentQuestion < questions.length) {
+      const q = questions[currentQuestion];
+      quizDiv.innerHTML = "<div class='question'>" + q.question + "</div>";
+
+      const optionsDiv = document.createElement("div");
+      optionsDiv.className = "options";
+
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i, btn);
+        optionsDiv.appendChild(btn);
+      });
+
+      quizDiv.appendChild(optionsDiv);
+
+      // Progression visuelle
+      let progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+      document.getElementById("progress").style.width = progressPercent + "%";
+      document.getElementById("restartBtn").style.display = "none";
+    } else {
+      // Fin du niveau
+      let grade = getGrade(score, questions.length);
+      let message = getMotivation(grade);
+      document.getElementById("result").innerHTML =
+        "Niveau " + (currentLevel + 1) + " terminé 🎉<br>Score : " + score + "/" + questions.length +
+        " | Grade : <strong>" + grade + "</strong><br>" + message;
+
+      // Passage automatique au niveau suivant
+      if(currentLevel < niveaux.length - 1) {
+        document.getElementById("result").innerHTML +=
+          "<br><br><small>Passage au niveau suivant en 4s...</small>";
+        currentLevel++;
+        currentQuestion = 0;
+        score = 0;
+        setTimeout(showQuestion, 4000);
+      } else {
+        document.getElementById("result").innerHTML +=
+          "<br><br><strong>🏆 Tous les niveaux complétés !</strong>";
+        document.getElementById("restartBtn").style.display = "block";
+      }
+    }
+  }
+
+  function checkAnswer(selected, btn) {
+    let questions = niveaux[currentLevel];
+    let correct = selected === questions[currentQuestion].answer;
+    
+    if(correct) {
+      score++;
+      btn.style.background = "rgba(26,188,156,0.5)";
+    } else {
+      btn.style.background = "rgba(231,76,60,0.5)";
+      let correctBtn = document.querySelectorAll(".options button")[questions[currentQuestion].answer];
+      correctBtn.style.background = "rgba(26,188,156,0.5)";
+    }
+
+    document.querySelectorAll(".options button").forEach(b => b.disabled = true);
+    setTimeout(() => {
+      currentQuestion++;
+      showQuestion();
+    }, 1500);
+  }
+
+  function restartQuiz() {
+    currentLevel = 0;
+    currentQuestion = 0;
+    score = 0;
+    levelScores = [];
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("progress").style.width = "0%";
+    document.getElementById("restartBtn").style.display = "none";
+    showQuestion();
+  }
+
+  function getGrade(score, total) {
+    let percent = (score / total) * 100;
+    if(percent < 50) return "Croyant";
+    else if(percent < 70) return "Disciple";
+    else if(percent < 85) return "Ouvrier";
+    else if(percent < 95) return "Pasteur";
+    else return "Docteur";
+  }
+
+  function getMotivation(grade) {
+    switch(grade) {
+      case "Croyant": return "Continue, chaque pas te rapproche de la vérité ✨";
+      case "Disciple": return "Tu avances bien, garde la foi 🙏";
+      case "Ouvrier": return "Tu sers avec fidélité, persévère 💪";
+      case "Pasteur": return "Tu conduis avec sagesse, reste humble 🌟";
+      case "Docteur": return "Excellence ! Tu es une source d'inspiration 📖🔥";
+      default: return "";
+    }
+  }
+
+  showQuestion();
+</script>

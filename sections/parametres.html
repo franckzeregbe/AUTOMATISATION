@@ -1,0 +1,399 @@
+<style>
+  .settings-heading{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+  .settings-section{background:rgba(255,255,255,0.03);padding:20px;border-radius:12px;margin:15px 0;border:1px solid rgba(255,255,255,0.08)}
+  .section-title{font-size:18px;font-weight:600;margin-bottom:15px;display:flex;align-items:center;gap:8px}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .field{margin:12px 0}
+  label{display:block;margin-bottom:6px;font-weight:500}
+  select,input[type=text],input[type=email],input[type=number]{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:white;width:100%;max-width:420px}
+  .small{font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px}
+  .btn{padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:white;cursor:pointer;transition:all 0.3s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+  .btn.primary{background:linear-gradient(135deg,#6a11cb,#2575fc);border:none}
+  .btn.danger{background:linear-gradient(135deg,#ff5252,#ff7043);border:none}
+  .btn.success{background:linear-gradient(135deg,#43a047,#66bb6a);border:none}
+</style>
+
+<h2 class="settings-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-settings"></use></svg> <span>Paramètres</span></h2>
+
+<!-- Section Apparence -->
+<div class="settings-section">
+  <div class="section-title">🎨 Apparence</div>
+  
+  <div class="field">
+  <label>🎨 Thème</label>
+  <div class="row">
+    <select id="themeSelect">
+      <option value="dark">Sombre</option>
+      <option value="light">Clair</option>
+    </select>
+    <button class="btn" id="applyTheme">Appliquer</button>
+    <div class="small">(Le thème est enregistré localement)</div>
+  </div>
+</div>
+
+<div class="field">
+  <label>🌍 Langue</label>
+  <div class="row">
+    <select id="langSelect">
+      <option value="fr">Français</option>
+      <option value="en">Anglais</option>
+    </select>
+    <button class="btn" id="applyLang">Appliquer</button>
+    <div class="small">(Changement de langue pour l'interface future)</div>
+  </div>
+</div>
+
+<div class="field">
+  <label>🔠 Police</label>
+  <div class="row">
+    <select id="fontSelect">
+      <option value="standard">Standard</option>
+      <option value="large">Large</option>
+      <option value="hand">Manuscrite</option>
+    </select>
+    <button class="btn" id="applyFont">Appliquer</button>
+    <div class="small">(Ajuste la taille et le style de police)</div>
+  </div>
+</div>
+</div>
+
+<!-- Section Notifications -->
+<div class="settings-section">
+  <div class="section-title">🔔 Notifications & Rappels</div>
+  
+  <div class="field">
+  <label>Notifications</label>
+  <div class="row">
+    <input type="checkbox" id="notifChk"> <label for="notifChk">Activer les notifications</label>
+    <div class="small">(Stocké localement)</div>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Rappels de prière</label>
+  <div class="row">
+    <input type="time" id="prayerTime" style="max-width:150px"> 
+    <button class="btn primary" id="setPrayerReminder">Définir rappel</button>
+    <div class="small">(Rappel quotidien pour la prière)</div>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Lecture biblique quotidienne</label>
+  <div class="row">
+    <input type="checkbox" id="dailyBibleChk"> <label for="dailyBibleChk">Activer les rappels de lecture</label>
+    <div class="small">(Notification pour lire la Bible chaque jour)</div>
+  </div>
+</div>
+</div>
+
+<!-- Section Contrôle Parental -->
+<div class="settings-section">
+  <div class="section-title">🧒 Contrôle Parental</div>
+  
+  <div class="field">
+  <label>Mode enfant</label>
+  <div class="row">
+    <input type="checkbox" id="childChk"> <label for="childChk">Activer le mode enfant</label>
+    <div class="small">(Masque les sections inappropriées)</div>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Limite de temps d'écran</label>
+  <div class="row">
+    <input type="number" id="screenTime" min="0" max="180" placeholder="Minutes" style="max-width:120px">
+    <button class="btn" id="setScreenTime">Définir</button>
+    <div class="small">(Limite quotidienne en minutes)</div>
+  </div>
+</div>
+</div>
+
+<!-- Section Connexion -->
+<div class="settings-section">
+  <div class="section-title">📡 Connexion & Synchronisation</div>
+  
+  <div class="field">
+  <label>Mode hors-ligne</label>
+  <div class="row">
+    <input type="checkbox" id="offlineChk"> <label for="offlineChk">Activer le mode hors-ligne</label>
+    <div class="small">(Prépare l'app pour un usage réduit hors connexion)</div>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Synchronisation automatique</label>
+  <div class="row">
+    <input type="checkbox" id="autoSyncChk"> <label for="autoSyncChk">Synchroniser automatiquement</label>
+    <div class="small">(Sauvegarde automatique des progrès)</div>
+  </div>
+</div>
+</div>
+
+<!-- Section Profil -->
+<div class="settings-section">
+  <div class="section-title">👤 Profil Utilisateur</div>
+  
+  <div class="field">
+  <label>Nom d'utilisateur</label>
+  <div class="row">
+    <input type="text" id="editName" placeholder="Changer le nom d'utilisateur">
+    <button class="btn primary" id="saveProfileBtn">Enregistrer</button>
+    <span class="small" id="profileMsg"></span>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Email</label>
+  <div class="row">
+    <input type="email" id="editEmail" placeholder="Changer l'email">
+    <button class="btn primary" id="saveEmailBtn">Enregistrer</button>
+    <span class="small" id="emailMsg"></span>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Photo de profil</label>
+  <div class="row">
+    <button class="btn" id="uploadPhotoBtn">📷 Choisir une photo</button>
+    <div class="small">(Fonctionnalité à venir)</div>
+  </div>
+</div>
+</div>
+
+<!-- Section Confidentialité -->
+<div class="settings-section">
+  <div class="section-title">🔒 Confidentialité & Sécurité</div>
+  
+  <div class="field">
+  <label>Historique de navigation</label>
+  <div class="row">
+    <button class="btn" id="clearHistoryBtn">Effacer l'historique</button>
+    <div class="small">(Supprime l'historique des sections visitées)</div>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Partage de données</label>
+  <div class="row">
+    <input type="checkbox" id="shareDataChk"> <label for="shareDataChk">Partager les statistiques anonymes</label>
+    <div class="small">(Aide à améliorer l'application)</div>
+  </div>
+</div>
+</div>
+
+<!-- Section Avancé -->
+<div class="settings-section">
+  <div class="section-title">⚙️ Paramètres Avancés</div>
+  
+  <div class="field">
+  <label>Version de la Bible par défaut</label>
+  <div class="row">
+    <select id="bibleVersionSelect">
+      <option value="LS1910">Louis Segond 1910</option>
+      <option value="Darby">Darby</option>
+      <option value="KJV">King James Version</option>
+    </select>
+    <button class="btn" id="applyBibleVersion">Appliquer</button>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Réinitialiser les points</label>
+  <div class="row">
+    <button class="btn danger" id="resetPointsBtn">Réinitialiser mes points</button>
+    <div class="small">(Remet vos points à zéro)</div>
+  </div>
+</div>
+
+  <div class="field">
+  <label>Données de l'application</label>
+  <div class="row">
+    <button class="btn danger" id="clearBtn">Effacer les données (localStorage)</button>
+    <div class="small">Attention : cela déconnectera les utilisateurs et réinitialisera les points.</div>
+  </div>
+</div>
+
+<script>
+// Initialisation et gestion des préférences
+(function(){
+  const themeSelect = document.getElementById('themeSelect');
+  const applyThemeBtn = document.getElementById('applyTheme');
+  const langSelect = document.getElementById('langSelect');
+  const applyLangBtn = document.getElementById('applyLang');
+  const fontSelect = document.getElementById('fontSelect');
+  const applyFontBtn = document.getElementById('applyFont');
+  const notifChk = document.getElementById('notifChk');
+  const childChk = document.getElementById('childChk');
+  const offlineChk = document.getElementById('offlineChk');
+  const saveProfileBtn = document.getElementById('saveProfileBtn');
+  const editName = document.getElementById('editName');
+  const profileMsg = document.getElementById('profileMsg');
+  const clearBtn = document.getElementById('clearBtn');
+
+  const defaultPrefs = {
+    theme: localStorage.getItem('appTheme') || 'dark',
+    lang: localStorage.getItem('appLang') || 'fr',
+    font: localStorage.getItem('appFont') || 'standard',
+    notifications: JSON.parse(localStorage.getItem('appNotif') || 'false'),
+    childMode: JSON.parse(localStorage.getItem('appChild') || 'false'),
+    offline: JSON.parse(localStorage.getItem('appOffline') || 'false')
+  };
+
+  // Appliquer les préférences à l'UI
+  function applyAll(p){
+    themeSelect.value = p.theme; applyTheme(p.theme);
+    langSelect.value = p.lang;
+    fontSelect.value = p.font; applyFont(p.font);
+    notifChk.checked = p.notifications;
+    childChk.checked = p.childMode; applyChildMode(p.childMode);
+    offlineChk.checked = p.offline;
+  }
+
+  function applyTheme(t){
+    localStorage.setItem('appTheme', t);
+    if(t==='light'){
+      document.documentElement.style.setProperty('--bg1','#f6f7fb');
+      document.documentElement.style.setProperty('--bg2','#e9eefc');
+      document.body.style.color = '#111';
+    } else {
+      document.documentElement.style.setProperty('--bg1','#6a11cb');
+      document.documentElement.style.setProperty('--bg2','#2575fc');
+      document.body.style.color = '#fff';
+    }
+  }
+
+  function applyFont(f){
+    localStorage.setItem('appFont', f);
+    if(f==='large'){
+      document.documentElement.style.setProperty('font-size','18px');
+      document.body.style.fontFamily = "'Segoe UI', sans-serif";
+    } else if(f==='hand'){
+      document.documentElement.style.setProperty('font-size','16px');
+      document.body.style.fontFamily = "'Segoe UI', 'Bradley Hand', 'Comic Sans MS', cursive";
+    } else {
+      document.documentElement.style.setProperty('font-size','15px');
+      document.body.style.fontFamily = "'Segoe UI', sans-serif";
+    }
+  }
+
+  function applyChildMode(on){
+    localStorage.setItem('appChild', JSON.stringify(on));
+    if(on){
+      // masquer certaines sections (ex: jeux)
+      document.querySelectorAll('.section[data-key="jeux"], .section[data-key="videos"]').forEach(el=>el.style.display='none');
+    } else {
+      document.querySelectorAll('.section[data-key="jeux"], .section[data-key="videos"]').forEach(el=>el.style.display='flex');
+    }
+  }
+
+  // charger et appliquer
+  applyAll(defaultPrefs);
+
+  applyThemeBtn.addEventListener('click', ()=>{ applyTheme(themeSelect.value); alert('Thème appliqué.'); });
+  applyLangBtn.addEventListener('click', ()=>{ localStorage.setItem('appLang', langSelect.value); alert('Langue enregistrée.'); });
+  applyFontBtn.addEventListener('click', ()=>{ applyFont(fontSelect.value); alert('Police appliquée.'); });
+
+  notifChk.addEventListener('change', ()=>{ localStorage.setItem('appNotif', JSON.stringify(notifChk.checked)); alert('Préférence de notification enregistrée.'); });
+  childChk.addEventListener('change', ()=>{ applyChildMode(childChk.checked); });
+  offlineChk.addEventListener('change', ()=>{ localStorage.setItem('appOffline', JSON.stringify(offlineChk.checked)); alert('Mode hors-ligne enregistré.'); });
+
+  // Nouveaux gestionnaires
+  const setPrayerReminder = document.getElementById('setPrayerReminder');
+  const prayerTime = document.getElementById('prayerTime');
+  setPrayerReminder?.addEventListener('click', ()=>{ 
+    if(prayerTime.value){ localStorage.setItem('prayerReminderTime', prayerTime.value); alert('Rappel de prière défini pour '+prayerTime.value); }
+    else alert('Veuillez choisir une heure');
+  });
+
+  const dailyBibleChk = document.getElementById('dailyBibleChk');
+  dailyBibleChk?.addEventListener('change', ()=>{ localStorage.setItem('dailyBible', JSON.stringify(dailyBibleChk.checked)); });
+
+  const setScreenTime = document.getElementById('setScreenTime');
+  const screenTime = document.getElementById('screenTime');
+  setScreenTime?.addEventListener('click', ()=>{ 
+    if(screenTime.value){ localStorage.setItem('screenTimeLimit', screenTime.value); alert('Limite de temps définie: '+screenTime.value+' minutes'); }
+  });
+
+  const autoSyncChk = document.getElementById('autoSyncChk');
+  autoSyncChk?.addEventListener('change', ()=>{ localStorage.setItem('autoSync', JSON.stringify(autoSyncChk.checked)); });
+
+  const saveEmailBtn = document.getElementById('saveEmailBtn');
+  const editEmail = document.getElementById('editEmail');
+  const emailMsg = document.getElementById('emailMsg');
+  saveEmailBtn?.addEventListener('click', ()=>{
+    const email = editEmail.value.trim();
+    if(!email || !email.includes('@')){ emailMsg.textContent = 'Email invalide.'; return; }
+    const cu = localStorage.getItem('currentUser');
+    if(cu){
+      const user = JSON.parse(cu);
+      user.email = email;
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      emailMsg.textContent = 'Email mis à jour.';
+    }
+  });
+
+  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+  clearHistoryBtn?.addEventListener('click', ()=>{ 
+    if(confirm('Effacer l\'historique ?')){ localStorage.removeItem('visitHistory'); alert('Historique effacé.'); }
+  });
+
+  const shareDataChk = document.getElementById('shareDataChk');
+  shareDataChk?.addEventListener('change', ()=>{ localStorage.setItem('shareData', JSON.stringify(shareDataChk.checked)); });
+
+  const bibleVersionSelect = document.getElementById('bibleVersionSelect');
+  const applyBibleVersion = document.getElementById('applyBibleVersion');
+  applyBibleVersion?.addEventListener('click', ()=>{ localStorage.setItem('bibleVersion', bibleVersionSelect.value); alert('Version de la Bible définie: '+bibleVersionSelect.value); });
+
+  const resetPointsBtn = document.getElementById('resetPointsBtn');
+  resetPointsBtn?.addEventListener('click', ()=>{
+    if(!confirm('Réinitialiser vos points ? Cette action est irréversible.')) return;
+    const cu = localStorage.getItem('currentUser');
+    if(cu){
+      const user = JSON.parse(cu);
+      user.points = 0; user.completed = 0;
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      const users = JSON.parse(localStorage.getItem('appUsers')||'[]');
+      const idx = users.findIndex(u=>u.email===user.email);
+      if(idx!==-1){ users[idx] = user; localStorage.setItem('appUsers', JSON.stringify(users)); }
+      alert('Points réinitialisés.');
+      location.reload();
+    }
+  });
+
+  // Charger les valeurs sauvegardées
+  prayerTime.value = localStorage.getItem('prayerReminderTime') || '';
+  dailyBibleChk.checked = JSON.parse(localStorage.getItem('dailyBible') || 'false');
+  screenTime.value = localStorage.getItem('screenTimeLimit') || '';
+  autoSyncChk.checked = JSON.parse(localStorage.getItem('autoSync') || 'true');
+  shareDataChk.checked = JSON.parse(localStorage.getItem('shareData') || 'false');
+  bibleVersionSelect.value = localStorage.getItem('bibleVersion') || 'LS1910';
+
+  saveProfileBtn.addEventListener('click', ()=>{
+    const name = editName.value.trim();
+    if(!name){ profileMsg.textContent = 'Entrez un nom.'; return; }
+    const cu = localStorage.getItem('currentUser');
+    if(cu){
+      const user = JSON.parse(cu);
+      user.username = name;
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      const users = JSON.parse(localStorage.getItem('appUsers')||'[]');
+      const idx = users.findIndex(u=>u.email===user.email);
+      if(idx!==-1){ users[idx].username = name; localStorage.setItem('appUsers', JSON.stringify(users)); }
+      profileMsg.textContent = 'Profil mis à jour.';
+      const display = document.getElementById('userDisplayName'); if(display) display.textContent = name;
+    } else {
+      profileMsg.textContent = 'Aucun utilisateur connecté.';
+    }
+  });
+
+  clearBtn.addEventListener('click', ()=>{
+    if(!confirm('Effacer toutes les données locales ? Cette opération est irréversible.')) return;
+    localStorage.clear();
+    alert('Données effacées. Rechargement de la page.');
+    location.reload();
+  });
+
+})();
+</script>
