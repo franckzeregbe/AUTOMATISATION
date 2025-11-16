@@ -84,8 +84,36 @@
   <button id="restartBtn" onclick="restartQuiz()" style="display:none;">Rejouer</button>
 </div>
 
-<script src="./quiz-questions.js"></script>
 <script>
+  // 300 questions: Niveau 1(20Q), Niveau 2(40Q), Niveau 3(60Q), Niveau 4(80Q), Niveau 5(100Q)
+  window.quizQuestions = [
+    Array(20).fill(null).map((_, i) => ({
+      question: `Question Niveau 1 - ${i+1}`,
+      options: ["Option A", "Option B", "Option C", "Option D"],
+      answer: Math.floor(Math.random() * 4)
+    })),
+    Array(40).fill(null).map((_, i) => ({
+      question: `Question Niveau 2 - ${i+1}`,
+      options: ["Option A", "Option B", "Option C", "Option D"],
+      answer: Math.floor(Math.random() * 4)
+    })),
+    Array(60).fill(null).map((_, i) => ({
+      question: `Question Niveau 3 - ${i+1}`,
+      options: ["Option A", "Option B", "Option C", "Option D"],
+      answer: Math.floor(Math.random() * 4)
+    })),
+    Array(80).fill(null).map((_, i) => ({
+      question: `Question Niveau 4 - ${i+1}`,
+      options: ["Option A", "Option B", "Option C", "Option D"],
+      answer: Math.floor(Math.random() * 4)
+    })),
+    Array(100).fill(null).map((_, i) => ({
+      question: `Question Niveau 5 - ${i+1}`,
+      options: ["Option A", "Option B", "Option C", "Option D"],
+      answer: Math.floor(Math.random() * 4)
+    }))
+  ];
+  
   let currentLevel = 0;
   let currentQuestion = 0;
   let score = 0;
