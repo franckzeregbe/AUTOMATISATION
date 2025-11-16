@@ -1,0 +1,4 @@
+Corrections à faire:
+1. Enlever verset du jour - FAIT (HTML retiré)
+2. Corriger viewProfile - Ajouter content.style.display='block' et sections.style.display='none'
+3. Agent JOHN - Vérifier sections/agent.html pour micro en double
