@@ -28,25 +28,27 @@
       max-height: 100vh;
       overflow-y: auto;
       transition: all 0.3s ease;
-      position: relative;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 999;
     }
 
     .sidebar.collapsed {
-      width: 0;
-      padding: 0;
-      overflow: hidden;
+      left: -240px;
     }
 
     .menu-toggle {
       position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
       background: var(--sidebar);
       border: none;
       color: white;
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       border-radius: 8px;
       cursor: pointer;
       display: flex;
@@ -58,11 +60,6 @@
 
     .menu-toggle:hover {
       background: #6a11cb;
-      transform: scale(1.1);
-    }
-
-    .sidebar.collapsed + .menu-toggle {
-      left: 20px;
     }
 
     .sidebar h2 {
@@ -217,20 +214,36 @@
 
     .main {
       flex: 1;
-      padding: 28px;
+      padding: 70px 20px 20px 20px;
       overflow-y: auto;
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+      margin-left: 0;
+      width: 100%;
     }
 
-    .main h1 { margin-top: 0; text-align: center }
-    .main > p { text-align: center }
+    .main h1 { margin-top: 0; text-align: center; font-size: 24px; }
+    .main > p { text-align: center; font-size: 14px; }
 
-    /* small responsive */
-    @media (max-width: 800px){
-      body{flex-direction:column;height:auto}
-      .sidebar{width:100%;flex-direction:row;overflow:auto}
-      .menu-item{flex:1;justify-content:center}
-      .main{padding:16px}
+    /* Mobile responsive */
+    @media (max-width: 768px){
+      body { height: 100vh; overflow: hidden; }
+      .sidebar { left: -240px; }
+      .sidebar.collapsed { left: -240px; }
+      .sidebar:not(.collapsed) { left: 0; }
+      .main { padding: 60px 15px 15px 15px; margin-left: 0; }
+      .main h1 { font-size: 20px; }
+      .section { width: 150px; padding: 15px 12px; }
+      .section-icon { width: 55px; height: 55px; }
+      .icon-svg { width: 30px; height: 30px; }
+      .menu-toggle { top: 10px; left: 10px; }
+      #searchInput { max-width: 100%; font-size: 14px; }
+      .verse-box { padding: 15px; margin: 15px 0; }
+      #verseText { font-size: 15px !important; }
+    }
+
+    @media (min-width: 769px){
+      .sidebar { left: 0 !important; }
+      .main { margin-left: 240px; width: calc(100% - 240px); }
     }
 
     /* retain existing styles for sections and login */
@@ -276,6 +289,7 @@
       transition: all 0.3s ease;
       margin: 12px auto 0;
       display: block;
+      box-sizing: border-box;
     }
 
     #searchInput::placeholder { color: rgba(255,255,255,0.6); }
@@ -498,6 +512,11 @@
       const path = el.getAttribute('data-path');
       document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
       el.classList.add('active');
+      // Fermer le menu sur mobile après clic
+      if(window.innerWidth <= 768){
+        document.getElementById('sidebar').classList.add('collapsed');
+        document.body.style.overflow = 'auto';
+      }
       if(!path || path==='index-home'){
         afficherAccueil();
         return;
@@ -700,8 +719,23 @@
     function toggleSidebar(){
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.toggle('collapsed');
-      localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+      // Sur mobile, fermer automatiquement après sélection
+      if(window.innerWidth <= 768) {
+        document.body.style.overflow = sidebar.classList.contains('collapsed') ? 'auto' : 'hidden';
+      }
     }
+
+    // Fermer le menu en cliquant en dehors
+    document.addEventListener('click', (e) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.querySelector('.menu-toggle');
+      if(window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+        if(!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+          sidebar.classList.add('collapsed');
+          document.body.style.overflow = 'auto';
+        }
+      }
+    });
 
     // Toggle menu section
     function toggleMenuSection(e){
@@ -903,7 +937,10 @@
     // initial load
     document.addEventListener('DOMContentLoaded', ()=>{ 
       afficherAccueil();
-      if(localStorage.getItem('sidebarCollapsed') === 'true'){
+      // Sur mobile, menu fermé par défaut
+      if(window.innerWidth <= 768){
+        document.getElementById('sidebar').classList.add('collapsed');
+      } else if(localStorage.getItem('sidebarCollapsed') === 'true'){
         document.getElementById('sidebar').classList.add('collapsed');
       }
       if(localStorage.getItem('menuSectionExpanded') === 'true'){
