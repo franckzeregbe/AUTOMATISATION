@@ -355,8 +355,9 @@
       return;
     }
 
+    const version = document.getElementById('bibleVersionSelect').value;
     currentUtterance = new SpeechSynthesisUtterance(currentText);
-    currentUtterance.lang = 'en-US';
+    currentUtterance.lang = version === 'kjv' ? 'en-US' : 'fr-FR';
     currentUtterance.rate = parseFloat(document.getElementById('speedControl').value);
     
     currentUtterance.onstart = () => {
