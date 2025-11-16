@@ -1,0 +1,352 @@
+<h2>👥 Communauté</h2>
+
+<style>
+  .tab-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+  }
+  .community-card {
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border-left: 4px solid #6a11cb;
+  }
+  .input-field {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    box-sizing: border-box;
+  }
+</style>
+
+<div class="tab-buttons">
+  <button class="tab-btn active" onclick="showTab('groups')">👥 Groupes</button>
+  <button class="tab-btn" onclick="showTab('prayers')">🙏 Demandes</button>
+  <button class="tab-btn" onclick="showTab('events')">📅 Événements</button>
+</div>
+
+<div id="groupsTab" style="display: block;"></div>
+<div id="prayersTab" style="display: none;"></div>
+<div id="eventsTab" style="display: none;"></div>
+
+<script>
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  document.getElementById('groupsTab').style.display = tab === 'groups' ? 'block' : 'none';
+  document.getElementById('prayersTab').style.display = tab === 'prayers' ? 'block' : 'none';
+  document.getElementById('eventsTab').style.display = tab === 'events' ? 'block' : 'none';
+  
+  if(tab === 'groups') loadGroups();
+  if(tab === 'prayers') loadPrayerRequests();
+  if(tab === 'events') loadEvents();
+}
+
+// GROUPES DE PRIÈRE
+function loadGroups() {
+  const groups = JSON.parse(localStorage.getItem('prayerGroups')) || [];
+  const userGroups = JSON.parse(localStorage.getItem('userGroups_' + currentUser.phone)) || [];
+  
+  let html = `
+    <h3>👥 Groupes de Prière</h3>
+    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+      <h4>Créer un groupe</h4>
+      <input type="text" id="groupName" placeholder="Nom du groupe" class="input-field">
+      <textarea id="groupDesc" placeholder="Description" class="input-field" style="min-height: 80px;"></textarea>
+      <button onclick="createGroup()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px;">
+        ✅ Créer le groupe
+      </button>
+    </div>
+    <h4>Groupes disponibles</h4>
+  `;
+  
+  if(groups.length === 0) {
+    html += '<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucun groupe pour le moment</p>';
+  } else {
+    groups.forEach((group, i) => {
+      const isMember = userGroups.includes(group.id);
+      const memberCount = group.members ? group.members.length : 1;
+      html += `
+        <div class="community-card">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <div style="font-weight: bold; font-size: 18px; margin-bottom: 8px;">${group.name}</div>
+              <div style="opacity: 0.8; margin-bottom: 10px;">${group.description}</div>
+              <div style="font-size: 12px; opacity: 0.7;">
+                👤 ${memberCount} membre(s) • Créé par ${group.creator}
+              </div>
+            </div>
+            <button onclick="toggleGroupMembership('${group.id}')" style="background: ${isMember ? '#4caf50' : '#6a11cb'}; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+              ${isMember ? '✓ Membre' : '+ Rejoindre'}
+            </button>
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  document.getElementById('groupsTab').innerHTML = html;
+}
+
+function createGroup() {
+  const name = document.getElementById('groupName').value.trim();
+  const desc = document.getElementById('groupDesc').value.trim();
+  
+  if(!name) {
+    alert('⚠️ Veuillez entrer un nom de groupe');
+    return;
+  }
+  
+  const groups = JSON.parse(localStorage.getItem('prayerGroups')) || [];
+  const newGroup = {
+    id: Date.now().toString(),
+    name,
+    description: desc || 'Aucune description',
+    creator: currentUser.fullname,
+    creatorPhone: currentUser.phone,
+    created: new Date().toISOString(),
+    members: [currentUser.phone]
+  };
+  
+  groups.push(newGroup);
+  localStorage.setItem('prayerGroups', JSON.stringify(groups));
+  
+  const userGroups = JSON.parse(localStorage.getItem('userGroups_' + currentUser.phone)) || [];
+  userGroups.push(newGroup.id);
+  localStorage.setItem('userGroups_' + currentUser.phone, JSON.stringify(userGroups));
+  
+  alert('✅ Groupe créé avec succès !');
+  loadGroups();
+}
+
+function toggleGroupMembership(groupId) {
+  const groups = JSON.parse(localStorage.getItem('prayerGroups')) || [];
+  const userGroups = JSON.parse(localStorage.getItem('userGroups_' + currentUser.phone)) || [];
+  
+  const groupIndex = groups.findIndex(g => g.id === groupId);
+  if(groupIndex === -1) return;
+  
+  if(userGroups.includes(groupId)) {
+    // Leave group
+    const idx = userGroups.indexOf(groupId);
+    userGroups.splice(idx, 1);
+    groups[groupIndex].members = groups[groupIndex].members.filter(m => m !== currentUser.phone);
+  } else {
+    // Join group
+    userGroups.push(groupId);
+    if(!groups[groupIndex].members) groups[groupIndex].members = [];
+    groups[groupIndex].members.push(currentUser.phone);
+  }
+  
+  localStorage.setItem('userGroups_' + currentUser.phone, JSON.stringify(userGroups));
+  localStorage.setItem('prayerGroups', JSON.stringify(groups));
+  loadGroups();
+}
+
+// DEMANDES DE PRIÈRE
+function loadPrayerRequests() {
+  const requests = JSON.parse(localStorage.getItem('prayerRequests')) || [];
+  
+  let html = `
+    <h3>🙏 Demandes de Prière</h3>
+    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+      <h4>Partager une demande</h4>
+      <input type="text" id="requestTitle" placeholder="Sujet de prière" class="input-field">
+      <textarea id="requestDesc" placeholder="Détails (optionnel)" class="input-field" style="min-height: 80px;"></textarea>
+      <label style="display: flex; align-items: center; gap: 8px; margin: 10px 0; cursor: pointer;">
+        <input type="checkbox" id="requestAnonymous" style="width: 18px; height: 18px;">
+        <span>Publier anonymement</span>
+      </label>
+      <button onclick="createPrayerRequest()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px;">
+        ✅ Partager la demande
+      </button>
+    </div>
+    <h4>Demandes de la communauté</h4>
+  `;
+  
+  if(requests.length === 0) {
+    html += '<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucune demande pour le moment</p>';
+  } else {
+    requests.reverse().forEach((req, i) => {
+      const prayers = req.prayers || 0;
+      const userPrayed = (req.prayedBy || []).includes(currentUser.phone);
+      html += `
+        <div class="community-card" style="border-left-color: #ff9800;">
+          <div style="font-weight: bold; font-size: 18px; margin-bottom: 8px;">${req.title}</div>
+          ${req.description ? `<div style="opacity: 0.8; margin-bottom: 10px;">${req.description}</div>` : ''}
+          <div style="font-size: 12px; opacity: 0.7; margin-bottom: 15px;">
+            👤 ${req.anonymous ? 'Anonyme' : req.author} • ${req.date}
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button onclick="prayForRequest(${requests.length - 1 - i})" style="background: ${userPrayed ? '#4caf50' : '#ff9800'}; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+              ${userPrayed ? '✓ J\'ai prié' : '🙏 Prier'}
+            </button>
+            <span style="opacity: 0.8;">${prayers} prière(s)</span>
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  document.getElementById('prayersTab').innerHTML = html;
+}
+
+function createPrayerRequest() {
+  const title = document.getElementById('requestTitle').value.trim();
+  const desc = document.getElementById('requestDesc').value.trim();
+  const anonymous = document.getElementById('requestAnonymous').checked;
+  
+  if(!title) {
+    alert('⚠️ Veuillez entrer un sujet de prière');
+    return;
+  }
+  
+  const requests = JSON.parse(localStorage.getItem('prayerRequests')) || [];
+  requests.push({
+    title,
+    description: desc,
+    author: currentUser.fullname,
+    authorPhone: currentUser.phone,
+    anonymous,
+    date: new Date().toLocaleDateString('fr-FR'),
+    prayers: 0,
+    prayedBy: []
+  });
+  
+  localStorage.setItem('prayerRequests', JSON.stringify(requests));
+  alert('✅ Demande partagée avec succès !');
+  loadPrayerRequests();
+}
+
+function prayForRequest(index) {
+  const requests = JSON.parse(localStorage.getItem('prayerRequests')) || [];
+  if(!requests[index].prayedBy) requests[index].prayedBy = [];
+  
+  if(!requests[index].prayedBy.includes(currentUser.phone)) {
+    requests[index].prayers = (requests[index].prayers || 0) + 1;
+    requests[index].prayedBy.push(currentUser.phone);
+    localStorage.setItem('prayerRequests', JSON.stringify(requests));
+    alert('🙏 Merci d\'avoir prié !');
+    loadPrayerRequests();
+  }
+}
+
+// ÉVÉNEMENTS
+function loadEvents() {
+  const events = JSON.parse(localStorage.getItem('spiritualEvents')) || [];
+  
+  let html = `
+    <h3>📅 Événements Spirituels</h3>
+    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+      <h4>Créer un événement</h4>
+      <input type="text" id="eventTitle" placeholder="Titre de l'événement" class="input-field">
+      <textarea id="eventDesc" placeholder="Description" class="input-field" style="min-height: 80px;"></textarea>
+      <input type="datetime-local" id="eventDate" class="input-field">
+      <input type="text" id="eventLocation" placeholder="Lieu" class="input-field">
+      <button onclick="createEvent()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px;">
+        ✅ Créer l'événement
+      </button>
+    </div>
+    <h4>Événements à venir</h4>
+  `;
+  
+  const upcoming = events.filter(e => new Date(e.date) >= new Date()).sort((a,b) => new Date(a.date) - new Date(b.date));
+  
+  if(upcoming.length === 0) {
+    html += '<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucun événement à venir</p>';
+  } else {
+    upcoming.forEach(event => {
+      const eventDate = new Date(event.date);
+      const participants = event.participants || [];
+      const isParticipant = participants.includes(currentUser.phone);
+      
+      html += `
+        <div class="community-card" style="border-left-color: #4caf50;">
+          <div style="font-weight: bold; font-size: 18px; margin-bottom: 8px;">${event.title}</div>
+          <div style="opacity: 0.8; margin-bottom: 10px;">${event.description}</div>
+          <div style="font-size: 14px; margin-bottom: 5px;">📅 ${eventDate.toLocaleDateString('fr-FR')} à ${eventDate.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</div>
+          <div style="font-size: 14px; margin-bottom: 10px;">📍 ${event.location}</div>
+          <div style="font-size: 12px; opacity: 0.7; margin-bottom: 15px;">
+            Organisé par ${event.organizer} • ${participants.length} participant(s)
+          </div>
+          <button onclick="toggleEventParticipation('${event.id}')" style="background: ${isParticipant ? '#4caf50' : '#6a11cb'}; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            ${isParticipant ? '✓ Je participe' : '+ Participer'}
+          </button>
+        </div>
+      `;
+    });
+  }
+  
+  document.getElementById('eventsTab').innerHTML = html;
+}
+
+function createEvent() {
+  const title = document.getElementById('eventTitle').value.trim();
+  const desc = document.getElementById('eventDesc').value.trim();
+  const date = document.getElementById('eventDate').value;
+  const location = document.getElementById('eventLocation').value.trim();
+  
+  if(!title || !date || !location) {
+    alert('⚠️ Veuillez remplir tous les champs obligatoires');
+    return;
+  }
+  
+  const events = JSON.parse(localStorage.getItem('spiritualEvents')) || [];
+  events.push({
+    id: Date.now().toString(),
+    title,
+    description: desc,
+    date,
+    location,
+    organizer: currentUser.fullname,
+    organizerPhone: currentUser.phone,
+    created: new Date().toISOString(),
+    participants: [currentUser.phone]
+  });
+  
+  localStorage.setItem('spiritualEvents', JSON.stringify(events));
+  alert('✅ Événement créé avec succès !');
+  loadEvents();
+}
+
+function toggleEventParticipation(eventId) {
+  const events = JSON.parse(localStorage.getItem('spiritualEvents')) || [];
+  const eventIndex = events.findIndex(e => e.id === eventId);
+  
+  if(eventIndex === -1) return;
+  
+  if(!events[eventIndex].participants) events[eventIndex].participants = [];
+  
+  if(events[eventIndex].participants.includes(currentUser.phone)) {
+    events[eventIndex].participants = events[eventIndex].participants.filter(p => p !== currentUser.phone);
+  } else {
+    events[eventIndex].participants.push(currentUser.phone);
+  }
+  
+  localStorage.setItem('spiritualEvents', JSON.stringify(events));
+  loadEvents();
+}
+
+// Load initial tab
+loadGroups();
+</script>
