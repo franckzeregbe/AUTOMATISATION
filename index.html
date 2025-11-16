@@ -583,40 +583,56 @@
 
     <a class="menu-item active" href="#" data-path="index-home" onclick="navClick(event)"><svg aria-hidden><use href="#icon-home"></use></svg> <span>Accueil</span></a>
     
+    <div class="menu-divider"></div>
+    
     <div>
       <div class="menu-section-header" onclick="toggleMenuSection(event)">
-        <span>📚 Sections</span>
+        <span>📚 Sections Spirituelles</span>
         <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z" fill="white"/></svg>
       </div>
       <div class="menu-section-content">
         <a class="menu-item" href="#" data-path="sections/prieres.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-prayer"></use></svg> <span>Prières</span></a>
-        <a class="menu-item" href="#" data-path="sections/videos.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-video"></use></svg> <span>Vidéos</span></a>
-        <a class="menu-item" href="#" data-path="sections/jeux.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-game"></use></svg> <span>Jeux</span></a>
         <a class="menu-item" href="#" data-path="sections/bible.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-bible"></use></svg> <span>Bible</span></a>
-        <a class="menu-item" href="#" data-path="sections/dons.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-dons"></use></svg> <span>Dons</span></a>
-        <a class="menu-item" href="#" data-path="sections/agent.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-agent"></use></svg> <span>Agent</span></a>
-        <a class="menu-item" href="#" data-path="sections/rendez-vous.html" onclick="navClick(event)"><span>📅 Rendez-vous</span></a>
+        <a class="menu-item" href="#" data-path="sections/agent.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-agent"></use></svg> <span>Agent JOHN</span></a>
+        <a class="menu-item" href="#" data-path="sections/plan-lecture.html" onclick="navClick(event)"><span>📖 Plan de Lecture</span></a>
+        <a class="menu-item" href="#" data-path="sections/rappels.html" onclick="navClick(event)"><span>🔔 Rappels</span></a>
       </div>
     </div>
     
-    <a class="menu-item" href="#" onclick="showStats(event)"><span>📊 Mes Statistiques</span></a>
+    <div class="menu-divider"></div>
+    
+    <a class="menu-item" href="#" data-path="sections/videos.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-video"></use></svg> <span>Vidéos</span></a>
+    <a class="menu-item" href="#" data-path="sections/jeux.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-game"></use></svg> <span>Quiz Biblique</span></a>
+    
+    <div class="menu-divider"></div>
+    
+    <a class="menu-item" href="#" onclick="showStats(event)"><span>📊 Statistiques</span></a>
     <a class="menu-item" href="#" onclick="showFavorites(event)"><span>⭐ Favoris</span></a>
-    <a class="menu-item" href="#" onclick="showNotes(event)"><span>📝 Mes Notes</span></a>
+    <a class="menu-item" href="#" onclick="showNotes(event)"><span>📝 Notes</span></a>
     <a class="menu-item" href="#" onclick="showGoals(event)"><span>🎯 Objectifs</span></a>
-    <a class="menu-item" href="#" onclick="showTestimonies(event)"><span>💬 Témoignages</span></a>
     <a class="menu-item" href="#" data-path="sections/gamification.html" onclick="navClick(event)"><span>🏆 Gamification</span></a>
+    
+    <div class="menu-divider"></div>
+    
+    <a class="menu-item" href="#" onclick="showTestimonies(event)"><span>💬 Témoignages</span></a>
     <a class="menu-item" href="#" data-path="sections/communaute.html" onclick="navClick(event)"><span>👥 Communauté</span></a>
-    <a class="menu-item" href="#" data-path="sections/plan-lecture.html" onclick="navClick(event)"><span>📖 Plan de Lecture</span></a>
-    <a class="menu-item" href="#" data-path="sections/rappels.html" onclick="navClick(event)"><span>🔔 Rappels de Prière</span></a>
+    
+    <div class="menu-divider"></div>
+    
+    <a class="menu-item" href="#" data-path="sections/rendez-vous.html" onclick="navClick(event)"><span>📅 Rendez-vous</span></a>
+    <a class="menu-item" href="#" data-path="sections/dons.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-dons"></use></svg> <span>Dons</span></a>
+    
+    <div class="menu-divider"></div>
+    
     <a class="menu-item" href="#" data-path="sections/parametres.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-settings"></use></svg> <span>Paramètres</span></a>
     <a class="menu-item" href="#" data-path="sections/admin.html" onclick="navClick(event)"><span>🔐 Admin</span></a>
     
     <div class="menu-divider"></div>
     
-    <a class="menu-item" href="#" onclick="rateApp(event)"><span>⭐ Noter l'application</span></a>
-    <a class="menu-item" href="#" onclick="showAbout(event)"><svg aria-hidden><use href="#icon-info"></use></svg> <span>À propos de nous</span></a>
-    <a class="menu-item" href="#" onclick="showTerms(event)"><span>📄 Termes de l'application</span></a>
-    <a class="menu-item" href="#" onclick="contactUs(event)"><span>📧 Contactez-nous</span></a>
+    <a class="menu-item" href="#" onclick="showAbout(event)"><svg aria-hidden><use href="#icon-info"></use></svg> <span>À propos</span></a>
+    <a class="menu-item" href="#" onclick="rateApp(event)"><span>⭐ Noter l'app</span></a>
+    <a class="menu-item" href="#" onclick="showTerms(event)"><span>📄 Termes</span></a>
+    <a class="menu-item" href="#" onclick="contactUs(event)"><span>📧 Contact</span></a>
     
     <div style="flex:1"></div>
     <button class="btn-suppression" onclick="deleteAccount()">Suppression de compte</button>
