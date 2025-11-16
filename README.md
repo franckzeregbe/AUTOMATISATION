@@ -2,19 +2,33 @@
 
 > Votre compagnon spirituel quotidien
 
+## 📍 Localisation
+
+**Abidjan, Côte d'Ivoire** 🇨🇮
+
 ## 📖 Description
 
-AUTOMATISATION est une application web spirituelle conçue pour fortifier votre foi, enrichir votre connaissance biblique et vous accompagner dans votre marche avec Jésus-Christ.
+AUTOMATISATION est une application web spirituelle professionnelle conçue pour fortifier votre foi, enrichir votre connaissance biblique et vous accompagner dans votre marche avec Jésus-Christ.
 
 ## 🎯 Fonctionnalités
 
-- 🙏 **Prières quotidiennes** - 8 catégories avec 32 prières
+### Spirituelles
+- 🙏 **Prières quotidiennes** - 8 catégories avec 32 prières + références bibliques
 - 🎬 **Vidéos spirituelles** - 9 vidéos YouTube inspirantes
-- 🎮 **Quiz bibliques** - 4 niveaux progressifs
+- 🎮 **Quiz bibliques** - 4 niveaux progressifs (10-40 questions)
 - 📖 **Bible complète** - 3 versions (KJV, LS1910, Darby) avec audio
 - 💖 **Dons sécurisés** - 4 méthodes de paiement
 - 🤖 **Agent de prière JOHN** - Assistant intelligent avec reconnaissance vocale
+
+### Professionnelles
+- 📅 **Système de rendez-vous** - Prise de rendez-vous spirituels en ligne
+- 🔐 **Tableau de bord Admin** - Gestion complète des utilisateurs et rendez-vous
+- 📱 **Authentification avancée** - Téléphone (+225) + Nom + Email
+- 📊 **Statistiques** - Suivi des utilisateurs et activités
+
+### Interface
 - ⚙️ **Paramètres personnalisables** - Thèmes, notifications, contrôle parental
+- 📱 **100% Mobile-Responsive** - Optimisé pour tous les appareils
 
 ## 🚀 Technologies
 
@@ -27,23 +41,50 @@ AUTOMATISATION est une application web spirituelle conçue pour fortifier votre 
 
 1. Clonez le dépôt :
 ```bash
-git clone https://github.com/VOTRE_USERNAME/AUTOMATISATION.git
+git clone https://github.com/franckzeregbe/AUTOMATISATION.git
 ```
 
 2. Ouvrez `index.html` dans votre navigateur
 
+## 🚀 Déploiement
+
+- **GitHub Pages**: https://franckzeregbe.github.io/AUTOMATISATION
+- **APK Mobile**: Généré via WebIntoApp.com
+- **Mises à jour automatiques**: Push sur la branche main
+
 ## 🎨 Fonctionnalités dynamiques
 
 - ✨ Verset du jour qui change quotidiennement
-- 🔥 Streak de connexion avec badge animé
+- 🔥 Streak de connexion avec suivi
 - 🔔 Notifications toast élégantes
 - 🎬 Animations fluides et transitions
 - 💾 Sauvegarde automatique toutes les 30 secondes
+- 🔙 Bouton retour dynamique
+- 🎨 Sidebar grise professionnelle
+
+## 🔐 Accès Administrateur
+
+**Mot de passe par défaut**: `admin2024`
+
+Fonctionnalités admin:
+- 📊 Statistiques en temps réel
+- 👥 Gestion des utilisateurs
+- 📅 Gestion des rendez-vous (confirmer/annuler/terminer)
+- 📱 Informations de contact des utilisateurs
+
+## 📱 Authentification
+
+- **Téléphone**: Identifiant unique (format +225)
+- **Nom complet**: Obligatoire
+- **Email**: Optionnel
+- **Stockage**: LocalStorage (données locales)
 
 ## 👤 Auteur
 
 **Pst Franck**
 - Email: pstfranck@automatisation.com
+- GitHub: [@franckzeregbe](https://github.com/franckzeregbe)
+- Localisation: Abidjan, Côte d'Ivoire 🇨🇮
 
 ## 📜 Licence
 

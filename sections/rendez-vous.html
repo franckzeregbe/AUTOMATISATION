@@ -1,0 +1,136 @@
+<h2>📅 Prendre Rendez-vous</h2>
+
+<div style="max-width: 600px; margin: 0 auto;">
+  <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0;">
+    <h3 style="margin-top: 0;">Réserver un rendez-vous spirituel</h3>
+    <p style="opacity: 0.8; margin-bottom: 25px;">Prenez rendez-vous pour une consultation spirituelle, une prière personnalisée ou un conseil pastoral.</p>
+    
+    <form id="appointmentForm" onsubmit="submitAppointment(event)">
+      <div style="margin: 15px 0;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Type de rendez-vous</label>
+        <select id="appointmentType" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+          <option value="">Sélectionnez...</option>
+          <option value="consultation">Consultation spirituelle</option>
+          <option value="priere">Prière personnalisée</option>
+          <option value="conseil">Conseil pastoral</option>
+          <option value="delivrance">Délivrance</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      
+      <div style="margin: 15px 0;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Date souhaitée</label>
+        <input type="date" id="appointmentDate" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+      </div>
+      
+      <div style="margin: 15px 0;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Heure souhaitée</label>
+        <select id="appointmentTime" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+          <option value="">Sélectionnez...</option>
+          <option value="08:00">08:00</option>
+          <option value="09:00">09:00</option>
+          <option value="10:00">10:00</option>
+          <option value="11:00">11:00</option>
+          <option value="14:00">14:00</option>
+          <option value="15:00">15:00</option>
+          <option value="16:00">16:00</option>
+          <option value="17:00">17:00</option>
+        </select>
+      </div>
+      
+      <div style="margin: 15px 0;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Message (optionnel)</label>
+        <textarea id="appointmentMessage" placeholder="Décrivez brièvement votre besoin..." style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; min-height: 100px; resize: vertical;"></textarea>
+      </div>
+      
+      <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px;">
+        Confirmer le rendez-vous
+      </button>
+    </form>
+  </div>
+  
+  <div id="myAppointments" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0;">
+    <h3 style="margin-top: 0;">Mes rendez-vous</h3>
+    <div id="appointmentsList"></div>
+  </div>
+</div>
+
+<script>
+function submitAppointment(e) {
+  e.preventDefault();
+  
+  const type = document.getElementById('appointmentType').value;
+  const date = document.getElementById('appointmentDate').value;
+  const time = document.getElementById('appointmentTime').value;
+  const message = document.getElementById('appointmentMessage').value;
+  
+  const appointment = {
+    id: Date.now(),
+    userId: currentUser.phone,
+    userName: currentUser.fullname,
+    userPhone: currentUser.phone,
+    type,
+    date,
+    time,
+    message,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+  
+  let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+  appointments.push(appointment);
+  localStorage.setItem('appointments', JSON.stringify(appointments));
+  
+  alert('✅ Rendez-vous enregistré avec succès !\n\nVous recevrez une confirmation par téléphone.');
+  document.getElementById('appointmentForm').reset();
+  loadMyAppointments();
+}
+
+function loadMyAppointments() {
+  const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+  const myAppointments = appointments.filter(a => a.userId === currentUser.phone);
+  
+  const list = document.getElementById('appointmentsList');
+  
+  if(myAppointments.length === 0) {
+    list.innerHTML = '<p style="opacity: 0.6; text-align: center;">Aucun rendez-vous pour le moment</p>';
+    return;
+  }
+  
+  const statusLabels = {
+    pending: '⏳ En attente',
+    confirmed: '✅ Confirmé',
+    cancelled: '❌ Annulé',
+    completed: '✔️ Terminé'
+  };
+  
+  list.innerHTML = myAppointments.map(a => `
+    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 3px solid #6a11cb;">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+        <strong>${a.type}</strong>
+        <span style="font-size: 12px; padding: 4px 8px; background: rgba(106,17,203,0.3); border-radius: 4px;">${statusLabels[a.status]}</span>
+      </div>
+      <p style="margin: 5px 0; opacity: 0.9;">📅 ${new Date(a.date).toLocaleDateString('fr-FR')} à ${a.time}</p>
+      ${a.message ? `<p style="margin: 5px 0; opacity: 0.7; font-size: 14px;">${a.message}</p>` : ''}
+      ${a.status === 'pending' ? `<button onclick="cancelAppointment(${a.id})" style="margin-top: 10px; padding: 6px 12px; background: rgba(255,82,82,0.2); border: 1px solid #ff5252; color: #ff5252; border-radius: 6px; cursor: pointer; font-size: 13px;">Annuler</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function cancelAppointment(id) {
+  if(!confirm('Voulez-vous vraiment annuler ce rendez-vous ?')) return;
+  
+  let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+  appointments = appointments.map(a => a.id === id ? {...a, status: 'cancelled'} : a);
+  localStorage.setItem('appointments', JSON.stringify(appointments));
+  
+  alert('Rendez-vous annulé');
+  loadMyAppointments();
+}
+
+// Set minimum date to today
+document.getElementById('appointmentDate').min = new Date().toISOString().split('T')[0];
+
+// Load appointments on page load
+loadMyAppointments();
+</script>

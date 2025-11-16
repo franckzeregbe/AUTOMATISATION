@@ -1,0 +1,176 @@
+<div id="adminPanel">
+  <h2>🔐 Tableau de bord Administrateur</h2>
+  
+  <div id="adminAccess" style="display: none;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+      <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h3 style="margin: 0 0 10px 0; font-size: 32px;" id="totalUsers">0</h3>
+        <p style="margin: 0; opacity: 0.9;">👥 Utilisateurs inscrits</p>
+      </div>
+      
+      <div style="background: linear-gradient(135deg, #f093fb, #f5576c); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h3 style="margin: 0 0 10px 0; font-size: 32px;" id="totalAppointments">0</h3>
+        <p style="margin: 0; opacity: 0.9;">📅 Rendez-vous</p>
+      </div>
+      
+      <div style="background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h3 style="margin: 0 0 10px 0; font-size: 32px;" id="pendingAppointments">0</h3>
+        <p style="margin: 0; opacity: 0.9;">⏳ En attente</p>
+      </div>
+    </div>
+    
+    <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0;">
+      <h3>📋 Gestion des rendez-vous</h3>
+      <div id="adminAppointmentsList"></div>
+    </div>
+    
+    <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0;">
+      <h3>👥 Liste des utilisateurs</h3>
+      <div id="adminUsersList"></div>
+    </div>
+  </div>
+  
+  <div id="adminLogin" style="max-width: 400px; margin: 50px auto; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px;">
+    <h3 style="text-align: center; margin-bottom: 20px;">Accès Administrateur</h3>
+    <input type="password" id="adminPassword" placeholder="Mot de passe administrateur" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; margin-bottom: 15px;">
+    <button onclick="adminLogin()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">Se connecter</button>
+    <p style="text-align: center; margin-top: 15px; font-size: 12px; opacity: 0.6;">Réservé aux administrateurs uniquement</p>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = 'admin2024';
+
+function checkAdminAccess() {
+  if(currentUser && currentUser.isAdmin) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminAccess').style.display = 'block';
+    loadAdminData();
+  } else {
+    document.getElementById('adminLogin').style.display = 'block';
+    document.getElementById('adminAccess').style.display = 'none';
+  }
+}
+
+function adminLogin() {
+  const password = document.getElementById('adminPassword').value;
+  
+  if(password === ADMIN_PASSWORD) {
+    currentUser.isAdmin = true;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    
+    let users = JSON.parse(localStorage.getItem('appUsers')) || [];
+    users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
+    localStorage.setItem('appUsers', JSON.stringify(users));
+    
+    alert('✅ Accès administrateur accordé');
+    checkAdminAccess();
+  } else {
+    alert('❌ Mot de passe incorrect');
+  }
+}
+
+function loadAdminData() {
+  const users = JSON.parse(localStorage.getItem('appUsers')) || [];
+  const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+  
+  document.getElementById('totalUsers').textContent = users.length;
+  document.getElementById('totalAppointments').textContent = appointments.length;
+  document.getElementById('pendingAppointments').textContent = appointments.filter(a => a.status === 'pending').length;
+  
+  loadAdminAppointments();
+  loadAdminUsers();
+}
+
+function loadAdminAppointments() {
+  const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+  const list = document.getElementById('adminAppointmentsList');
+  
+  if(appointments.length === 0) {
+    list.innerHTML = '<p style="opacity: 0.6; text-align: center;">Aucun rendez-vous</p>';
+    return;
+  }
+  
+  const statusLabels = {
+    pending: '⏳ En attente',
+    confirmed: '✅ Confirmé',
+    cancelled: '❌ Annulé',
+    completed: '✔️ Terminé'
+  };
+  
+  const sortedAppointments = appointments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  
+  list.innerHTML = sortedAppointments.map(a => `
+    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 3px solid ${a.status === 'pending' ? '#ff9800' : a.status === 'confirmed' ? '#4caf50' : '#666'};">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+        <div>
+          <strong style="font-size: 16px;">${a.userName}</strong>
+          <p style="margin: 5px 0; opacity: 0.8; font-size: 14px;">📱 ${a.userPhone}</p>
+        </div>
+        <span style="font-size: 12px; padding: 4px 8px; background: rgba(106,17,203,0.3); border-radius: 4px;">${statusLabels[a.status]}</span>
+      </div>
+      <p style="margin: 5px 0;"><strong>Type:</strong> ${a.type}</p>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(a.date).toLocaleDateString('fr-FR')} à ${a.time}</p>
+      ${a.message ? `<p style="margin: 5px 0; opacity: 0.7; font-size: 14px;"><strong>Message:</strong> ${a.message}</p>` : ''}
+      <p style="margin: 5px 0; opacity: 0.6; font-size: 12px;">Créé le ${new Date(a.createdAt).toLocaleString('fr-FR')}</p>
+      
+      ${a.status === 'pending' ? `
+        <div style="margin-top: 10px; display: flex; gap: 10px;">
+          <button onclick="updateAppointmentStatus(${a.id}, 'confirmed')" style="flex: 1; padding: 8px; background: #4caf50; border: none; color: white; border-radius: 6px; cursor: pointer; font-size: 13px;">✅ Confirmer</button>
+          <button onclick="updateAppointmentStatus(${a.id}, 'cancelled')" style="flex: 1; padding: 8px; background: #ff5252; border: none; color: white; border-radius: 6px; cursor: pointer; font-size: 13px;">❌ Annuler</button>
+        </div>
+      ` : ''}
+      
+      ${a.status === 'confirmed' ? `
+        <button onclick="updateAppointmentStatus(${a.id}, 'completed')" style="margin-top: 10px; width: 100%; padding: 8px; background: #2196f3; border: none; color: white; border-radius: 6px; cursor: pointer; font-size: 13px;">✔️ Marquer comme terminé</button>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+function loadAdminUsers() {
+  const users = JSON.parse(localStorage.getItem('appUsers')) || [];
+  const list = document.getElementById('adminUsersList');
+  
+  if(users.length === 0) {
+    list.innerHTML = '<p style="opacity: 0.6; text-align: center;">Aucun utilisateur</p>';
+    return;
+  }
+  
+  const sortedUsers = users.sort((a, b) => new Date(b.lastLogin) - new Date(a.lastLogin));
+  
+  list.innerHTML = sortedUsers.map(u => `
+    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="font-size: 16px;">${u.fullname}</strong>
+        <p style="margin: 5px 0; opacity: 0.8; font-size: 14px;">📱 ${u.phone}</p>
+        ${u.email ? `<p style="margin: 5px 0; opacity: 0.7; font-size: 13px;">📧 ${u.email}</p>` : ''}
+        <p style="margin: 5px 0; opacity: 0.6; font-size: 12px;">Inscrit le ${u.joinDate}</p>
+        <p style="margin: 5px 0; opacity: 0.6; font-size: 12px;">Dernière connexion: ${new Date(u.lastLogin).toLocaleString('fr-FR')}</p>
+      </div>
+      <div style="text-align: right;">
+        <p style="margin: 5px 0;"><strong>${u.points || 0}</strong> points</p>
+        ${u.isAdmin ? '<span style="background: #ff9800; padding: 4px 8px; border-radius: 4px; font-size: 12px;">👑 Admin</span>' : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateAppointmentStatus(id, status) {
+  let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+  appointments = appointments.map(a => a.id === id ? {...a, status} : a);
+  localStorage.setItem('appointments', JSON.stringify(appointments));
+  
+  const messages = {
+    confirmed: '✅ Rendez-vous confirmé',
+    cancelled: '❌ Rendez-vous annulé',
+    completed: '✔️ Rendez-vous marqué comme terminé'
+  };
+  
+  alert(messages[status]);
+  loadAdminData();
+}
+
+// Check access on load
+checkAdminAccess();
+</script>

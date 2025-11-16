@@ -396,8 +396,10 @@
   <div id="loginScreen">
     <div class="login-container">
       <h1>🔐 Connexion</h1>
-      <input type="text" id="username" placeholder="Nom d'utilisateur" onkeypress="if(event.key==='Enter') login()">
-      <input type="email" id="email" placeholder="Adresse email" onkeypress="if(event.key==='Enter') login()">
+      <p style="text-align:center; margin-bottom:20px; color:#666;">Rejoignez notre communauté spirituelle</p>
+      <input type="text" id="fullname" placeholder="Nom complet" onkeypress="if(event.key==='Enter') login()">
+      <input type="tel" id="phone" placeholder="Téléphone (+225 XX XX XX XX XX)" onkeypress="if(event.key==='Enter') login()">
+      <input type="email" id="email" placeholder="Email (optionnel)" onkeypress="if(event.key==='Enter') login()">
       <button class="login-btn" onclick="login()">Se connecter</button>
       <div class="login-error" id="loginError"></div>
     </div>
@@ -452,10 +454,12 @@
         <a class="menu-item" href="#" data-path="sections/bible.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-bible"></use></svg> <span>Bible</span></a>
         <a class="menu-item" href="#" data-path="sections/dons.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-dons"></use></svg> <span>Dons</span></a>
         <a class="menu-item" href="#" data-path="sections/agent.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-agent"></use></svg> <span>Agent</span></a>
+        <a class="menu-item" href="#" data-path="sections/rendez-vous.html" onclick="navClick(event)"><span>📅 Rendez-vous</span></a>
       </div>
     </div>
     
     <a class="menu-item" href="#" data-path="sections/parametres.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-settings"></use></svg> <span>Paramètres</span></a>
+    <a class="menu-item" href="#" data-path="sections/admin.html" onclick="navClick(event)"><span>🔐 Admin</span></a>
     
     <div class="menu-divider"></div>
     
@@ -623,7 +627,7 @@
         }
         currentUser.lastLoginDate = today;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        users = users.map(u => u.email === currentUser.email ? currentUser : u);
+        users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
         localStorage.setItem('appUsers', JSON.stringify(users));
       }
       if(currentUser.streak > 0) {
@@ -656,19 +660,32 @@
     });
 
     function login(){
-      const username = document.getElementById('username').value.trim();
+      const fullname = document.getElementById('fullname').value.trim();
+      const phone = document.getElementById('phone').value.trim();
       const email = document.getElementById('email').value.trim();
       const errorDiv = document.getElementById('loginError');
-      if(!username){ errorDiv.textContent = '⚠️ Veuillez entrer votre nom d\'utilisateur'; return; }
-      if(!email || !email.includes('@')){ errorDiv.textContent = '⚠️ Veuillez entrer une email valide'; return; }
-      let user = users.find(u=>u.username===username && u.email===email);
+      
+      if(!fullname){ errorDiv.textContent = '⚠️ Veuillez entrer votre nom complet'; return; }
+      if(!phone){ errorDiv.textContent = '⚠️ Veuillez entrer votre numéro de téléphone'; return; }
+      if(phone.length < 9){ errorDiv.textContent = '⚠️ Numéro de téléphone invalide'; return; }
+      
+      let user = users.find(u=>u.phone===phone);
       if(!user){ 
-        user = { username, email, points:0, completed:0, joinDate: new Date().toLocaleDateString('fr-FR'), lastLogin: new Date().toISOString() }; 
+        user = { 
+          fullname, 
+          phone, 
+          email: email || '', 
+          points:0, 
+          completed:0, 
+          isAdmin: false,
+          joinDate: new Date().toLocaleDateString('fr-FR'), 
+          lastLogin: new Date().toISOString() 
+        }; 
         users.push(user); 
         localStorage.setItem('appUsers', JSON.stringify(users)); 
       } else {
         user.lastLogin = new Date().toISOString();
-        users = users.map(u => u.email === email ? user : u);
+        users = users.map(u => u.phone === phone ? user : u);
         localStorage.setItem('appUsers', JSON.stringify(users));
       }
       currentUser = user; 
@@ -680,14 +697,14 @@
 
     function initializeApp(){
       document.getElementById('userProfile').style.display = 'block';
-      document.getElementById('userDisplayName').textContent = currentUser.username;
+      document.getElementById('userDisplayName').textContent = currentUser.fullname;
       document.getElementById('sidebarProfile').style.display = 'block';
-      document.getElementById('sidebarUsername').textContent = currentUser.username;
-      document.getElementById('sidebarEmail').textContent = currentUser.email;
+      document.getElementById('sidebarUsername').textContent = currentUser.fullname;
+      document.getElementById('sidebarEmail').textContent = currentUser.phone;
       points = currentUser.points || 0; completed = currentUser.completed || 0;
       updateStreak();
       showVerseOfDay();
-      showToast('🙏 Bienvenue ' + currentUser.username + ' !');
+      showToast('🙏 Bienvenue ' + currentUser.fullname + ' !');
       setTimeout(()=>{ const s = document.getElementById('splash'); if(s) s.style.display='none'; }, 800);
     }
 
@@ -695,7 +712,7 @@
       if(currentUser){ 
         currentUser.points = points; 
         currentUser.completed = completed; 
-        users = users.map(u=>u.username===currentUser.username?currentUser:u); 
+        users = users.map(u=>u.phone===currentUser.phone?currentUser:u); 
         localStorage.setItem('appUsers', JSON.stringify(users)); 
       }
       currentUser = null; 
@@ -714,8 +731,9 @@
       const profileHTML = `
         <h2>👤 Mon Profil</h2>
         <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin: 20px 0;">
-          <p><strong>Nom d'utilisateur :</strong> ${currentUser.username}</p>
-          <p><strong>Email :</strong> ${currentUser.email}</p>
+          <p><strong>Nom complet :</strong> ${currentUser.fullname}</p>
+          <p><strong>Téléphone :</strong> ${currentUser.phone}</p>
+          ${currentUser.email ? `<p><strong>Email :</strong> ${currentUser.email}</p>` : ''}
           <p><strong>Points totaux :</strong> ${points} 🎉</p>
           <p><strong>Sections visitées :</strong> ${completed} ✅</p>
           <p><strong>Membre depuis :</strong> ${currentUser.joinDate}</p>
@@ -736,7 +754,7 @@
       if(currentUser){ 
         currentUser.points = points; 
         currentUser.completed = completed; 
-        users = users.map(u=>u.username===currentUser.username?currentUser:u); 
+        users = users.map(u=>u.phone===currentUser.phone?currentUser:u); 
         localStorage.setItem('appUsers', JSON.stringify(users)); 
         localStorage.setItem('currentUser', JSON.stringify(currentUser)); 
       }
@@ -909,12 +927,12 @@
           
           <div style="margin: 20px 0;">
             <h3>📞 Téléphone</h3>
-            <p>+237 6XX XXX XXX</p>
+            <p>+225 XX XX XX XX XX</p>
           </div>
           
           <div style="margin: 20px 0;">
             <h3>📍 Adresse</h3>
-            <p>Yaoundé, Cameroun</p>
+            <p>Abidjan, Côte d'Ivoire</p>
           </div>
           
           <div style="margin: 30px 0;">
@@ -1001,7 +1019,7 @@
     function deleteAccount(){
       if(!currentUser){ alert('Aucun compte connecté'); return; }
       if(confirm('⚠️ ATTENTION\n\nÊtes-vous sûr de vouloir supprimer votre compte ?\nCette action est irréversible.')){
-        users = users.filter(u=>u.email !== currentUser.email);
+        users = users.filter(u=>u.phone !== currentUser.phone);
         localStorage.setItem('appUsers', JSON.stringify(users));
         logout();
         alert('Compte supprimé avec succès.');
@@ -1014,7 +1032,7 @@
         currentUser.points = points;
         currentUser.completed = completed;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        users = users.map(u => u.email === currentUser.email ? currentUser : u);
+        users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
         localStorage.setItem('appUsers', JSON.stringify(users));
       }
     }, 30000);
@@ -1025,7 +1043,7 @@
         currentUser.points = points;
         currentUser.completed = completed;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        users = users.map(u => u.email === currentUser.email ? currentUser : u);
+        users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
         localStorage.setItem('appUsers', JSON.stringify(users));
       }
     });
