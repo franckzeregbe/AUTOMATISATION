@@ -375,10 +375,10 @@
       top: 70px;
       left: 70px;
       z-index: 1002;
-      background: rgba(106,17,203,0.9);
+      background: white;
       backdrop-filter: blur(10px);
-      border: 2px solid rgba(255,255,255,0.3);
-      color: white;
+      border: 2px solid rgba(0,0,0,0.1);
+      color: black;
       width: 45px;
       height: 45px;
       border-radius: 50%;
@@ -386,13 +386,13 @@
       display: none;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       transition: all 0.3s ease;
     }
     .back-button:hover {
-      background: rgba(106,17,203,1);
+      background: #f0f0f0;
       transform: scale(1.15);
-      box-shadow: 0 6px 20px rgba(106,17,203,0.5);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
     .back-button.show { display: flex !important; }
     
@@ -471,6 +471,11 @@
       </div>
     </div>
     
+    <a class="menu-item" href="#" onclick="showStats(event)"><span>📊 Mes Statistiques</span></a>
+    <a class="menu-item" href="#" onclick="showFavorites(event)"><span>⭐ Favoris</span></a>
+    <a class="menu-item" href="#" onclick="showNotes(event)"><span>📝 Mes Notes</span></a>
+    <a class="menu-item" href="#" onclick="showGoals(event)"><span>🎯 Objectifs</span></a>
+    <a class="menu-item" href="#" onclick="showTestimonies(event)"><span>💬 Témoignages</span></a>
     <a class="menu-item" href="#" data-path="sections/parametres.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-settings"></use></svg> <span>Paramètres</span></a>
     <a class="menu-item" href="#" data-path="sections/admin.html" onclick="navClick(event)"><span>🔐 Admin</span></a>
     
@@ -486,7 +491,7 @@
   </div>
 
   <button class="back-button" id="backButton" onclick="goBack()" title="Retour">
-    <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+    <svg width="20" height="20" fill="black" viewBox="0 0 24 24">
       <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
     </svg>
   </button>
@@ -1190,6 +1195,294 @@
         logout();
         alert('Compte supprimé avec succès.');
       }
+    }
+
+    // Nouvelles fonctionnalités
+    function showStats(e){
+      e.preventDefault();
+      currentSection = 'stats';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
+      document.getElementById('verseOfDay').style.display = 'none';
+      
+      const userStats = JSON.parse(localStorage.getItem('userStats_' + currentUser.phone)) || {prayers: 0, quizCompleted: 0, bibleReading: 0, timeSpent: 0};
+      
+      const content = `
+        <h2>📊 Mes Statistiques</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+          <div style="background: linear-gradient(135deg, #6a11cb, #2575fc); padding: 20px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 40px;">🙏</div>
+            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;">${userStats.prayers}</div>
+            <div>Prières effectuées</div>
+          </div>
+          <div style="background: linear-gradient(135deg, #42a5f5, #1e88e5); padding: 20px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 40px;">🎮</div>
+            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;">${userStats.quizCompleted}</div>
+            <div>Quiz complétés</div>
+          </div>
+          <div style="background: linear-gradient(135deg, #66bb6a, #43a047); padding: 20px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 40px;">📖</div>
+            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;">${userStats.bibleReading}</div>
+            <div>Chapitres lus</div>
+          </div>
+          <div style="background: linear-gradient(135deg, #ff9800, #ff5722); padding: 20px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 40px;">🔥</div>
+            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;">${currentUser.streak || 0}</div>
+            <div>Jours de connexion</div>
+          </div>
+        </div>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>
+      `;
+      document.getElementById('content').innerHTML = content;
+      document.querySelector('.sections').style.display='none';
+    }
+
+    function showFavorites(e){
+      e.preventDefault();
+      currentSection = 'favorites';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
+      document.getElementById('verseOfDay').style.display = 'none';
+      
+      const favorites = JSON.parse(localStorage.getItem('favorites_' + currentUser.phone)) || [];
+      
+      let content = `<h2>⭐ Mes Favoris</h2>`;
+      if(favorites.length === 0){
+        content += `<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucun favori pour le moment.<br>Ajoutez des prières, versets ou vidéos à vos favoris !</p>`;
+      } else {
+        content += `<div style="display: grid; gap: 15px; margin: 20px 0;">`;
+        favorites.forEach((fav, i) => {
+          content += `
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 4px solid #ffeb3b;">
+              <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                  <div style="font-weight: bold; margin-bottom: 5px;">${fav.type} ${fav.icon || ''}</div>
+                  <div style="opacity: 0.9;">${fav.content}</div>
+                </div>
+                <button onclick="removeFavorite(${i})" style="background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">❌</button>
+              </div>
+            </div>
+          `;
+        });
+        content += `</div>`;
+      }
+      content += `<button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      document.getElementById('content').innerHTML = content;
+      document.querySelector('.sections').style.display='none';
+    }
+
+    function removeFavorite(index){
+      const favorites = JSON.parse(localStorage.getItem('favorites_' + currentUser.phone)) || [];
+      favorites.splice(index, 1);
+      localStorage.setItem('favorites_' + currentUser.phone, JSON.stringify(favorites));
+      showFavorites({preventDefault: ()=>{}});
+    }
+
+    function showNotes(e){
+      e.preventDefault();
+      currentSection = 'notes';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
+      document.getElementById('verseOfDay').style.display = 'none';
+      
+      const notes = JSON.parse(localStorage.getItem('notes_' + currentUser.phone)) || [];
+      
+      let content = `
+        <h2>📝 Mes Notes Bibliques</h2>
+        <div style="margin: 20px 0;">
+          <textarea id="newNote" placeholder="Écrivez votre note ou réflexion biblique..." style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; min-height: 100px; margin-bottom: 10px;"></textarea>
+          <button onclick="addNote()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">➕ Ajouter une note</button>
+        </div>
+        <div id="notesList">`;
+      
+      if(notes.length === 0){
+        content += `<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucune note pour le moment.</p>`;
+      } else {
+        notes.reverse().forEach((note, i) => {
+          content += `
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #6a11cb;">
+              <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                  <div style="opacity: 0.9; white-space: pre-wrap;">${note.content}</div>
+                  <div style="font-size: 11px; opacity: 0.6; margin-top: 10px;">${note.date}</div>
+                </div>
+                <button onclick="deleteNote(${notes.length - 1 - i})" style="background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      document.getElementById('content').innerHTML = content;
+      document.querySelector('.sections').style.display='none';
+    }
+
+    function addNote(){
+      const noteText = document.getElementById('newNote').value.trim();
+      if(!noteText){ alert('⚠️ Veuillez écrire une note'); return; }
+      
+      const notes = JSON.parse(localStorage.getItem('notes_' + currentUser.phone)) || [];
+      notes.push({content: noteText, date: new Date().toLocaleString('fr-FR')});
+      localStorage.setItem('notes_' + currentUser.phone, JSON.stringify(notes));
+      showNotes({preventDefault: ()=>{}});
+    }
+
+    function deleteNote(index){
+      const notes = JSON.parse(localStorage.getItem('notes_' + currentUser.phone)) || [];
+      notes.splice(index, 1);
+      localStorage.setItem('notes_' + currentUser.phone, JSON.stringify(notes));
+      showNotes({preventDefault: ()=>{}});
+    }
+
+    function showGoals(e){
+      e.preventDefault();
+      currentSection = 'goals';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
+      document.getElementById('verseOfDay').style.display = 'none';
+      
+      const goals = JSON.parse(localStorage.getItem('goals_' + currentUser.phone)) || [];
+      
+      let content = `
+        <h2>🎯 Mes Objectifs Spirituels</h2>
+        <div style="margin: 20px 0; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+          <h3>Créer un nouvel objectif</h3>
+          <input type="text" id="goalTitle" placeholder="Ex: Lire la Bible 30 min/jour" style="width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+          <select id="goalType" style="width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+            <option value="daily">Quotidien</option>
+            <option value="weekly">Hebdomadaire</option>
+            <option value="monthly">Mensuel</option>
+          </select>
+          <button onclick="addGoal()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 10px;">➕ Ajouter</button>
+        </div>
+        <div id="goalsList">`;
+      
+      if(goals.length === 0){
+        content += `<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucun objectif défini. Commencez dès maintenant !</p>`;
+      } else {
+        goals.forEach((goal, i) => {
+          const progress = Math.min(100, (goal.current / goal.target) * 100);
+          content += `
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 10px 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                  <div style="font-weight: bold;">${goal.title}</div>
+                  <div style="font-size: 12px; opacity: 0.7;">${goal.type === 'daily' ? 'Quotidien' : goal.type === 'weekly' ? 'Hebdomadaire' : 'Mensuel'}</div>
+                </div>
+                <button onclick="deleteGoal(${i})" style="background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">❌</button>
+              </div>
+              <div style="background: rgba(0,0,0,0.2); height: 20px; border-radius: 10px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, #6a11cb, #2575fc); height: 100%; width: ${progress}%; transition: width 0.3s;"></div>
+              </div>
+              <div style="text-align: center; margin-top: 5px; font-size: 12px;">${goal.current} / ${goal.target} (${Math.round(progress)}%)</div>
+              <button onclick="updateGoalProgress(${i})" style="background: #4caf50; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%;">✅ Marquer comme fait</button>
+            </div>
+          `;
+        });
+      }
+      
+      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      document.getElementById('content').innerHTML = content;
+      document.querySelector('.sections').style.display='none';
+    }
+
+    function addGoal(){
+      const title = document.getElementById('goalTitle').value.trim();
+      const type = document.getElementById('goalType').value;
+      if(!title){ alert('⚠️ Veuillez entrer un objectif'); return; }
+      
+      const goals = JSON.parse(localStorage.getItem('goals_' + currentUser.phone)) || [];
+      const target = type === 'daily' ? 1 : type === 'weekly' ? 7 : 30;
+      goals.push({title, type, current: 0, target, created: new Date().toISOString()});
+      localStorage.setItem('goals_' + currentUser.phone, JSON.stringify(goals));
+      showGoals({preventDefault: ()=>{}});
+    }
+
+    function updateGoalProgress(index){
+      const goals = JSON.parse(localStorage.getItem('goals_' + currentUser.phone)) || [];
+      if(goals[index].current < goals[index].target){
+        goals[index].current++;
+        localStorage.setItem('goals_' + currentUser.phone, JSON.stringify(goals));
+        if(goals[index].current === goals[index].target){
+          alert('🎉 Félicitations ! Objectif atteint !');
+        }
+        showGoals({preventDefault: ()=>{}});
+      }
+    }
+
+    function deleteGoal(index){
+      const goals = JSON.parse(localStorage.getItem('goals_' + currentUser.phone)) || [];
+      goals.splice(index, 1);
+      localStorage.setItem('goals_' + currentUser.phone, JSON.stringify(goals));
+      showGoals({preventDefault: ()=>{}});
+    }
+
+    function showTestimonies(e){
+      e.preventDefault();
+      currentSection = 'testimonies';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
+      document.getElementById('verseOfDay').style.display = 'none';
+      
+      const testimonies = JSON.parse(localStorage.getItem('testimonies')) || [];
+      
+      let content = `
+        <h2>💬 Témoignages de Foi</h2>
+        <div style="margin: 20px 0; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+          <h3>Partager votre témoignage</h3>
+          <input type="text" id="testimonyTitle" placeholder="Titre de votre témoignage" style="width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;">
+          <textarea id="testimonyContent" placeholder="Partagez comment Dieu a agi dans votre vie..." style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; min-height: 120px;"></textarea>
+          <button onclick="addTestimony()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 10px;">✨ Publier</button>
+        </div>
+        <div id="testimoniesList">`;
+      
+      if(testimonies.length === 0){
+        content += `<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucun témoignage pour le moment. Soyez le premier à partager !</p>`;
+      } else {
+        testimonies.reverse().forEach((testimony, i) => {
+          content += `
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 15px 0; border-left: 4px solid #ffeb3b;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                <div>
+                  <div style="font-weight: bold; font-size: 18px; color: #ffeb3b;">${testimony.title}</div>
+                  <div style="font-size: 12px; opacity: 0.6; margin-top: 5px;">👤 ${testimony.author} • ${testimony.date}</div>
+                </div>
+                ${testimony.authorPhone === currentUser.phone ? `<button onclick="deleteTestimony(${testimonies.length - 1 - i})" style="background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>` : ''}
+              </div>
+              <div style="opacity: 0.9; line-height: 1.6; white-space: pre-wrap;">${testimony.content}</div>
+            </div>
+          `;
+        });
+      }
+      
+      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      document.getElementById('content').innerHTML = content;
+      document.querySelector('.sections').style.display='none';
+    }
+
+    function addTestimony(){
+      const title = document.getElementById('testimonyTitle').value.trim();
+      const content = document.getElementById('testimonyContent').value.trim();
+      if(!title || !content){ alert('⚠️ Veuillez remplir tous les champs'); return; }
+      
+      const testimonies = JSON.parse(localStorage.getItem('testimonies')) || [];
+      testimonies.push({
+        title,
+        content,
+        author: currentUser.fullname,
+        authorPhone: currentUser.phone,
+        date: new Date().toLocaleDateString('fr-FR')
+      });
+      localStorage.setItem('testimonies', JSON.stringify(testimonies));
+      showTestimonies({preventDefault: ()=>{}});
+    }
+
+    function deleteTestimony(index){
+      const testimonies = JSON.parse(localStorage.getItem('testimonies')) || [];
+      testimonies.splice(index, 1);
+      localStorage.setItem('testimonies', JSON.stringify(testimonies));
+      showTestimonies({preventDefault: ()=>{}});
     }
 
     // Auto-save session every 30 seconds

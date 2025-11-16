@@ -9,12 +9,19 @@
 <p>Consulter les versets de Genèse à Apocalypse</p>
 
 <style>
-  .bible-container { display: flex; gap: 15px; max-height: 600px; }
-  .bible-books { width: 250px; overflow-y: auto; }
-  .bible-book-item { padding: 8px; margin: 5px 0; background: #f0f0f0; cursor: pointer; border-radius: 5px; }
-  .bible-book-item:hover { background: #e0e0ff; }
-  .bible-book-item.active { background: #6C63FF; color: white; }
-  .bible-viewer { flex: 1; overflow-y: auto; padding: 10px; font-size: 0.95rem; line-height: 1.6; }
+  .bible-container { display: flex; gap: 20px; max-height: 70vh; }
+  .bible-books { width: 220px; overflow-y: auto; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; }
+  .bible-book-item { padding: 12px; margin: 8px 0; background: rgba(255,255,255,0.08); cursor: pointer; border-radius: 8px; color: white; transition: all 0.2s; border-left: 3px solid transparent; }
+  .bible-book-item:hover { background: rgba(106,17,203,0.3); transform: translateX(5px); }
+  .bible-book-item.active { background: linear-gradient(90deg, rgba(106,17,203,0.5), rgba(37,117,252,0.3)); color: white; border-left-color: #ffeb3b; font-weight: bold; }
+  .bible-viewer { flex: 1; overflow-y: auto; padding: 20px; background: rgba(255,255,255,0.08); border-radius: 12px; font-size: 15px; line-height: 1.8; }
+  .bible-verse { background: rgba(255,255,255,0.05); padding: 12px; margin: 10px 0; border-radius: 8px; border-left: 3px solid #6a11cb; }
+  .bible-verse strong { color: #ffeb3b; margin-right: 8px; }
+  @media (max-width: 768px) {
+    .bible-container { flex-direction: column; max-height: none; }
+    .bible-books { width: 100%; max-height: 200px; }
+    .bible-viewer { padding: 15px; font-size: 14px; }
+  }
 </style>
 
 <div style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px;">
@@ -152,19 +159,19 @@
       const response = await fetch(`https://bible-api.com/${book.id}+${bibleCurrChapter}?translation=kjv`);
       const data = await response.json();
       
-      let html = `<div style="margin-bottom: 20px;"><strong style="font-size: 20px;">${book.fr}</strong></div>`;
+      let html = `<div style="text-align: center; margin-bottom: 25px; padding: 15px; background: linear-gradient(135deg, rgba(106,17,203,0.3), rgba(37,117,252,0.2)); border-radius: 12px;"><strong style="font-size: 24px; color: #ffeb3b;">📖 ${book.fr}</strong></div>`;
       
       // Sélecteur de chapitres
-      html += '<div style="margin: 15px 0;"><label><strong>Chapitre: </strong></label><select id="chapterSelect" onchange="changeChapter()" style="padding: 8px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">';
+      html += '<div style="text-align: center; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;"><label style="font-size: 16px; font-weight: bold; margin-right: 10px;">Chapitre:</label><select id="chapterSelect" onchange="changeChapter()" style="padding: 10px 20px; border-radius: 8px; background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.3); font-size: 16px; font-weight: bold; cursor: pointer;">';
       for(let i = 1; i <= book.chapters; i++) {
         html += `<option value="${i}" ${i === bibleCurrChapter ? 'selected' : ''}>${i}</option>`;
       }
       html += '</select></div>';
       
       // Contenu du chapitre
-      html += '<div style="line-height: 1.8; margin-top: 20px;">';
+      html += '<div style="margin-top: 25px;">';
       data.verses.forEach(verse => {
-        html += `<p style="margin: 10px 0;"><strong>${verse.verse}</strong> ${verse.text}</p>`;
+        html += `<div class="bible-verse"><strong>${verse.verse}</strong>${verse.text}</div>`;
       });
       html += '</div>';
       
@@ -194,17 +201,17 @@
       const response = await fetch(`https://bible-api.com/${book.id}+${chapter}?translation=kjv`);
       const data = await response.json();
       
-      let html = `<div style="margin-bottom: 20px;"><strong style="font-size: 20px;">${book.fr} - Chapitre ${chapter}</strong></div>`;
+      let html = `<div style="text-align: center; margin-bottom: 25px; padding: 15px; background: linear-gradient(135deg, rgba(106,17,203,0.3), rgba(37,117,252,0.2)); border-radius: 12px;"><strong style="font-size: 24px; color: #ffeb3b;">📖 ${book.fr} - Chapitre ${chapter}</strong></div>`;
       
-      html += '<div style="margin: 15px 0;"><label><strong>Chapitre: </strong></label><select id="chapterSelect" onchange="changeChapter()" style="padding: 8px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">';
+      html += '<div style="text-align: center; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;"><label style="font-size: 16px; font-weight: bold; margin-right: 10px;">Chapitre:</label><select id="chapterSelect" onchange="changeChapter()" style="padding: 10px 20px; border-radius: 8px; background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.3); font-size: 16px; font-weight: bold; cursor: pointer;">';
       for(let i = 1; i <= book.chapters; i++) {
         html += `<option value="${i}" ${i === chapter ? 'selected' : ''}>${i}</option>`;
       }
       html += '</select></div>';
       
-      html += '<div style="line-height: 1.8; margin-top: 20px;">';
+      html += '<div style="margin-top: 25px;">';
       data.verses.forEach(verse => {
-        html += `<p style="margin: 10px 0;"><strong>${verse.verse}</strong> ${verse.text}</p>`;
+        html += `<div class="bible-verse"><strong>${verse.verse}</strong>${verse.text}</div>`;
       });
       html += '</div>';
       

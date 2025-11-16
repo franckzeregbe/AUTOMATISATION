@@ -1,399 +1,281 @@
 <style>
-  .settings-heading{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-  .settings-section{background:rgba(255,255,255,0.03);padding:20px;border-radius:12px;margin:15px 0;border:1px solid rgba(255,255,255,0.08)}
-  .section-title{font-size:18px;font-weight:600;margin-bottom:15px;display:flex;align-items:center;gap:8px}
-  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  .field{margin:12px 0}
-  label{display:block;margin-bottom:6px;font-weight:500}
-  select,input[type=text],input[type=email],input[type=number]{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:white;width:100%;max-width:420px}
-  .small{font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px}
-  .btn{padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:white;cursor:pointer;transition:all 0.3s}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
-  .btn.primary{background:linear-gradient(135deg,#6a11cb,#2575fc);border:none}
-  .btn.danger{background:linear-gradient(135deg,#ff5252,#ff7043);border:none}
-  .btn.success{background:linear-gradient(135deg,#43a047,#66bb6a);border:none}
+  .section-heading { display:flex; align-items:center; gap:10px; }
+  .section-heading .icon-svg { width:28px; height:28px; transition: transform 0.18s ease; }
+  .section-heading:hover .icon-svg { transform: scale(1.12); }
+  .settings-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 15px 0; }
+  .settings-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .settings-item:last-child { border-bottom: none; }
+  .toggle-switch { position: relative; width: 60px; height: 30px; background: rgba(255,255,255,0.2); border-radius: 15px; cursor: pointer; transition: background 0.3s; }
+  .toggle-switch.active { background: #4caf50; }
+  .toggle-switch::after { content: ''; position: absolute; width: 26px; height: 26px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: left 0.3s; }
+  .toggle-switch.active::after { left: 32px; }
 </style>
 
-<h2 class="settings-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-settings"></use></svg> <span>Paramètres</span></h2>
+<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-settings"></use></svg> <span>⚙️ Paramètres</span></h2>
 
-<!-- Section Apparence -->
-<div class="settings-section">
-  <div class="section-title">🎨 Apparence</div>
-  
-  <div class="field">
-  <label>🎨 Thème</label>
-  <div class="row">
-    <select id="themeSelect">
-      <option value="dark">Sombre</option>
-      <option value="light">Clair</option>
-    </select>
-    <button class="btn" id="applyTheme">Appliquer</button>
-    <div class="small">(Le thème est enregistré localement)</div>
+<div class="settings-card">
+  <h3>🎨 Apparence</h3>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Mode sombre/clair</div>
+      <div style="font-size: 12px; opacity: 0.7;">Changer le thème de l'application</div>
+    </div>
+    <div class="toggle-switch" id="themeToggle" onclick="toggleTheme()"></div>
   </div>
 </div>
 
-<div class="field">
-  <label>🌍 Langue</label>
-  <div class="row">
-    <select id="langSelect">
-      <option value="fr">Français</option>
-      <option value="en">Anglais</option>
-    </select>
-    <button class="btn" id="applyLang">Appliquer</button>
-    <div class="small">(Changement de langue pour l'interface future)</div>
+<div class="settings-card">
+  <h3>🔔 Notifications</h3>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Rappels de prière</div>
+      <div style="font-size: 12px; opacity: 0.7;">Recevoir des rappels quotidiens</div>
+    </div>
+    <div class="toggle-switch" id="prayerNotif" onclick="toggleSetting('prayerNotif')"></div>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Verset du jour</div>
+      <div style="font-size: 12px; opacity: 0.7;">Notification quotidienne du verset</div>
+    </div>
+    <div class="toggle-switch" id="verseNotif" onclick="toggleSetting('verseNotif')"></div>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Heure des rappels</div>
+      <div style="font-size: 12px; opacity: 0.7;">Définir l'heure des notifications</div>
+    </div>
+    <input type="time" id="notifTime" value="07:00" style="padding: 8px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);" onchange="saveNotifTime()">
   </div>
 </div>
 
-<div class="field">
-  <label>🔠 Police</label>
-  <div class="row">
-    <select id="fontSelect">
-      <option value="standard">Standard</option>
-      <option value="large">Large</option>
-      <option value="hand">Manuscrite</option>
-    </select>
-    <button class="btn" id="applyFont">Appliquer</button>
-    <div class="small">(Ajuste la taille et le style de police)</div>
+<div class="settings-card">
+  <h3>🔊 Audio</h3>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Lecture automatique</div>
+      <div style="font-size: 12px; opacity: 0.7;">Lire automatiquement les prières</div>
+    </div>
+    <div class="toggle-switch" id="autoPlay" onclick="toggleSetting('autoPlay')"></div>
   </div>
-</div>
-</div>
-
-<!-- Section Notifications -->
-<div class="settings-section">
-  <div class="section-title">🔔 Notifications & Rappels</div>
-  
-  <div class="field">
-  <label>Notifications</label>
-  <div class="row">
-    <input type="checkbox" id="notifChk"> <label for="notifChk">Activer les notifications</label>
-    <div class="small">(Stocké localement)</div>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Volume</div>
+      <div style="font-size: 12px; opacity: 0.7;">Ajuster le volume audio</div>
+    </div>
+    <input type="range" id="volumeControl" min="0" max="100" value="80" style="width: 120px;" onchange="saveVolume()">
   </div>
 </div>
 
-  <div class="field">
-  <label>Rappels de prière</label>
-  <div class="row">
-    <input type="time" id="prayerTime" style="max-width:150px"> 
-    <button class="btn primary" id="setPrayerReminder">Définir rappel</button>
-    <div class="small">(Rappel quotidien pour la prière)</div>
+<div class="settings-card">
+  <h3>👨‍👩‍👧‍👦 Contrôle parental</h3>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Mode enfant</div>
+      <div style="font-size: 12px; opacity: 0.7;">Contenu adapté aux enfants</div>
+    </div>
+    <div class="toggle-switch" id="childMode" onclick="toggleSetting('childMode')"></div>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Code PIN</div>
+      <div style="font-size: 12px; opacity: 0.7;">Protéger l'accès aux paramètres</div>
+    </div>
+    <button onclick="setPIN()" style="background: #6a11cb; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Définir</button>
   </div>
 </div>
 
-  <div class="field">
-  <label>Lecture biblique quotidienne</label>
-  <div class="row">
-    <input type="checkbox" id="dailyBibleChk"> <label for="dailyBibleChk">Activer les rappels de lecture</label>
-    <div class="small">(Notification pour lire la Bible chaque jour)</div>
-  </div>
-</div>
-</div>
-
-<!-- Section Contrôle Parental -->
-<div class="settings-section">
-  <div class="section-title">🧒 Contrôle Parental</div>
-  
-  <div class="field">
-  <label>Mode enfant</label>
-  <div class="row">
-    <input type="checkbox" id="childChk"> <label for="childChk">Activer le mode enfant</label>
-    <div class="small">(Masque les sections inappropriées)</div>
+<div class="settings-card">
+  <h3>📱 Partage</h3>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Partager l'application</div>
+      <div style="font-size: 12px; opacity: 0.7;">Inviter vos amis</div>
+    </div>
+    <button onclick="shareApp()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📤 Partager</button>
   </div>
 </div>
 
-  <div class="field">
-  <label>Limite de temps d'écran</label>
-  <div class="row">
-    <input type="number" id="screenTime" min="0" max="180" placeholder="Minutes" style="max-width:120px">
-    <button class="btn" id="setScreenTime">Définir</button>
-    <div class="small">(Limite quotidienne en minutes)</div>
-  </div>
-</div>
-</div>
-
-<!-- Section Connexion -->
-<div class="settings-section">
-  <div class="section-title">📡 Connexion & Synchronisation</div>
-  
-  <div class="field">
-  <label>Mode hors-ligne</label>
-  <div class="row">
-    <input type="checkbox" id="offlineChk"> <label for="offlineChk">Activer le mode hors-ligne</label>
-    <div class="small">(Prépare l'app pour un usage réduit hors connexion)</div>
+<div class="settings-card">
+  <h3>📅 Calendrier liturgique</h3>
+  <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 10px;">
+    <div style="font-weight: bold; margin-bottom: 10px;">Prochaines fêtes chrétiennes</div>
+    <div id="liturgicalCalendar"></div>
   </div>
 </div>
 
-  <div class="field">
-  <label>Synchronisation automatique</label>
-  <div class="row">
-    <input type="checkbox" id="autoSyncChk"> <label for="autoSyncChk">Synchroniser automatiquement</label>
-    <div class="small">(Sauvegarde automatique des progrès)</div>
+<div class="settings-card">
+  <h3>💾 Données</h3>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Sauvegarder mes données</div>
+      <div style="font-size: 12px; opacity: 0.7;">Exporter vos données</div>
+    </div>
+    <button onclick="exportData()" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">💾 Exporter</button>
   </div>
-</div>
-</div>
-
-<!-- Section Profil -->
-<div class="settings-section">
-  <div class="section-title">👤 Profil Utilisateur</div>
-  
-  <div class="field">
-  <label>Nom d'utilisateur</label>
-  <div class="row">
-    <input type="text" id="editName" placeholder="Changer le nom d'utilisateur">
-    <button class="btn primary" id="saveProfileBtn">Enregistrer</button>
-    <span class="small" id="profileMsg"></span>
-  </div>
-</div>
-
-  <div class="field">
-  <label>Email</label>
-  <div class="row">
-    <input type="email" id="editEmail" placeholder="Changer l'email">
-    <button class="btn primary" id="saveEmailBtn">Enregistrer</button>
-    <span class="small" id="emailMsg"></span>
-  </div>
-</div>
-
-  <div class="field">
-  <label>Photo de profil</label>
-  <div class="row">
-    <button class="btn" id="uploadPhotoBtn">📷 Choisir une photo</button>
-    <div class="small">(Fonctionnalité à venir)</div>
-  </div>
-</div>
-</div>
-
-<!-- Section Confidentialité -->
-<div class="settings-section">
-  <div class="section-title">🔒 Confidentialité & Sécurité</div>
-  
-  <div class="field">
-  <label>Historique de navigation</label>
-  <div class="row">
-    <button class="btn" id="clearHistoryBtn">Effacer l'historique</button>
-    <div class="small">(Supprime l'historique des sections visitées)</div>
-  </div>
-</div>
-
-  <div class="field">
-  <label>Partage de données</label>
-  <div class="row">
-    <input type="checkbox" id="shareDataChk"> <label for="shareDataChk">Partager les statistiques anonymes</label>
-    <div class="small">(Aide à améliorer l'application)</div>
-  </div>
-</div>
-</div>
-
-<!-- Section Avancé -->
-<div class="settings-section">
-  <div class="section-title">⚙️ Paramètres Avancés</div>
-  
-  <div class="field">
-  <label>Version de la Bible par défaut</label>
-  <div class="row">
-    <select id="bibleVersionSelect">
-      <option value="LS1910">Louis Segond 1910</option>
-      <option value="Darby">Darby</option>
-      <option value="KJV">King James Version</option>
-    </select>
-    <button class="btn" id="applyBibleVersion">Appliquer</button>
-  </div>
-</div>
-
-  <div class="field">
-  <label>Réinitialiser les points</label>
-  <div class="row">
-    <button class="btn danger" id="resetPointsBtn">Réinitialiser mes points</button>
-    <div class="small">(Remet vos points à zéro)</div>
-  </div>
-</div>
-
-  <div class="field">
-  <label>Données de l'application</label>
-  <div class="row">
-    <button class="btn danger" id="clearBtn">Effacer les données (localStorage)</button>
-    <div class="small">Attention : cela déconnectera les utilisateurs et réinitialisera les points.</div>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Effacer le cache</div>
+      <div style="font-size: 12px; opacity: 0.7;">Libérer de l'espace</div>
+    </div>
+    <button onclick="clearCache()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">🗑️ Effacer</button>
   </div>
 </div>
 
 <script>
-// Initialisation et gestion des préférences
-(function(){
-  const themeSelect = document.getElementById('themeSelect');
-  const applyThemeBtn = document.getElementById('applyTheme');
-  const langSelect = document.getElementById('langSelect');
-  const applyLangBtn = document.getElementById('applyLang');
-  const fontSelect = document.getElementById('fontSelect');
-  const applyFontBtn = document.getElementById('applyFont');
-  const notifChk = document.getElementById('notifChk');
-  const childChk = document.getElementById('childChk');
-  const offlineChk = document.getElementById('offlineChk');
-  const saveProfileBtn = document.getElementById('saveProfileBtn');
-  const editName = document.getElementById('editName');
-  const profileMsg = document.getElementById('profileMsg');
-  const clearBtn = document.getElementById('clearBtn');
-
-  const defaultPrefs = {
-    theme: localStorage.getItem('appTheme') || 'dark',
-    lang: localStorage.getItem('appLang') || 'fr',
-    font: localStorage.getItem('appFont') || 'standard',
-    notifications: JSON.parse(localStorage.getItem('appNotif') || 'false'),
-    childMode: JSON.parse(localStorage.getItem('appChild') || 'false'),
-    offline: JSON.parse(localStorage.getItem('appOffline') || 'false')
-  };
-
-  // Appliquer les préférences à l'UI
-  function applyAll(p){
-    themeSelect.value = p.theme; applyTheme(p.theme);
-    langSelect.value = p.lang;
-    fontSelect.value = p.font; applyFont(p.font);
-    notifChk.checked = p.notifications;
-    childChk.checked = p.childMode; applyChildMode(p.childMode);
-    offlineChk.checked = p.offline;
+  // Charger les paramètres sauvegardés
+  function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+    
+    if(settings.theme === 'light') {
+      document.getElementById('themeToggle').classList.add('active');
+    }
+    
+    ['prayerNotif', 'verseNotif', 'autoPlay', 'childMode'].forEach(key => {
+      if(settings[key]) {
+        document.getElementById(key).classList.add('active');
+      }
+    });
+    
+    if(settings.notifTime) {
+      document.getElementById('notifTime').value = settings.notifTime;
+    }
+    
+    if(settings.volume) {
+      document.getElementById('volumeControl').value = settings.volume;
+    }
+    
+    loadLiturgicalCalendar();
   }
 
-  function applyTheme(t){
-    localStorage.setItem('appTheme', t);
-    if(t==='light'){
-      document.documentElement.style.setProperty('--bg1','#f6f7fb');
-      document.documentElement.style.setProperty('--bg2','#e9eefc');
-      document.body.style.color = '#111';
+  function toggleTheme() {
+    const toggle = document.getElementById('themeToggle');
+    toggle.classList.toggle('active');
+    
+    const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+    settings.theme = toggle.classList.contains('active') ? 'light' : 'dark';
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+    
+    // Appliquer le thème (à implémenter dans index.html)
+    if(settings.theme === 'light') {
+      document.body.style.background = 'linear-gradient(to right, #f5f5f5, #e0e0e0)';
+      document.body.style.color = '#333';
     } else {
-      document.documentElement.style.setProperty('--bg1','#6a11cb');
-      document.documentElement.style.setProperty('--bg2','#2575fc');
-      document.body.style.color = '#fff';
+      document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
+      document.body.style.color = 'white';
     }
   }
 
-  function applyFont(f){
-    localStorage.setItem('appFont', f);
-    if(f==='large'){
-      document.documentElement.style.setProperty('font-size','18px');
-      document.body.style.fontFamily = "'Segoe UI', sans-serif";
-    } else if(f==='hand'){
-      document.documentElement.style.setProperty('font-size','16px');
-      document.body.style.fontFamily = "'Segoe UI', 'Bradley Hand', 'Comic Sans MS', cursive";
-    } else {
-      document.documentElement.style.setProperty('font-size','15px');
-      document.body.style.fontFamily = "'Segoe UI', sans-serif";
+  function toggleSetting(key) {
+    const toggle = document.getElementById(key);
+    toggle.classList.toggle('active');
+    
+    const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+    settings[key] = toggle.classList.contains('active');
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+    
+    if(settings[key]) {
+      alert(`✅ ${key === 'prayerNotif' ? 'Rappels de prière' : key === 'verseNotif' ? 'Verset du jour' : key === 'autoPlay' ? 'Lecture automatique' : 'Mode enfant'} activé`);
     }
   }
 
-  function applyChildMode(on){
-    localStorage.setItem('appChild', JSON.stringify(on));
-    if(on){
-      // masquer certaines sections (ex: jeux)
-      document.querySelectorAll('.section[data-key="jeux"], .section[data-key="videos"]').forEach(el=>el.style.display='none');
+  function saveNotifTime() {
+    const time = document.getElementById('notifTime').value;
+    const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+    settings.notifTime = time;
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+    alert(`✅ Heure des rappels définie à ${time}`);
+  }
+
+  function saveVolume() {
+    const volume = document.getElementById('volumeControl').value;
+    const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+    settings.volume = volume;
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+  }
+
+  function setPIN() {
+    const pin = prompt('Définir un code PIN (4 chiffres):');
+    if(pin && pin.length === 4 && !isNaN(pin)) {
+      const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+      settings.pin = pin;
+      localStorage.setItem('appSettings', JSON.stringify(settings));
+      alert('✅ Code PIN défini avec succès');
     } else {
-      document.querySelectorAll('.section[data-key="jeux"], .section[data-key="videos"]').forEach(el=>el.style.display='flex');
+      alert('⚠️ Code PIN invalide. Utilisez 4 chiffres.');
     }
   }
 
-  // charger et appliquer
-  applyAll(defaultPrefs);
-
-  applyThemeBtn.addEventListener('click', ()=>{ applyTheme(themeSelect.value); alert('Thème appliqué.'); });
-  applyLangBtn.addEventListener('click', ()=>{ localStorage.setItem('appLang', langSelect.value); alert('Langue enregistrée.'); });
-  applyFontBtn.addEventListener('click', ()=>{ applyFont(fontSelect.value); alert('Police appliquée.'); });
-
-  notifChk.addEventListener('change', ()=>{ localStorage.setItem('appNotif', JSON.stringify(notifChk.checked)); alert('Préférence de notification enregistrée.'); });
-  childChk.addEventListener('change', ()=>{ applyChildMode(childChk.checked); });
-  offlineChk.addEventListener('change', ()=>{ localStorage.setItem('appOffline', JSON.stringify(offlineChk.checked)); alert('Mode hors-ligne enregistré.'); });
-
-  // Nouveaux gestionnaires
-  const setPrayerReminder = document.getElementById('setPrayerReminder');
-  const prayerTime = document.getElementById('prayerTime');
-  setPrayerReminder?.addEventListener('click', ()=>{ 
-    if(prayerTime.value){ localStorage.setItem('prayerReminderTime', prayerTime.value); alert('Rappel de prière défini pour '+prayerTime.value); }
-    else alert('Veuillez choisir une heure');
-  });
-
-  const dailyBibleChk = document.getElementById('dailyBibleChk');
-  dailyBibleChk?.addEventListener('change', ()=>{ localStorage.setItem('dailyBible', JSON.stringify(dailyBibleChk.checked)); });
-
-  const setScreenTime = document.getElementById('setScreenTime');
-  const screenTime = document.getElementById('screenTime');
-  setScreenTime?.addEventListener('click', ()=>{ 
-    if(screenTime.value){ localStorage.setItem('screenTimeLimit', screenTime.value); alert('Limite de temps définie: '+screenTime.value+' minutes'); }
-  });
-
-  const autoSyncChk = document.getElementById('autoSyncChk');
-  autoSyncChk?.addEventListener('change', ()=>{ localStorage.setItem('autoSync', JSON.stringify(autoSyncChk.checked)); });
-
-  const saveEmailBtn = document.getElementById('saveEmailBtn');
-  const editEmail = document.getElementById('editEmail');
-  const emailMsg = document.getElementById('emailMsg');
-  saveEmailBtn?.addEventListener('click', ()=>{
-    const email = editEmail.value.trim();
-    if(!email || !email.includes('@')){ emailMsg.textContent = 'Email invalide.'; return; }
-    const cu = localStorage.getItem('currentUser');
-    if(cu){
-      const user = JSON.parse(cu);
-      user.email = email;
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      emailMsg.textContent = 'Email mis à jour.';
-    }
-  });
-
-  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-  clearHistoryBtn?.addEventListener('click', ()=>{ 
-    if(confirm('Effacer l\'historique ?')){ localStorage.removeItem('visitHistory'); alert('Historique effacé.'); }
-  });
-
-  const shareDataChk = document.getElementById('shareDataChk');
-  shareDataChk?.addEventListener('change', ()=>{ localStorage.setItem('shareData', JSON.stringify(shareDataChk.checked)); });
-
-  const bibleVersionSelect = document.getElementById('bibleVersionSelect');
-  const applyBibleVersion = document.getElementById('applyBibleVersion');
-  applyBibleVersion?.addEventListener('click', ()=>{ localStorage.setItem('bibleVersion', bibleVersionSelect.value); alert('Version de la Bible définie: '+bibleVersionSelect.value); });
-
-  const resetPointsBtn = document.getElementById('resetPointsBtn');
-  resetPointsBtn?.addEventListener('click', ()=>{
-    if(!confirm('Réinitialiser vos points ? Cette action est irréversible.')) return;
-    const cu = localStorage.getItem('currentUser');
-    if(cu){
-      const user = JSON.parse(cu);
-      user.points = 0; user.completed = 0;
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      const users = JSON.parse(localStorage.getItem('appUsers')||'[]');
-      const idx = users.findIndex(u=>u.email===user.email);
-      if(idx!==-1){ users[idx] = user; localStorage.setItem('appUsers', JSON.stringify(users)); }
-      alert('Points réinitialisés.');
-      location.reload();
-    }
-  });
-
-  // Charger les valeurs sauvegardées
-  prayerTime.value = localStorage.getItem('prayerReminderTime') || '';
-  dailyBibleChk.checked = JSON.parse(localStorage.getItem('dailyBible') || 'false');
-  screenTime.value = localStorage.getItem('screenTimeLimit') || '';
-  autoSyncChk.checked = JSON.parse(localStorage.getItem('autoSync') || 'true');
-  shareDataChk.checked = JSON.parse(localStorage.getItem('shareData') || 'false');
-  bibleVersionSelect.value = localStorage.getItem('bibleVersion') || 'LS1910';
-
-  saveProfileBtn.addEventListener('click', ()=>{
-    const name = editName.value.trim();
-    if(!name){ profileMsg.textContent = 'Entrez un nom.'; return; }
-    const cu = localStorage.getItem('currentUser');
-    if(cu){
-      const user = JSON.parse(cu);
-      user.username = name;
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      const users = JSON.parse(localStorage.getItem('appUsers')||'[]');
-      const idx = users.findIndex(u=>u.email===user.email);
-      if(idx!==-1){ users[idx].username = name; localStorage.setItem('appUsers', JSON.stringify(users)); }
-      profileMsg.textContent = 'Profil mis à jour.';
-      const display = document.getElementById('userDisplayName'); if(display) display.textContent = name;
+  function shareApp() {
+    const shareText = '✨ Découvrez AUTOMATISATION - Votre compagnon spirituel quotidien ! 🙏\n\nPrières, Bible, Quiz et plus encore.\n\nhttps://franckzeregbe.github.io/AUTOMATISATION';
+    
+    if(navigator.share) {
+      navigator.share({
+        title: 'AUTOMATISATION',
+        text: shareText,
+        url: 'https://franckzeregbe.github.io/AUTOMATISATION'
+      }).catch(() => {});
     } else {
-      profileMsg.textContent = 'Aucun utilisateur connecté.';
+      navigator.clipboard.writeText(shareText);
+      alert('✅ Lien copié ! Partagez-le avec vos amis.');
     }
-  });
+  }
 
-  clearBtn.addEventListener('click', ()=>{
-    if(!confirm('Effacer toutes les données locales ? Cette opération est irréversible.')) return;
-    localStorage.clear();
-    alert('Données effacées. Rechargement de la page.');
-    location.reload();
-  });
+  function loadLiturgicalCalendar() {
+    const events = [
+      { date: '2024-12-25', name: '🎄 Noël - Naissance de Jésus' },
+      { date: '2025-01-01', name: '✨ Nouvel An' },
+      { date: '2025-04-20', name: '🌅 Pâques - Résurrection' },
+      { date: '2025-05-29', name: '🕊️ Pentecôte' },
+      { date: '2025-12-25', name: '🎄 Noël - Naissance de Jésus' }
+    ];
+    
+    const today = new Date();
+    const upcoming = events.filter(e => new Date(e.date) >= today).slice(0, 3);
+    
+    let html = '';
+    upcoming.forEach(event => {
+      const eventDate = new Date(event.date);
+      const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+      html += `<div style="padding: 10px; margin: 5px 0; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #ffeb3b;">
+        <div style="font-weight: bold;">${event.name}</div>
+        <div style="font-size: 12px; opacity: 0.7;">${eventDate.toLocaleDateString('fr-FR')} (dans ${daysUntil} jours)</div>
+      </div>`;
+    });
+    
+    document.getElementById('liturgicalCalendar').innerHTML = html || '<p style="opacity: 0.7;">Aucun événement à venir</p>';
+  }
 
-})();
+  function exportData() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if(!currentUser) return;
+    
+    const data = {
+      user: currentUser,
+      stats: JSON.parse(localStorage.getItem('userStats_' + currentUser.phone)) || {},
+      favorites: JSON.parse(localStorage.getItem('favorites_' + currentUser.phone)) || [],
+      notes: JSON.parse(localStorage.getItem('notes_' + currentUser.phone)) || [],
+      goals: JSON.parse(localStorage.getItem('goals_' + currentUser.phone)) || [],
+      settings: JSON.parse(localStorage.getItem('appSettings')) || {}
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `automatisation_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    alert('✅ Données exportées avec succès !');
+  }
+
+  function clearCache() {
+    if(confirm('⚠️ Êtes-vous sûr de vouloir effacer le cache ?\n\nCela ne supprimera pas vos données personnelles.')) {
+      // Effacer uniquement les données temporaires
+      sessionStorage.clear();
+      alert('✅ Cache effacé avec succès !');
+    }
+  }
+
+  // Charger les paramètres au chargement de la page
+  loadSettings();
 </script>

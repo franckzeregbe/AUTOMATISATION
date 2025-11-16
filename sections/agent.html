@@ -17,6 +17,12 @@
     font-size: 60px; 
     margin: 20px auto;
     animation: bounce 2s infinite, glow 2s infinite;
+    overflow: hidden;
+  }
+  .agent-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   
   .greeting-box {
@@ -109,7 +115,9 @@
 <h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-agent"></use></svg> <span>🤖 Intercesseur JOHN</span></h2>
 
 <div id="greetingBox" class="greeting-box">
-  <div class="agent-avatar">🤖</div>
+  <div class="agent-avatar">
+    <img src="https://i.pravatar.cc/150?img=12" alt="Agent JOHN" onerror="this.parentElement.innerHTML='👨'">
+  </div>
   <h3 style="text-align: center; color: #ffeb3b; margin: 10px 0;">Bonjour ! Je suis JOHN</h3>
   <p style="text-align: center; line-height: 1.6;">
     Je suis votre assistant spirituel, prêt à vous accompagner dans vos prières. 
