@@ -290,7 +290,7 @@
     @media (max-width: 768px){
       body { height: 100vh; overflow: hidden; width: 100vw; font-size: 14px; }
       .sidebar { left: -220px; width: 200px; transition: left 0.3s ease; }
-      .sidebar.collapsed { left: -220px; }
+      .sidebar.collapsed { left: -220px; box-shadow: none; }
       .sidebar:not(.collapsed) { left: 0; box-shadow: 4px 0 20px rgba(0,0,0,0.5); z-index: 1000; }
       .menu-toggle { display: flex !important; }
       .main { padding: 65px 10px 15px 10px; margin-left: 0; transition: none; width: 100%; max-width: 100vw; }
@@ -593,7 +593,7 @@
       <div class="menu-section-content">
         <a class="menu-item" href="#" data-path="sections/prieres.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-prayer"></use></svg> <span>Prières</span></a>
         <a class="menu-item" href="#" data-path="sections/bible.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-bible"></use></svg> <span>Bible</span></a>
-        <a class="menu-item" href="#" data-path="sections/agent.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-agent"></use></svg> <span>Agent JOHN</span></a>
+        <a class="menu-item" href="#" data-path="sections/videos.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-video"></use></svg> <span>Vidéos</span></a>
         <a class="menu-item" href="#" data-path="sections/plan-lecture.html" onclick="navClick(event)"><span>📖 Plan de Lecture</span></a>
         <a class="menu-item" href="#" data-path="sections/rappels.html" onclick="navClick(event)"><span>🔔 Rappels</span></a>
       </div>
@@ -601,7 +601,7 @@
     
     <div class="menu-divider"></div>
     
-    <a class="menu-item" href="#" data-path="sections/videos.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-video"></use></svg> <span>Vidéos</span></a>
+    <a class="menu-item" href="#" data-path="sections/agent.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-agent"></use></svg> <span>Agent JOHN</span></a>
     <a class="menu-item" href="#" data-path="sections/jeux.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-game"></use></svg> <span>Quiz Biblique</span></a>
     
     <div class="menu-divider"></div>
