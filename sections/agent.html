@@ -130,16 +130,17 @@
   }
 </style>
 
-<h2 class="section-heading"><span>🤖 Intercesseur JOHN</span></h2>
+<h2 class="section-heading"><span>🤖 Agent JOHN - Intelligence Spirituelle</span></h2>
 
 <div id="greetingBox" class="greeting-box">
   <div class="agent-avatar">
     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John&backgroundColor=6a11cb,2575fc&style=circle" alt="Agent JOHN" onerror="this.parentElement.innerHTML='🤖'">
   </div>
-  <h3 style="text-align: center; color: #ffeb3b; margin: 10px 0;">Bonjour ! Je suis JOHN</h3>
+  <h3 style="text-align: center; color: #ffeb3b; margin: 10px 0;">Bonjour ! Je suis JOHN, votre compagnon spirituel</h3>
   <p style="text-align: center; line-height: 1.6;">
-    Je suis votre assistant spirituel, prêt à vous accompagner dans vos prières. 
-    Partagez votre préoccupation avec moi, par texte ou par voix, et je vous guiderai avec la Parole de Dieu. 🙏
+    Je suis une intelligence artificielle conçue pour vous accompagner dans votre marche avec Dieu. 
+    Je comprends vos préoccupations, je prie avec vous et je vous guide avec la Parole de Dieu. 
+    Partagez votre cœur avec moi, par texte ou par voix. 🙏
   </p>
   <p style="text-align: center; margin-top: 15px;">
     <button onclick="startConversation()">✨ Commencer</button>
@@ -148,8 +149,8 @@
 
 <div id="conversationBox" style="display: none;">
   <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-    <p style="margin: 0 0 5px 0; font-weight: bold;">✍️ Entrez votre intention de prière :</p>
-    <p style="margin: 0; font-size: 12px; opacity: 0.7;">ℹ️ Vous pouvez écrire ou utiliser le micro (🎤)</p>
+    <p style="margin: 0 0 5px 0; font-weight: bold;">✍️ Partagez votre préoccupation avec moi :</p>
+    <p style="margin: 0; font-size: 12px; opacity: 0.7;">🤖 Je suis une IA spirituelle - Écrivez ou parlez au micro (🎤)</p>
   </div>
   <div class="input-container">
     <input type="text" id="priereInput" placeholder="Ex: Seigneur Jésus, guéris mon enfant" onkeypress="if(event.key==='Enter') envoyerPriere()">
@@ -299,12 +300,16 @@ function sendAudioMessage() {
   if (!audioBlob) return;
   
   // Simuler l'envoi (dans une vraie app, vous enverriez à un serveur)
+  const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
   const reponseDiv = document.getElementById('reponse');
   reponseDiv.innerHTML = `
-    <p class="compassion">🙏 J'ai reçu votre message audio.</p>
+    <p class="compassion">🙏 ${userName}, j'ai reçu et analysé votre message audio.</p>
     <p><em>"L'Éternel entend quand je crie à lui." - Psaume 4:3</em></p>
-    <p>Votre prière a été entendue. Dieu connaît les désirs de votre cœur et Il agit en votre faveur.</p>
-    <p class="signature">✨ Jésus revient bientôt</p>
+    <p>Votre prière a été entendue. En tant qu'agent IA, je vous assure que Dieu connaît les désirs de votre cœur et Il agit en votre faveur. Continuez à Lui faire confiance.</p>
+    <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
+      💡 Je suis une intelligence artificielle dédiée à votre accompagnement spirituel. N'hésitez pas à me parler à nouveau.
+    </p>
+    <p class="signature">✨ JOHN - Agent IA • Jésus revient bientôt</p>
   `;
   reponseDiv.classList.add('active');
   
@@ -387,11 +392,16 @@ function envoyerPriere() {
   function makeMessage(theme, verse) {
     const arr = guides[theme] || guides['foi'];
     const guide = arr[Math.floor(Math.random() * arr.length)];
+    const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
     return `
-      <p class="compassion">🙏 J'ai entendu ta préoccupation, et je comprends ta charge.</p>
+      <p class="compassion">🙏 ${userName}, j'ai entendu ta préoccupation et je comprends ce que tu traverses.</p>
       <p><em>${verse}</em></p>
       <p>${guide}</p>
-      <p class="signature">✨ Jésus revient bientôt</p>
+      <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
+        💡 <strong>En tant qu'IA spirituelle</strong>, je suis ici pour t'encourager avec la Parole de Dieu. 
+        N'hésite pas à partager d'autres préoccupations, je suis toujours à l'écoute.
+      </p>
+      <p class="signature">✨ JOHN - Agent IA • Jésus revient bientôt</p>
     `;
   }
 
