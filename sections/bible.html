@@ -231,7 +231,10 @@
       // Contenu du chapitre
       html += '<div style="margin-top: 25px;">';
       data.verses.forEach(verse => {
-        html += `<div class="bible-verse"><strong>${verse.verse}</strong>${verse.text}</div>`;
+        html += `<div class="bible-verse" style="position: relative; padding-right: 50px;">
+          <strong>${verse.verse}</strong>${verse.text}
+          <button onclick="shareVerse('${book.fr}', ${bibleCurrChapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(37,117,252,0.8); border: none; padding: 6px 10px; border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">📤</button>
+        </div>`;
       });
       html += '</div>';
       
@@ -286,7 +289,10 @@
       
       html += '<div style="margin-top: 25px;">';
       data.verses.forEach(verse => {
-        html += `<div class="bible-verse"><strong>${verse.verse}</strong>${verse.text}</div>`;
+        html += `<div class="bible-verse" style="position: relative; padding-right: 50px;">
+          <strong>${verse.verse}</strong>${verse.text}
+          <button onclick="shareVerse('${book.fr}', ${chapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(37,117,252,0.8); border: none; padding: 6px 10px; border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">📤</button>
+        </div>`;
       });
       html += '</div>';
       
@@ -391,6 +397,12 @@
     document.getElementById('playBtn').style.display = 'inline-block';
     document.getElementById('pauseBtn').style.display = 'none';
     document.getElementById('audioStatus').textContent = '';
+  }
+
+  function shareVerse(bookName, chapter, verseNum, verseText) {
+    const shareText = `📖 ${bookName} ${chapter}:${verseNum}\n\n"${verseText}"\n\n✨ Partagé depuis AUTOMATISATION`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    window.open(whatsappUrl, '_blank');
   }
 
   function updateSpeed() {
