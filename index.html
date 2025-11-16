@@ -820,12 +820,11 @@
     window.addEventListener('load', ()=>{
       const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
       if(savedUser){ 
-        currentUser = JSON.parse(savedUser); 
-        document.getElementById('splash').style.display = 'flex';
-        setTimeout(() => {
-          initializeApp();
-          document.getElementById('loginScreen').style.display = 'none';
-        }, 500);
+        currentUser = JSON.parse(savedUser);
+        users = JSON.parse(localStorage.getItem('appUsers')) || [];
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('splash').style.display = 'none';
+        initializeApp();
       } else { 
         document.getElementById('splash').style.display = 'none'; 
         document.getElementById('loginScreen').style.display = 'flex'; 
