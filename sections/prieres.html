@@ -80,18 +80,46 @@ const prayers = {
   ]
 };
 
+const prayerImages = {
+  matin: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400',
+  soir: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=400',
+  famille: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400',
+  travail: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400',
+  guerison: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400',
+  protection: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',
+  delivrance: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=400',
+  finances: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400'
+};
+
+function sharePrayer(title, text, ref) {
+  const shareText = `🙏 ${title}\n\n${text}\n\n📖 ${ref}\n\n✨ Partagé depuis AUTOMATISATION`;
+  if(navigator.share) {
+    navigator.share({ title, text: shareText }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(shareText).then(() => alert('✅ Prière copiée !'));
+  }
+}
+
 function showPrayerCategory(category, evt) {
   document.querySelectorAll('.prayer-tab').forEach(tab => tab.classList.remove('active'));
   if(evt && evt.target) evt.target.classList.add('active');
   
   const content = document.getElementById('prayerContent');
   const categoryPrayers = prayers[category];
+  const image = prayerImages[category];
   
-  content.innerHTML = categoryPrayers.map(prayer => `
-    <div class="prayer-card">
+  content.innerHTML = `
+    <div style="margin-bottom: 25px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+      <img src="${image}" alt="${category}" style="width: 100%; height: 250px; object-fit: cover;">
+    </div>
+  ` + categoryPrayers.map((prayer, i) => `
+    <div class="prayer-card" style="animation: fadeInUp 0.5s ease ${i * 0.1}s both;">
       <h3>${prayer.title}</h3>
       <p>${prayer.text}</p>
-      <div class="bible-ref">📖 ${prayer.ref}</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
+        <div class="bible-ref">📖 ${prayer.ref}</div>
+        <button onclick="sharePrayer('${prayer.title.replace(/'/g, "\\'")}',' ${prayer.text.replace(/'/g, "\\'")}', '${prayer.ref}')" style="padding: 8px 16px; background: linear-gradient(135deg, #4caf50, #66bb6a); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 13px;">📤 Partager</button>
+      </div>
     </div>
   `).join('');
 }

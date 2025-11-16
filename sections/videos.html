@@ -134,18 +134,40 @@ const videos = [
   }
 ];
 
+function shareVideo(title, url) {
+  const shareText = `🎬 ${title}\n\n${url}\n\n✨ Partagé depuis AUTOMATISATION`;
+  if(navigator.share) {
+    navigator.share({ title, url }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(shareText).then(() => alert('✅ Lien copié !'));
+  }
+}
+
+function downloadVideo(videoId, title) {
+  const downloadUrl = `https://www.y2mate.com/youtube/${videoId}`;
+  window.open(downloadUrl, '_blank');
+  alert(`📥 Redirection vers le téléchargeur...\n\nVous pouvez télécharger "${title}" depuis le site ouvert.`);
+}
+
 function renderVideos() {
   const grid = document.getElementById('videosGrid');
-  grid.innerHTML = videos.map(video => `
-    <div class="video-card" onclick="window.open('${video.url}', '_blank')">
-      <img src="https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg" 
-           alt="${video.titre}" 
-           class="video-thumbnail">
+  grid.innerHTML = videos.map((video, i) => `
+    <div class="video-card" style="animation: fadeInUp 0.5s ease ${i * 0.1}s both;">
+      <div style="position: relative; cursor: pointer;" onclick="window.open('${video.url}', '_blank')">
+        <img src="https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg" 
+             alt="${video.titre}" 
+             class="video-thumbnail">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: rgba(255,0,0,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">▶️</div>
+      </div>
       <div class="video-info">
         <span class="category-badge">${video.categorie}</span>
         <h3>${video.titre}</h3>
         <p>${video.description}</p>
-        <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="video-btn" onclick="event.stopPropagation()">📺 Voir la vidéo</a>
+        <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+          <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="video-btn" style="flex: 1; text-align: center; min-width: 120px;" onclick="event.stopPropagation()">📺 Regarder</a>
+          <button onclick="event.stopPropagation(); shareVideo('${video.titre.replace(/'/g, "\\'")}',' ${video.url}')" style="padding: 10px 16px; background: linear-gradient(135deg, #4caf50, #66bb6a); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 14px;">📤 Partager</button>
+          <button onclick="event.stopPropagation(); downloadVideo('${video.videoId}', '${video.titre.replace(/'/g, "\\'")}')" style="padding: 10px 16px; background: linear-gradient(135deg, #ff9800, #ff5722); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 14px;">📥 Télécharger</button>
+        </div>
       </div>
     </div>
   `).join('');
