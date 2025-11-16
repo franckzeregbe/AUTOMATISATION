@@ -718,6 +718,15 @@
       document.getElementById('sidebarUsername').textContent = currentUser.fullname;
       document.getElementById('sidebarEmail').textContent = currentUser.phone;
       points = currentUser.points || 0; completed = currentUser.completed || 0;
+      
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('content').innerHTML = '';
+      document.querySelector('.sections').style.display = 'flex';
+      document.getElementById('homeHeader').classList.remove('hide');
+      document.getElementById('backButton').classList.remove('show');
+      document.getElementById('searchContainer').style.display = 'block';
+      document.getElementById('verseOfDay').style.display = 'block';
+      
       updateStreak();
       showVerseOfDay();
       showToast('🙏 Bienvenue ' + currentUser.fullname + ' !');
@@ -945,10 +954,14 @@
 
     function afficherAccueil(){ 
       currentSection = null;
+      
       document.getElementById('content').innerHTML = '';
       document.getElementById('content').style.display = 'none';
       document.getElementById('searchContainer').style.display = 'block';
       document.getElementById('verseOfDay').style.display = 'block';
+      document.getElementById('homeHeader').classList.remove('hide');
+      document.getElementById('backButton').classList.remove('show');
+      
       const sections = document.querySelector('.sections');
       sections.style.display = 'flex';
       sections.style.opacity = '0';
@@ -1202,7 +1215,12 @@
 
     // initial load
     document.addEventListener('DOMContentLoaded', ()=>{ 
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('content').innerHTML = '';
+      document.querySelector('.sections').style.display = 'flex';
+      
       afficherAccueil();
+      
       // Sur mobile, menu fermé par défaut
       if(window.innerWidth <= 768){
         document.getElementById('sidebar').classList.add('collapsed');
