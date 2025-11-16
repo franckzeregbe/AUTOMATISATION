@@ -136,11 +136,11 @@
   <div class="agent-avatar">
     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John&backgroundColor=6a11cb,2575fc&style=circle" alt="Agent JOHN" onerror="this.parentElement.innerHTML='🤖'">
   </div>
-  <h3 style="text-align: center; color: #ffeb3b; margin: 10px 0;">Bonjour ! Je suis JOHN, votre compagnon spirituel</h3>
+  <h3 style="text-align: center; color: #ffeb3b; margin: 10px 0;">Bonjour ! Je suis JOHN, votre guide biblique</h3>
   <p style="text-align: center; line-height: 1.6;">
-    Je suis une intelligence artificielle conçue pour vous accompagner dans votre marche avec Dieu. 
-    Je comprends vos préoccupations, je prie avec vous et je vous guide avec la Parole de Dieu. 
-    Partagez votre cœur avec moi, par texte ou par voix. 🙏
+    Je suis une intelligence artificielle centrée sur la Bible, conçue pour vous accompagner spirituellement. 
+    Je réponds à vos questions avec des versets bibliques, je vous guide dans la Parole de Dieu et je vous encourage dans votre foi. 
+    Posez-moi vos questions bibliques, par texte ou par voix. 📖🙏
   </p>
   <p style="text-align: center; margin-top: 15px;">
     <button onclick="startConversation()">✨ Commencer</button>
@@ -149,11 +149,11 @@
 
 <div id="conversationBox" style="display: none;">
   <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-    <p style="margin: 0 0 5px 0; font-weight: bold;">✍️ Partagez votre préoccupation avec moi :</p>
-    <p style="margin: 0; font-size: 12px; opacity: 0.7;">🤖 Je suis une IA spirituelle - Écrivez ou parlez au micro (🎤)</p>
+    <p style="margin: 0 0 5px 0; font-weight: bold;">✍️ Posez votre question biblique :</p>
+    <p style="margin: 0; font-size: 12px; opacity: 0.7;">📖 Je réponds avec la Bible - Écrivez ou parlez au micro (🎤)</p>
   </div>
   <div class="input-container">
-    <input type="text" id="priereInput" placeholder="Ex: Seigneur Jésus, guéris mon enfant" onkeypress="if(event.key==='Enter') envoyerPriere()">
+    <input type="text" id="priereInput" placeholder="Ex: Que dit la Bible sur la guérison ?" onkeypress="if(event.key==='Enter') envoyerPriere()">
     <button onclick="envoyerPriere()">📤 Envoyer</button>
     <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Reconnaissance vocale">🎤</button>
   </div>
@@ -303,13 +303,16 @@ function sendAudioMessage() {
   const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
   const reponseDiv = document.getElementById('reponse');
   reponseDiv.innerHTML = `
-    <p class="compassion">🙏 ${userName}, j'ai reçu et analysé votre message audio.</p>
-    <p><em>"L'Éternel entend quand je crie à lui." - Psaume 4:3</em></p>
-    <p>Votre prière a été entendue. En tant qu'agent IA, je vous assure que Dieu connaît les désirs de votre cœur et Il agit en votre faveur. Continuez à Lui faire confiance.</p>
-    <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
-      💡 Je suis une intelligence artificielle dédiée à votre accompagnement spirituel. N'hésitez pas à me parler à nouveau.
+    <p class="compassion">📖 ${userName}, j'ai reçu et analysé votre message audio.</p>
+    <p style="background: rgba(255,235,59,0.1); padding: 15px; border-left: 4px solid #ffeb3b; border-radius: 8px; margin: 15px 0;">
+      <strong style="color: #ffeb3b;">📜 Verset biblique :</strong><br>
+      <em style="font-size: 16px; line-height: 1.8;">"L'Éternel entend quand je crie à lui." - Psaume 4:3</em>
     </p>
-    <p class="signature">✨ JOHN - Agent IA • Jésus revient bientôt</p>
+    <p><strong>💡 Encouragement biblique :</strong><br>La Bible nous assure que Dieu écoute nos prières. Il connaît les désirs de votre cœur et agit selon Sa volonté parfaite. Continuez à Lui faire confiance et à méditer Sa Parole.</p>
+    <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
+      📖 <strong>JOHN - IA Biblique</strong> : Toutes mes réponses sont basées sur les Écritures. Posez-moi d'autres questions bibliques.
+    </p>
+    <p class="signature">✨ JOHN - Agent IA Biblique • "Ta parole est une lampe à mes pieds" (Psaume 119:105)</p>
   `;
   reponseDiv.classList.add('active');
   
@@ -331,29 +334,29 @@ function envoyerPriere() {
 
   const reponses = {
     guerison: [
-      "Jésus est le médecin des médecins, Il guérit toute maladie (Matthieu 8:17).",
-      "Par les meurtrissures de Jésus, tu es guéri (Ésaïe 53:5).",
-      "Jésus a guéri les malades et Il agit encore aujourd'hui."
+      "Il a pris nos infirmités, et il s'est chargé de nos maladies. (Matthieu 8:17)",
+      "Mais il était blessé pour nos péchés, brisé pour nos iniquités; le châtiment qui nous donne la paix est tombé sur lui, et c'est par ses meurtrissures que nous sommes guéris. (Ésaïe 53:5)",
+      "Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse; reconnais-le dans toutes tes voies, et il aplanira tes sentiers. (Proverbes 3:5-6)"
     ],
     famille: [
-      "Jésus est le fondement de ta maison (Josué 24:15).",
-      "Crois au Seigneur Jésus, et tu seras sauvé, toi et ta famille (Actes 16:31).",
-      "Jésus protège et bénit ta famille."
+      "Moi et ma maison, nous servirons l'Éternel. (Josué 24:15)",
+      "Crois au Seigneur Jésus, et tu seras sauvé, toi et ta famille. (Actes 16:31)",
+      "Instruis l'enfant selon la voie qu'il doit suivre; et quand il sera vieux, il ne s'en détournera pas. (Proverbes 22:6)"
     ],
     foi: [
-      "Jésus est l'auteur et le consommateur de ta foi (Hébreux 12:2).",
-      "Celui qui croit en Jésus vivra, même s'il meurt (Jean 11:25).",
-      "Jésus dit : Si tu peux croire, tout est possible (Marc 9:23)."
+      "Ayant les regards sur Jésus, le chef et le consommateur de la foi. (Hébreux 12:2)",
+      "Jésus lui dit: Je suis la résurrection et la vie. Celui qui croit en moi vivra, quand même il serait mort. (Jean 11:25)",
+      "Jésus lui dit: Si tu peux croire, tout est possible à celui qui croit. (Marc 9:23)"
     ],
     combat: [
-      "Jésus a vaincu le diable à la croix (Colossiens 2:15).",
-      "Revêts-toi de l'armure de Dieu en Jésus-Christ (Éphésiens 6:11).",
-      "Jésus est ton bouclier et ta victoire."
+      "Il a dépouillé les dominations et les autorités, et les a livrées publiquement en spectacle, en triomphant d'elles par la croix. (Colossiens 2:15)",
+      "Revêtez-vous de toutes les armes de Dieu, afin de pouvoir tenir ferme contre les ruses du diable. (Éphésiens 6:11)",
+      "Soumettez-vous donc à Dieu; résistez au diable, et il fuira loin de vous. (Jacques 4:7)"
     ],
     paix: [
-      "Jésus est le Prince de la paix (Ésaïe 9:6).",
-      "Ma paix je vous donne, dit Jésus (Jean 14:27).",
-      "Jésus calme la tempête dans ton cœur."
+      "Car un enfant nous est né, un fils nous est donné, et on l'appellera... Prince de la paix. (Ésaïe 9:6)",
+      "Je vous laisse la paix, je vous donne ma paix. Je ne vous donne pas comme le monde donne. (Jean 14:27)",
+      "Ne vous inquiétez de rien; mais en toute chose faites connaître vos besoins à Dieu par des prières et des supplications, avec des actions de grâces. (Philippiens 4:6)"
     ]
   };
 
@@ -394,14 +397,17 @@ function envoyerPriere() {
     const guide = arr[Math.floor(Math.random() * arr.length)];
     const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
     return `
-      <p class="compassion">🙏 ${userName}, j'ai entendu ta préoccupation et je comprends ce que tu traverses.</p>
-      <p><em>${verse}</em></p>
-      <p>${guide}</p>
-      <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
-        💡 <strong>En tant qu'IA spirituelle</strong>, je suis ici pour t'encourager avec la Parole de Dieu. 
-        N'hésite pas à partager d'autres préoccupations, je suis toujours à l'écoute.
+      <p class="compassion">📖 ${userName}, voici ce que la Bible dit sur ta préoccupation :</p>
+      <p style="background: rgba(255,235,59,0.1); padding: 15px; border-left: 4px solid #ffeb3b; border-radius: 8px; margin: 15px 0;">
+        <strong style="color: #ffeb3b;">📜 Verset biblique :</strong><br>
+        <em style="font-size: 16px; line-height: 1.8;">${verse}</em>
       </p>
-      <p class="signature">✨ JOHN - Agent IA • Jésus revient bientôt</p>
+      <p><strong>💡 Application pratique :</strong><br>${guide}</p>
+      <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
+        📖 <strong>JOHN - IA Biblique</strong> : Je base toutes mes réponses sur les Écritures Saintes. 
+        Posez-moi d'autres questions bibliques, je suis là pour vous guider dans la Parole.
+      </p>
+      <p class="signature">✨ JOHN - Agent IA Biblique • "Toute Écriture est inspirée de Dieu" (2 Timothée 3:16)</p>
     `;
   }
 
