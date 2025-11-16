@@ -1,0 +1,24 @@
+---------------------------------------------------
+Here are the ownership and the certification details
+of the Automatisation 1.2
+---------------------------------------------------
+
+app_name - 						Automatisation
+app_alias - 					Automatisation
+app_author_name - 				Apotre Jean
+app_author_organizational - 	Apotre Jean
+app_author_organization - 		Apotre Jean
+app_author_locality - 			Apotre Jean
+app_author_state - 				Abidjan
+app_author_country - 			Cote D'Ivoire
+app_password - 					gVY5crQTXbDA
+app_versionName - 				versionName "1.2"
+app_versionCode - 				102
+
+---------------------------------------------------
+The certification was created by WebIntoApp.com at
+the Sunday 16th of November 2025 05:57:24 AM
+
+https://webintoapp.com
+---------------------------------------------------
+
