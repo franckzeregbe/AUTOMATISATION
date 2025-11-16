@@ -514,6 +514,10 @@
       <input type="text" id="fullname" placeholder="Nom complet" onkeypress="if(event.key==='Enter') login()">
       <input type="tel" id="phone" placeholder="Téléphone (+225 XX XX XX XX XX)" onkeypress="if(event.key==='Enter') login()">
       <input type="email" id="email" placeholder="Email (optionnel)" onkeypress="if(event.key==='Enter') login()">
+      <div style="display: flex; align-items: center; gap: 8px; margin: 10px 0;">
+        <input type="checkbox" id="rememberMe" checked style="width: auto; cursor: pointer;">
+        <label for="rememberMe" style="cursor: pointer; font-size: 14px; color: #666;">Se souvenir de moi</label>
+      </div>
       <button class="login-btn" onclick="login()">Se connecter</button>
       <div class="login-error" id="loginError"></div>
     </div>
@@ -792,7 +796,7 @@
     }
 
     window.addEventListener('load', ()=>{
-      const savedUser = localStorage.getItem('currentUser');
+      const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
       if(savedUser){ 
         currentUser = JSON.parse(savedUser); 
         document.getElementById('splash').style.display = 'flex';
@@ -810,6 +814,7 @@
       const fullname = document.getElementById('fullname').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const email = document.getElementById('email').value.trim();
+      const rememberMe = document.getElementById('rememberMe').checked;
       const errorDiv = document.getElementById('loginError');
       
       if(!fullname){ errorDiv.textContent = '⚠️ Veuillez entrer votre nom complet'; return; }
@@ -836,8 +841,13 @@
         localStorage.setItem('appUsers', JSON.stringify(users));
       }
       currentUser = user; 
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-      localStorage.setItem('keepLoggedIn', 'true');
+      if(rememberMe) {
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        localStorage.setItem('keepLoggedIn', 'true');
+      } else {
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+        localStorage.removeItem('keepLoggedIn');
+      }
       document.getElementById('loginScreen').style.display = 'none';
       initializeApp();
     }
@@ -874,6 +884,7 @@
       }
       currentUser = null; 
       localStorage.removeItem('currentUser'); 
+      sessionStorage.removeItem('currentUser');
       localStorage.removeItem('keepLoggedIn');
       points=0; completed=0; 
       document.getElementById('userProfile').style.display='none'; 
@@ -1921,7 +1932,8 @@
       if(currentUser) {
         currentUser.points = points;
         currentUser.completed = completed;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        const storage = localStorage.getItem('keepLoggedIn') === 'true' ? localStorage : sessionStorage;
+        storage.setItem('currentUser', JSON.stringify(currentUser));
         users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
         localStorage.setItem('appUsers', JSON.stringify(users));
       }
@@ -1932,7 +1944,8 @@
       if(currentUser) {
         currentUser.points = points;
         currentUser.completed = completed;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        const storage = localStorage.getItem('keepLoggedIn') === 'true' ? localStorage : sessionStorage;
+        storage.setItem('currentUser', JSON.stringify(currentUser));
         users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
         localStorage.setItem('appUsers', JSON.stringify(users));
       }
