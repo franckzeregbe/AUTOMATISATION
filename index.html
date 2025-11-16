@@ -991,7 +991,9 @@
       currentSection = 'profile';
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
-      document.getElementById('verseOfDay').style.display = 'none';
+      document.getElementById('searchContainer').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       const profileHTML = `
         <h2>👤 Mon Profil</h2>
@@ -1228,8 +1230,9 @@
       currentSection = 'verse';
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
-      document.getElementById('verseOfDay').style.display = 'none';
       document.getElementById('searchContainer').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       const content = `
         <div style="background: linear-gradient(135deg, rgba(106,17,203,0.3), rgba(37,117,252,0.2)); padding: 30px; border-radius: 12px; margin: 20px 0;">
@@ -1332,7 +1335,8 @@
       document.querySelector('.sections').style.opacity = '0';
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('searchContainer').style.display = 'none';
-      document.getElementById('verseOfDay').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       setTimeout(() => {
         document.querySelector('.sections').style.display = 'none';
@@ -1354,6 +1358,7 @@
     
     function goBack(){
       currentSection = null;
+      localStorage.setItem('currentPage', 'accueil');
       const contentDiv = document.getElementById('content');
       contentDiv.classList.add('hiding');
       
@@ -1362,7 +1367,8 @@
         document.getElementById('backButton').classList.remove('show');
         document.getElementById('homeHeader').classList.remove('hide');
         document.getElementById('searchContainer').style.display = 'block';
-        document.getElementById('verseOfDay').style.display = 'block';
+        const verseDiv = document.getElementById('verseOfDay');
+        if(verseDiv) verseDiv.style.display = 'block';
       }, 300);
     }
 
@@ -1375,7 +1381,8 @@
       document.getElementById('content').innerHTML = '';
       document.getElementById('content').style.display = 'none';
       document.getElementById('searchContainer').style.display = 'block';
-      document.getElementById('verseOfDay').style.display = 'block';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'block';
       document.getElementById('homeHeader').classList.remove('hide');
       document.getElementById('backButton').classList.remove('show');
       
@@ -1634,14 +1641,15 @@
     function showStats(e){
       e.preventDefault();
       currentSection = 'stats';
-      // Fermer le menu latéral
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
-      document.getElementById('verseOfDay').style.display = 'none';
+      document.getElementById('searchContainer').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       const userStats = JSON.parse(localStorage.getItem('userStats_' + currentUser.phone)) || {prayers: 0, quizCompleted: 0, bibleReading: 0, timeSpent: 0};
       
@@ -1678,14 +1686,15 @@
     function showFavorites(e){
       e.preventDefault();
       currentSection = 'favorites';
-      // Fermer le menu latéral
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
-      document.getElementById('verseOfDay').style.display = 'none';
+      document.getElementById('searchContainer').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       const favorites = JSON.parse(localStorage.getItem('favorites_' + currentUser.phone)) || [];
       
@@ -1724,14 +1733,15 @@
     function showNotes(e){
       e.preventDefault();
       currentSection = 'notes';
-      // Fermer le menu latéral
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
-      document.getElementById('verseOfDay').style.display = 'none';
+      document.getElementById('searchContainer').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       const notes = JSON.parse(localStorage.getItem('notes_' + currentUser.phone)) || [];
       
@@ -1787,14 +1797,15 @@
     function showGoals(e){
       e.preventDefault();
       currentSection = 'goals';
-      // Fermer le menu latéral
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
-      document.getElementById('verseOfDay').style.display = 'none';
+      document.getElementById('searchContainer').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       const goals = JSON.parse(localStorage.getItem('goals_' + currentUser.phone)) || [];
       
@@ -1879,14 +1890,15 @@
     function showTestimonies(e){
       e.preventDefault();
       currentSection = 'testimonies';
-      // Fermer le menu latéral
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
-      document.getElementById('verseOfDay').style.display = 'none';
+      document.getElementById('searchContainer').style.display = 'none';
+      const verseDiv = document.getElementById('verseOfDay');
+      if(verseDiv) verseDiv.style.display = 'none';
       
       const testimonies = JSON.parse(localStorage.getItem('testimonies')) || [];
       
