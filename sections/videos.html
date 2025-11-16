@@ -173,8 +173,8 @@ function renderVideos() {
         <p>${video.description}</p>
         <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
           <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="video-btn" style="flex: 1; text-align: center; min-width: 120px;" onclick="event.stopPropagation()">📺 Regarder</a>
-          <button onclick="event.stopPropagation(); shareVideo('${video.titre.replace(/'/g, "\\'")}',' ${video.url}')" style="padding: 10px 16px; background: linear-gradient(135deg, #4caf50, #66bb6a); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 14px;">📤 Partager</button>
-          <button onclick="event.stopPropagation(); downloadVideo('${video.videoId}', '${video.titre.replace(/'/g, "\\'")}')" style="padding: 10px 16px; background: linear-gradient(135deg, #ff9800, #ff5722); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 14px;">📥 Télécharger</button>
+          <button onclick="event.stopPropagation(); shareVideo('${video.titre.replace(/'/g, "\\'")}',' ${video.url}')" style="padding: 10px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 14px; backdrop-filter: blur(10px);">📤 Partager</button>
+          <button onclick="event.stopPropagation(); downloadVideo('${video.videoId}', '${video.titre.replace(/'/g, "\\'")}')" style="padding: 10px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 14px; backdrop-filter: blur(10px);">📥 Télécharger</button>
         </div>
       </div>
     </div>

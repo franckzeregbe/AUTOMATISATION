@@ -125,7 +125,7 @@ function showPrayerCategory(category, evt) {
       <p>${prayer.text}</p>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
         <div class="bible-ref">📖 ${prayer.ref}</div>
-        <button onclick="sharePrayer('${prayer.title.replace(/'/g, "\\'")}',' ${prayer.text.replace(/'/g, "\\'")}', '${prayer.ref}')" style="padding: 8px 16px; background: linear-gradient(135deg, #4caf50, #66bb6a); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 13px;">📤 Partager</button>
+        <button onclick="sharePrayer('${prayer.title.replace(/'/g, "\\'")}',' ${prayer.text.replace(/'/g, "\\'")}', '${prayer.ref}')" style="padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 13px; backdrop-filter: blur(10px);">📤 Partager</button>
       </div>
     </div>
   `).join('');
