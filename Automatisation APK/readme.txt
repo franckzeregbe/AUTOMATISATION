@@ -1,16 +1,16 @@
 
 FREE APP
 
-Created by WebIntoApp.com on Sunday 16th of November 2025 12:55:30 AM.
+Created by WebIntoApp.com on Sunday 16th of November 2025 02:29:31 AM.
 
 Release APK & App Bundle (AAB) ready to be submitted to Google Play Store 
 and to any other APK / AAB store over the internet.
 
 -------------------------------------
-App ID:			989672
-App Key:		BUBDRnLiUSZWptmBmrbGJzxdvrqACzcL
-App Name:		AUTOMATISATION
-App Version:	1.0
+App ID:			989707
+App Key:		ZQyiQgYWsFVqDSYgiBDUpsxVigTcqrIM
+App Name:		Automatisation
+App Version:	1.1
 Package:		com.apotrejean.automatisation
 Mode:			Free App
 -------------------------------------
@@ -23,7 +23,7 @@ Please note, your app is under a FREE mode, you can always
 convert it to your own dedicated and branded mobile app for 
 Android and iOS with all the premium features at:
 
-https://webintoapp.com/author/apps/989672/edit?cmd=app-switcher
+https://webintoapp.com/author/apps/989707/edit?cmd=app-switcher
 
 -------------------------------------
 Here are some useful links:
@@ -33,7 +33,7 @@ You can edit your app at:
 https://webintoapp.com/author/apps
 
 Get installs statistics at:
-https://webintoapp.com/author/stats?appid=989672
+https://webintoapp.com/author/stats?appid=989707
 
 The Author Area:
 https://webintoapp.com/author/dashboard

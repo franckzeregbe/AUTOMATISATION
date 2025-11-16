@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#6a11cb">
   <link rel="manifest" href="manifest.json">
   <style>
-    :root{--bg1:#6a11cb;--bg2:#2575fc;--sidebar:#1e1e2f;--muted:rgba(255,255,255,0.85)}
+    :root{--bg1:#6a11cb;--bg2:#2575fc;--sidebar:#4a4a5e;--muted:rgba(255,255,255,0.85)}
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -345,11 +345,47 @@
 
     .icon-svg { width:36px;height:36px; fill:white;opacity:0.95 }
     .section-label { font-weight:600;letter-spacing:0.2px }
-    .content { background-color: rgba(255,255,255,0.06); border-radius:10px; padding:18px; margin-top:18px; }
+    .content { background-color: rgba(255,255,255,0.06); border-radius:10px; padding:18px; margin-top:18px; transition: opacity 0.3s ease; }
+    .content.hiding { opacity: 0; }
+    
+    .home-header { transition: opacity 0.3s ease; }
+    .home-header.hide { display: none; }
 
     @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes slideInRight { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
     @keyframes pulse { 0%, 100% { transform:scale(1); } 50% { transform:scale(1.05); } }
     .fade-in { animation: fadeInUp 0.6s ease-out; }
+    .page-transition { animation: slideInRight 0.4s ease-out; }
+    
+    .back-button {
+      position: fixed;
+      top: 70px;
+      left: 70px;
+      z-index: 998;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+    .back-button:hover {
+      background: rgba(255,255,255,0.25);
+      transform: scale(1.1);
+    }
+    .back-button.show { display: flex; }
+    
+    @media (max-width: 768px){
+      .back-button { top: 60px; left: 60px; width: 38px; height: 38px; }
+    }
     .toast { position:fixed; top:20px; right:20px; background:#6a11cb; color:white; padding:15px 20px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:9999; animation:fadeInUp 0.3s; }
     .verse-box { background:linear-gradient(135deg,rgba(106,17,203,0.2),rgba(37,117,252,0.2)); padding:20px; border-radius:12px; margin:20px 0; border-left:4px solid #6a11cb; animation:fadeInUp 0.8s; }
     .streak-badge { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#ff9800,#ff5722); padding:8px 16px; border-radius:20px; font-weight:600; animation:pulse 2s infinite; }
@@ -432,8 +468,14 @@
     <button class="btn-suppression" onclick="deleteAccount()">Suppression de compte</button>
   </div>
 
+  <button class="back-button" id="backButton" onclick="goBack()" title="Retour">
+    <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+  </button>
+
   <div class="main" id="main">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <div class="home-header" id="homeHeader" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
       <div style="flex:1"></div>
       <h1 style="margin:0">Bienvenue dans AUTOMATISATION</h1>
       <div style="flex:1;display:flex;justify-content:flex-end">
@@ -448,6 +490,7 @@
     </div>
 
     <p>Explorez les sections spirituelles, éducatives et interactives pour enrichir votre expérience.</p>
+    </div>
 
     <div id="verseOfDay" class="verse-box" style="display:none; text-align:center; max-width:700px; margin:20px auto;">
       <h3 style="margin:0 0 15px 0; color:#ffeb3b;">📖 Verset du jour</h3>
@@ -684,7 +727,10 @@
 
     function rechercher(){ const input = (document.getElementById('searchInput')||{value:''}).value.toLowerCase(); document.querySelectorAll('.section').forEach(s=>{ s.style.display = s.textContent.toLowerCase().includes(input)?'flex':'none'; }); }
 
+    let currentSection = null;
+
     function afficher(section){
+      currentSection = section;
       // update stats
       completed++; points += 10;
       if(currentUser){ 
@@ -694,25 +740,63 @@
         localStorage.setItem('appUsers', JSON.stringify(users)); 
         localStorage.setItem('currentUser', JSON.stringify(currentUser)); 
       }
-      document.querySelector('.sections').style.display = 'none'; 
-      const contentDiv = document.getElementById('content'); 
-      contentDiv.style.display='block';
-      const filePath = `./sections/${section}.html`;
-      fetch(filePath, {cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.text(); }).then(html=>{ contentDiv.innerHTML = html; runInlineScripts(contentDiv); }).catch(err=>{ contentDiv.innerHTML = `<h2>Erreur</h2><p>Impossible de charger ${section}.</p><pre>${err.message}</pre>`; });
+      
+      // Animation de sortie
+      const contentDiv = document.getElementById('content');
+      contentDiv.classList.add('hiding');
+      document.querySelector('.sections').style.opacity = '0';
+      document.getElementById('homeHeader').classList.add('hide');
+      
+      setTimeout(() => {
+        document.querySelector('.sections').style.display = 'none';
+        contentDiv.style.display='block';
+        contentDiv.classList.remove('hiding');
+        document.getElementById('backButton').classList.add('show');
+        
+        const filePath = `./sections/${section}.html`;
+        fetch(filePath, {cache:'no-store'})
+          .then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.text(); })
+          .then(html=>{ 
+            contentDiv.innerHTML = html; 
+            contentDiv.classList.add('page-transition');
+            runInlineScripts(contentDiv); 
+          })
+          .catch(err=>{ contentDiv.innerHTML = `<h2>Erreur</h2><p>Impossible de charger ${section}.</p><pre>${err.message}</pre>`; });
+      }, 300);
+    }
+    
+    function goBack(){
+      currentSection = null;
+      const contentDiv = document.getElementById('content');
+      contentDiv.classList.add('hiding');
+      
+      setTimeout(() => {
+        afficherAccueil();
+        document.getElementById('backButton').classList.remove('show');
+        document.getElementById('homeHeader').classList.remove('hide');
+      }, 300);
     }
 
     function envoyerPriere(){ const priere = (document.getElementById('priereInput')||{value:''}).value; if(priere.trim()) alert('Votre prière a été envoyée : '+priere); else alert('Veuillez entrer une prière'); }
 
     function afficherAccueil(){ 
-      document.getElementById('content').innerHTML = ''; 
+      currentSection = null;
+      document.getElementById('content').innerHTML = '';
+      document.getElementById('content').style.display = 'none';
       const sections = document.querySelector('.sections');
       sections.style.display = 'flex';
-      sections.querySelectorAll('.section').forEach((s, i) => {
-        s.style.animation = 'none';
-        setTimeout(() => {
-          s.style.animation = `fadeInUp 0.5s ease-out ${i * 0.1}s both`;
-        }, 10);
-      });
+      sections.style.opacity = '0';
+      
+      setTimeout(() => {
+        sections.style.opacity = '1';
+        sections.style.transition = 'opacity 0.4s ease';
+        sections.querySelectorAll('.section').forEach((s, i) => {
+          s.style.animation = 'none';
+          setTimeout(() => {
+            s.style.animation = `fadeInUp 0.5s ease-out ${i * 0.1}s both`;
+          }, 10);
+        });
+      }, 50);
     }
 
     // Toggle sidebar
@@ -747,7 +831,10 @@
     }
 
     function rateApp(e){ 
-      e.preventDefault(); 
+      e.preventDefault();
+      currentSection = 'rate';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
       const content = `
         <h2>⭐ Noter l'application</h2>
         <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; text-align: center; max-width: 500px; margin: 20px auto;">
@@ -772,7 +859,10 @@
     function submitRating(){ alert('Merci pour votre avis ! 🙏'); afficherAccueil(); }
     
     function showTerms(e){ 
-      e.preventDefault(); 
+      e.preventDefault();
+      currentSection = 'terms';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
       const content = `
         <h2>📄 Termes et Conditions</h2>
         <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0; line-height: 1.8;">
@@ -803,7 +893,10 @@
     }
     
     function contactUs(e){ 
-      e.preventDefault(); 
+      e.preventDefault();
+      currentSection = 'contact';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
       const content = `
         <h2>📧 Contactez-nous</h2>
         <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0;">
@@ -852,6 +945,9 @@
     
     function showAbout(e){
       e.preventDefault();
+      currentSection = 'about';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
       const content = `
         <h2>ℹ️ À propos de nous</h2>
         <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; margin: 20px 0; line-height: 1.8;">

@@ -1,5 +1,5 @@
 
-AUTOMATISATION 1.0
+Automatisation 1.1
 
 Copyright 2025 (c) WebIntoApp.com
 
