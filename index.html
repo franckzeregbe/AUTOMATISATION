@@ -492,21 +492,22 @@
   </button>
 
   <div class="main" id="main">
-    <div class="home-header" id="homeHeader" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-      <div style="flex:1"></div>
-      <h1 style="margin:0">Bienvenue dans AUTOMATISATION</h1>
-      <div style="flex:1;display:flex;justify-content:flex-end">
+    <div class="home-header" id="homeHeader" style="text-align:center;">
+      <div style="position:absolute;top:10px;right:20px;">
         <div id="userProfile" style="display: none; background: rgba(255,255,255,0.08); padding: 10px 15px; border-radius: 8px; cursor: pointer;" onclick="toggleUserMenu()">
           <div style="font-size: 12px; display:flex; align-items:center; gap:8px;"><svg class="icon-svg" aria-hidden="true"><use href="#icon-user"></use></svg><span id="userDisplayName">Utilisateur</span></div>
-          <div id="userMenu" style="display: none; position: absolute; background: #333; border-radius: 8px; margin-top: 5px; right: 20px; min-width: 180px; z-index: 100;">
+          <div id="userMenu" style="display: none; position: absolute; background: #333; border-radius: 8px; margin-top: 5px; right: 0; min-width: 180px; z-index: 100;">
             <div style="padding: 10px; border-bottom: 1px solid #555; cursor: pointer;" onclick="viewProfile()">Voir mon profil</div>
             <div style="padding: 10px; cursor: pointer;" onclick="logout()">Se déconnecter</div>
           </div>
         </div>
       </div>
-    </div>
-
-    <p>Explorez les sections spirituelles, éducatives et interactives pour enrichir votre expérience.</p>
+      
+      <div style="margin: 20px 0;">
+        <h1 style="margin:0 0 10px 0; font-size:28px;">Bienvenue <span id="userName" style="color:#ffeb3b;"></span> ! 🙏</h1>
+        <p style="font-size:16px; opacity:0.9; margin:5px 0;">Votre compagnon spirituel quotidien</p>
+        <p style="font-size:14px; opacity:0.7; margin:15px 0;">Explorez les sections spirituelles, éducatives et interactives pour enrichir votre expérience avec Jésus-Christ</p>
+      </div>
     </div>
 
     <div id="verseOfDay" class="verse-box" style="display:none; position:fixed; right:20px; top:80px; max-width:280px; z-index:900; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
@@ -714,6 +715,7 @@
     function initializeApp(){
       document.getElementById('userProfile').style.display = 'block';
       document.getElementById('userDisplayName').textContent = currentUser.fullname;
+      document.getElementById('userName').textContent = currentUser.fullname;
       document.getElementById('sidebarProfile').style.display = 'block';
       document.getElementById('sidebarUsername').textContent = currentUser.fullname;
       document.getElementById('sidebarEmail').textContent = currentUser.phone;
@@ -729,7 +731,6 @@
       
       updateStreak();
       showVerseOfDay();
-      showToast('🙏 Bienvenue ' + currentUser.fullname + ' !');
       setTimeout(()=>{ const s = document.getElementById('splash'); if(s) s.style.display='none'; }, 800);
     }
 
