@@ -100,11 +100,8 @@ const prayerImages = {
 
 function sharePrayer(title, text, ref) {
   const shareText = `🙏 ${title}\n\n${text}\n\n📖 ${ref}\n\n✨ Partagé depuis AUTOMATISATION`;
-  if(navigator.share) {
-    navigator.share({ title, text: shareText }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(shareText).then(() => alert('✅ Prière copiée !'));
-  }
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+  window.open(whatsappUrl, '_blank');
 }
 
 function showPrayerCategory(category, evt) {
