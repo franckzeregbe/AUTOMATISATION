@@ -328,9 +328,77 @@ function cancelAudio() {
 }
 
 function envoyerPriere() {
-  // Cacher l'aperçu audio si présent
   if (audioBlob) cancelAudio();
   const input = document.getElementById("priereInput").value.trim().toLowerCase();
+
+  // Commandes de navigation
+  const navCommands = {
+    'priere': 'prieres', 'prieres': 'prieres',
+    'video': 'videos', 'videos': 'videos',
+    'quiz': 'jeux', 'jeu': 'jeux', 'jeux': 'jeux',
+    'bible': 'bible',
+    'don': 'dons', 'dons': 'dons', 'donner': 'dons',
+    'rendez-vous': 'rendez-vous', 'rdv': 'rendez-vous',
+    'statistique': 'stats', 'stats': 'stats',
+    'favori': 'favorites', 'favoris': 'favorites',
+    'note': 'notes', 'notes': 'notes',
+    'objectif': 'goals', 'objectifs': 'goals',
+    'temoignage': 'testimonies', 'témoignages': 'testimonies',
+    'communaute': 'communaute', 'communauté': 'communaute',
+    'parametre': 'parametres', 'paramètres': 'parametres'
+  };
+
+  // Vérifier si c'est une commande de navigation
+  for (const [keyword, section] of Object.entries(navCommands)) {
+    if (input.includes(keyword)) {
+      const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
+      const reponseDiv = document.getElementById("reponse");
+      reponseDiv.innerHTML = `
+        <p class="compassion">✨ ${userName}, je vous guide vers la section demandée !</p>
+        <p style="background: rgba(255,235,59,0.1); padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <strong style="color: #ffeb3b;">📍 Navigation :</strong><br>
+          Je vous redirige vers <strong>${keyword}</strong>...
+        </p>
+        <p class="signature">✨ JOHN - Votre guide dans l'application</p>
+      `;
+      reponseDiv.classList.add("active");
+      setTimeout(() => {
+        if(['stats','favorites','notes','goals','testimonies'].includes(section)) {
+          const actions = {stats: showStats, favorites: showFavorites, notes: showNotes, goals: showGoals, testimonies: showTestimonies};
+          actions[section]({preventDefault: ()=>{}});
+        } else {
+          afficher(section);
+        }
+      }, 1500);
+      document.getElementById("priereInput").value = '';
+      return;
+    }
+  }
+
+  // Aide sur l'application
+  if (input.includes('aide') || input.includes('comment') || input.includes('utiliser') || input.includes('fonctionner')) {
+    const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
+    const reponseDiv = document.getElementById("reponse");
+    reponseDiv.innerHTML = `
+      <p class="compassion">📖 ${userName}, voici comment utiliser l'application :</p>
+      <div style="background: rgba(255,235,59,0.1); padding: 15px; border-radius: 8px; margin: 15px 0;">
+        <strong style="color: #ffeb3b;">🎯 Sections disponibles :</strong><br>
+        • <strong>Prières</strong> : 8 catégories de prières quotidiennes<br>
+        • <strong>Bible</strong> : 3 versions avec audio et mode hors ligne<br>
+        • <strong>Vidéos</strong> : Contenus spirituels inspirants<br>
+        • <strong>Quiz</strong> : 5 niveaux pour tester vos connaissances<br>
+        • <strong>Dons</strong> : Soutenez l'œuvre (5 méthodes)<br>
+        • <strong>Communauté</strong> : Groupes, demandes de prière, événements<br>
+        • <strong>Statistiques</strong> : Suivez votre progression spirituelle
+      </div>
+      <p><strong>💡 Astuce :</strong> Dites-moi simplement où vous voulez aller ! Exemples :<br>
+      "Emmène-moi aux prières", "Je veux lire la Bible", "Montre-moi mes statistiques"</p>
+      <p class="signature">✨ JOHN - Votre guide spirituel et assistant d'application</p>
+    `;
+    reponseDiv.classList.add("active");
+    document.getElementById("priereInput").value = '';
+    return;
+  }
 
   const reponses = {
     guerison: [
@@ -404,10 +472,10 @@ function envoyerPriere() {
       </p>
       <p><strong>💡 Application pratique :</strong><br>${guide}</p>
       <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
-        📖 <strong>JOHN - IA Biblique</strong> : Je base toutes mes réponses sur les Écritures Saintes. 
-        Posez-moi d'autres questions bibliques, je suis là pour vous guider dans la Parole.
+        📖 <strong>JOHN - IA Biblique & Guide</strong> : Je réponds à vos questions bibliques et je vous guide dans l'application. 
+        Dites "aide" pour découvrir toutes les fonctionnalités ou nommez une section pour y accéder directement.
       </p>
-      <p class="signature">✨ JOHN - Agent IA Biblique • "Toute Écriture est inspirée de Dieu" (2 Timothée 3:16)</p>
+      <p class="signature">✨ JOHN - Agent IA Biblique & Assistant • "Ta parole est une lampe à mes pieds" (Psaume 119:105)</p>
     `;
   }
 
