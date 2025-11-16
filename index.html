@@ -801,11 +801,15 @@
     }
 
     function showVerseOfDay() {
+      const verseDiv = document.getElementById('verseOfDay');
+      if(!verseDiv) return;
       const dayIndex = new Date().getDate() % verses.length;
       const verse = verses[dayIndex];
-      document.getElementById('verseText').textContent = verse.text;
-      document.getElementById('verseRef').textContent = '- ' + verse.ref;
-      document.getElementById('verseOfDay').style.display = 'block';
+      const verseText = document.getElementById('verseText');
+      const verseRef = document.getElementById('verseRef');
+      if(verseText) verseText.textContent = verse.text;
+      if(verseRef) verseRef.textContent = '- ' + verse.ref;
+      verseDiv.style.display = 'block';
     }
 
     window.addEventListener('load', ()=>{
@@ -875,17 +879,22 @@
       loadProfilePicture();
       points = currentUser.points || 0; completed = currentUser.completed || 0;
       
-      document.getElementById('content').style.display = 'none';
-      document.getElementById('content').innerHTML = '';
-      document.querySelector('.sections').style.display = 'flex';
-      document.getElementById('homeHeader').classList.remove('hide');
-      document.getElementById('backButton').classList.remove('show');
-      document.getElementById('searchContainer').style.display = 'block';
-      document.getElementById('verseOfDay').style.display = 'block';
+      const lastPage = localStorage.getItem('currentPage') || 'accueil';
+      
+      if(lastPage !== 'accueil') {
+        afficher(lastPage);
+      } else {
+        document.getElementById('content').style.display = 'none';
+        document.getElementById('content').innerHTML = '';
+        document.querySelector('.sections').style.display = 'flex';
+        document.getElementById('homeHeader').classList.remove('hide');
+        document.getElementById('backButton').classList.remove('show');
+        document.getElementById('searchContainer').style.display = 'block';
+      }
       
       updateStreak();
-      showVerseOfDay();
-      setTimeout(()=>{ const s = document.getElementById('splash'); if(s) s.style.display='none'; }, 800);
+      const s = document.getElementById('splash');
+      if(s) s.style.display='none';
     }
 
     function logout(){
@@ -2064,17 +2073,6 @@
     // initial load
     document.addEventListener('DOMContentLoaded', ()=>{ 
       applyUserSettings();
-      
-      const lastPage = localStorage.getItem('currentPage') || 'accueil';
-      
-      if(lastPage !== 'accueil') {
-        afficher(lastPage);
-      } else {
-        document.getElementById('content').style.display = 'none';
-        document.getElementById('content').innerHTML = '';
-        document.querySelector('.sections').style.display = 'flex';
-        afficherAccueil();
-      }
       
       // Sur mobile, menu fermé par défaut
       if(window.innerWidth <= 768){
