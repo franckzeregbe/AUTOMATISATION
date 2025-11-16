@@ -24,9 +24,17 @@
   }
 </style>
 
-<div style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px;">
-  <p style="margin: 0;"><strong>📝 Note :</strong> Texte biblique en anglais (King James Version). <span id="offlineStatus">📶 Mode en ligne</span></p>
-  <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Les chapitres consultés sont sauvegardés pour une lecture hors ligne.</p>
+<!-- Sélecteur de version -->
+<div style="margin: 15px 0; padding: 15px; background: rgba(106,17,203,0.2); border-radius: 10px;">
+  <label style="font-size: 16px; font-weight: bold; margin-right: 10px;">📖 Version:</label>
+  <select id="bibleVersionSelect" onchange="changeBibleVersion()" style="padding: 10px 20px; border-radius: 8px; background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.3); font-size: 15px; font-weight: bold; cursor: pointer;">
+    <option value="kjv">King James Version (KJV)</option>
+    <option value="lsg">Louis Segond 1910 (LSG)</option>
+    <option value="darby">Darby (FR)</option>
+  </select>
+  <div style="margin-top: 10px; font-size: 13px; opacity: 0.9;">
+    <span id="offlineStatus">📶 Mode en ligne</span> • Les chapitres sont sauvegardés pour lecture hors ligne
+  </div>
 </div>
 
 <div id="audioControls" style="display: none; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.08); border-radius: 10px;">
@@ -188,17 +196,18 @@
     bibleCurrChapter = 1;
     const book = bibleBooks[index];
     const viewer = document.getElementById('bibleViewer');
+    const version = document.getElementById('bibleVersionSelect').value;
     viewer.innerHTML = '<em>Chargement...</em>';
 
     try {
       // Try offline cache first
-      let data = await getBibleChapter(book.id, bibleCurrChapter).catch(() => null);
+      let data = await getBibleChapter(book.id + '_' + version, bibleCurrChapter).catch(() => null);
       
       if (!data) {
         // Fetch from API if not cached
-        const response = await fetch(`https://bible-api.com/${book.id}+${bibleCurrChapter}?translation=kjv`);
+        const response = await fetch(`https://bible-api.com/${book.id}+${bibleCurrChapter}?translation=${version}`);
         data = await response.json();
-        saveBibleChapter(book.id, bibleCurrChapter, data);
+        saveBibleChapter(book.id + '_' + version, bibleCurrChapter, data);
         document.getElementById('offlineStatus').textContent = '📶 Mode en ligne';
       } else {
         document.getElementById('offlineStatus').textContent = '💾 Mode hors ligne';
@@ -241,6 +250,7 @@
     const chapter = parseInt(document.getElementById('chapterSelect').value);
     bibleCurrChapter = chapter;
     const book = bibleBooks[bibleCurrBook];
+    const version = document.getElementById('bibleVersionSelect').value;
     const viewer = document.getElementById('bibleViewer');
     
     const currentScroll = viewer.scrollTop;
@@ -248,13 +258,13 @@
 
     try {
       // Try offline cache first
-      let data = await getBibleChapter(book.id, chapter).catch(() => null);
+      let data = await getBibleChapter(book.id + '_' + version, chapter).catch(() => null);
       
       if (!data) {
         // Fetch from API if not cached
-        const response = await fetch(`https://bible-api.com/${book.id}+${chapter}?translation=kjv`);
+        const response = await fetch(`https://bible-api.com/${book.id}+${chapter}?translation=${version}`);
         data = await response.json();
-        saveBibleChapter(book.id, chapter, data);
+        saveBibleChapter(book.id + '_' + version, chapter, data);
         document.getElementById('offlineStatus').textContent = '📶 Mode en ligne';
       } else {
         document.getElementById('offlineStatus').textContent = '💾 Mode hors ligne';
