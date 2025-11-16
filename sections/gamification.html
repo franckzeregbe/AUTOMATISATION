@@ -1,0 +1,235 @@
+<h2>🏆 Gamification</h2>
+
+<div style="display: grid; gap: 20px; margin: 20px 0;">
+  <!-- Niveau actuel -->
+  <div style="background: linear-gradient(135deg, #6a11cb, #2575fc); padding: 25px; border-radius: 12px; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 10px;">🌟</div>
+    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">Niveau</div>
+    <div id="userLevel" style="font-size: 42px; font-weight: bold;">1</div>
+    <div style="margin-top: 15px;">
+      <div style="background: rgba(0,0,0,0.2); height: 12px; border-radius: 6px; overflow: hidden;">
+        <div id="levelProgress" style="background: #ffeb3b; height: 100%; width: 0%; transition: width 0.5s;"></div>
+      </div>
+      <div id="levelText" style="font-size: 12px; margin-top: 8px; opacity: 0.9;">0 / 100 XP</div>
+    </div>
+  </div>
+
+  <!-- Badges -->
+  <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+    <h3 style="margin: 0 0 15px 0;">🏅 Mes Badges</h3>
+    <div id="badgesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px;"></div>
+  </div>
+
+  <!-- Défis actifs -->
+  <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+    <h3 style="margin: 0 0 15px 0;">⚡ Défis Actifs</h3>
+    <div id="challengesList"></div>
+  </div>
+
+  <!-- Classement -->
+  <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+    <h3 style="margin: 0 0 15px 0;">🏆 Classement</h3>
+    <div id="leaderboard"></div>
+  </div>
+</div>
+
+<button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>
+
+<script>
+const allBadges = [
+  {id: 'first_prayer', name: 'Première Prière', icon: '🙏', desc: 'Effectuer votre première prière', xp: 10, condition: () => getUserStats().prayers >= 1},
+  {id: 'prayer_warrior', name: 'Guerrier de Prière', icon: '⚔️', desc: 'Effectuer 50 prières', xp: 50, condition: () => getUserStats().prayers >= 50},
+  {id: 'first_quiz', name: 'Premier Quiz', icon: '🎮', desc: 'Compléter votre premier quiz', xp: 10, condition: () => getUserStats().quizCompleted >= 1},
+  {id: 'quiz_master', name: 'Maître du Quiz', icon: '🎓', desc: 'Compléter 20 quiz', xp: 100, condition: () => getUserStats().quizCompleted >= 20},
+  {id: 'bible_reader', name: 'Lecteur Biblique', icon: '📖', desc: 'Lire 10 chapitres', xp: 30, condition: () => getUserStats().bibleReading >= 10},
+  {id: 'bible_scholar', name: 'Érudit Biblique', icon: '📚', desc: 'Lire 100 chapitres', xp: 200, condition: () => getUserStats().bibleReading >= 100},
+  {id: 'streak_7', name: 'Semaine Fidèle', icon: '🔥', desc: '7 jours de connexion', xp: 50, condition: () => currentUser.streak >= 7},
+  {id: 'streak_30', name: 'Mois Dévoué', icon: '🌟', desc: '30 jours de connexion', xp: 150, condition: () => currentUser.streak >= 30},
+  {id: 'generous', name: 'Généreux', icon: '💖', desc: 'Faire un don', xp: 100, condition: () => getUserStats().donations >= 1},
+  {id: 'community', name: 'Communautaire', icon: '👥', desc: 'Rejoindre un groupe', xp: 20, condition: () => getUserStats().groupsJoined >= 1},
+  {id: 'testimony', name: 'Témoin', icon: '💬', desc: 'Partager un témoignage', xp: 30, condition: () => getUserStats().testimonies >= 1},
+  {id: 'goal_setter', name: 'Objectif Fixé', icon: '🎯', desc: 'Créer un objectif', xp: 15, condition: () => getUserStats().goalsCreated >= 1}
+];
+
+const challenges = [
+  {id: 'daily_prayer', name: 'Prière Quotidienne', icon: '🙏', desc: 'Prier aujourd\'hui', xp: 10, type: 'daily', progress: 0, target: 1},
+  {id: 'weekly_quiz', name: 'Quiz Hebdomadaire', icon: '🎮', desc: 'Compléter 3 quiz cette semaine', xp: 30, type: 'weekly', progress: 0, target: 3},
+  {id: 'bible_chapter', name: 'Lecture Biblique', icon: '📖', desc: 'Lire 5 chapitres', xp: 25, type: 'weekly', progress: 0, target: 5},
+  {id: 'share_verse', name: 'Partage de Verset', icon: '📤', desc: 'Partager 2 versets', xp: 20, type: 'weekly', progress: 0, target: 2}
+];
+
+function getUserStats() {
+  return JSON.parse(localStorage.getItem('userStats_' + currentUser.phone)) || {
+    prayers: 0, quizCompleted: 0, bibleReading: 0, donations: 0, 
+    groupsJoined: 0, testimonies: 0, goalsCreated: 0
+  };
+}
+
+function getUserBadges() {
+  return JSON.parse(localStorage.getItem('userBadges_' + currentUser.phone)) || [];
+}
+
+function getUserChallenges() {
+  return JSON.parse(localStorage.getItem('userChallenges_' + currentUser.phone)) || challenges;
+}
+
+function getUserXP() {
+  return parseInt(localStorage.getItem('userXP_' + currentUser.phone)) || 0;
+}
+
+function setUserXP(xp) {
+  localStorage.setItem('userXP_' + currentUser.phone, xp);
+}
+
+function calculateLevel(xp) {
+  return Math.floor(xp / 100) + 1;
+}
+
+function addXP(amount) {
+  const currentXP = getUserXP();
+  const newXP = currentXP + amount;
+  setUserXP(newXP);
+  checkLevelUp(currentXP, newXP);
+  return newXP;
+}
+
+function checkLevelUp(oldXP, newXP) {
+  const oldLevel = calculateLevel(oldXP);
+  const newLevel = calculateLevel(newXP);
+  if(newLevel > oldLevel) {
+    alert(`🎉 Félicitations ! Vous êtes passé au niveau ${newLevel} !`);
+  }
+}
+
+function checkBadges() {
+  const userBadges = getUserBadges();
+  const newBadges = [];
+  
+  allBadges.forEach(badge => {
+    if(!userBadges.includes(badge.id) && badge.condition()) {
+      userBadges.push(badge.id);
+      newBadges.push(badge);
+      addXP(badge.xp);
+    }
+  });
+  
+  localStorage.setItem('userBadges_' + currentUser.phone, JSON.stringify(userBadges));
+  
+  if(newBadges.length > 0) {
+    newBadges.forEach(badge => {
+      alert(`🏅 Nouveau badge débloqué : ${badge.name} (+${badge.xp} XP)`);
+    });
+  }
+}
+
+function renderBadges() {
+  const userBadges = getUserBadges();
+  const container = document.getElementById('badgesList');
+  
+  let html = '';
+  allBadges.forEach(badge => {
+    const unlocked = userBadges.includes(badge.id);
+    html += `
+      <div style="background: ${unlocked ? 'rgba(106,17,203,0.2)' : 'rgba(0,0,0,0.2)'}; padding: 15px; border-radius: 10px; text-align: center; ${unlocked ? 'border: 2px solid #ffeb3b;' : 'opacity: 0.5;'}">
+        <div style="font-size: 36px; margin-bottom: 8px;">${badge.icon}</div>
+        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">${badge.name}</div>
+        <div style="font-size: 10px; opacity: 0.8;">${badge.desc}</div>
+        ${unlocked ? '<div style="color: #ffeb3b; font-size: 10px; margin-top: 5px;">✓ Débloqué</div>' : ''}
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function renderChallenges() {
+  const userChallenges = getUserChallenges();
+  const container = document.getElementById('challengesList');
+  
+  if(userChallenges.length === 0) {
+    container.innerHTML = '<p style="text-align: center; opacity: 0.7;">Aucun défi actif</p>';
+    return;
+  }
+  
+  let html = '';
+  userChallenges.forEach((challenge, i) => {
+    const progress = Math.min(100, (challenge.progress / challenge.target) * 100);
+    html += `
+      <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 10px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">${challenge.icon}</span>
+            <div>
+              <div style="font-weight: bold;">${challenge.name}</div>
+              <div style="font-size: 11px; opacity: 0.7;">${challenge.desc}</div>
+            </div>
+          </div>
+          <div style="background: linear-gradient(135deg, #ff9800, #ff5722); padding: 5px 10px; border-radius: 5px; font-size: 11px;">+${challenge.xp} XP</div>
+        </div>
+        <div style="background: rgba(0,0,0,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+          <div style="background: linear-gradient(90deg, #6a11cb, #2575fc); height: 100%; width: ${progress}%; transition: width 0.3s;"></div>
+        </div>
+        <div style="text-align: center; margin-top: 5px; font-size: 11px;">${challenge.progress} / ${challenge.target}</div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function renderLeaderboard() {
+  const container = document.getElementById('leaderboard');
+  const allUsers = JSON.parse(localStorage.getItem('appUsers')) || [];
+  
+  const leaderboard = allUsers.map(user => ({
+    name: user.fullname,
+    xp: parseInt(localStorage.getItem('userXP_' + user.phone)) || 0,
+    level: calculateLevel(parseInt(localStorage.getItem('userXP_' + user.phone)) || 0)
+  })).sort((a, b) => b.xp - a.xp).slice(0, 10);
+  
+  if(leaderboard.length === 0) {
+    container.innerHTML = '<p style="text-align: center; opacity: 0.7;">Aucun utilisateur</p>';
+    return;
+  }
+  
+  let html = '';
+  leaderboard.forEach((user, i) => {
+    const isCurrentUser = user.name === currentUser.fullname;
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
+    html += `
+      <div style="background: ${isCurrentUser ? 'rgba(106,17,203,0.2)' : 'rgba(255,255,255,0.05)'}; padding: 12px 15px; border-radius: 8px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; ${isCurrentUser ? 'border: 2px solid #ffeb3b;' : ''}">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 20px; min-width: 30px;">${medal}</span>
+          <div>
+            <div style="font-weight: bold;">${user.name} ${isCurrentUser ? '(Vous)' : ''}</div>
+            <div style="font-size: 11px; opacity: 0.7;">Niveau ${user.level}</div>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-weight: bold; color: #ffeb3b;">${user.xp} XP</div>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function renderLevel() {
+  const xp = getUserXP();
+  const level = calculateLevel(xp);
+  const xpInLevel = xp % 100;
+  const progress = xpInLevel;
+  
+  document.getElementById('userLevel').textContent = level;
+  document.getElementById('levelProgress').style.width = progress + '%';
+  document.getElementById('levelText').textContent = `${xpInLevel} / 100 XP`;
+}
+
+// Initialize
+checkBadges();
+renderLevel();
+renderBadges();
+renderChallenges();
+renderLeaderboard();
+</script>

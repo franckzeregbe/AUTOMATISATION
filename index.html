@@ -582,6 +582,7 @@
     <a class="menu-item" href="#" onclick="showNotes(event)"><span>📝 Mes Notes</span></a>
     <a class="menu-item" href="#" onclick="showGoals(event)"><span>🎯 Objectifs</span></a>
     <a class="menu-item" href="#" onclick="showTestimonies(event)"><span>💬 Témoignages</span></a>
+    <a class="menu-item" href="#" data-path="sections/gamification.html" onclick="navClick(event)"><span>🏆 Gamification</span></a>
     <a class="menu-item" href="#" data-path="sections/communaute.html" onclick="navClick(event)"><span>👥 Communauté</span></a>
     <a class="menu-item" href="#" data-path="sections/plan-lecture.html" onclick="navClick(event)"><span>📖 Plan de Lecture</span></a>
     <a class="menu-item" href="#" data-path="sections/rappels.html" onclick="navClick(event)"><span>🔔 Rappels de Prière</span></a>
@@ -1717,6 +1718,7 @@
       const notes = JSON.parse(localStorage.getItem('notes_' + currentUser.phone)) || [];
       notes.push({content: noteText, date: new Date().toLocaleString('fr-FR')});
       localStorage.setItem('notes_' + currentUser.phone, JSON.stringify(notes));
+      addGamificationXP(5, 'Note ajoutée');
       showNotes({preventDefault: ()=>{}});
     }
 
@@ -1793,6 +1795,8 @@
       const target = type === 'daily' ? 1 : type === 'weekly' ? 7 : 30;
       goals.push({title, type, current: 0, target, created: new Date().toISOString()});
       localStorage.setItem('goals_' + currentUser.phone, JSON.stringify(goals));
+      updateUserStat('goalsCreated');
+      addGamificationXP(15, 'Objectif créé');
       showGoals({preventDefault: ()=>{}});
     }
 
@@ -1801,7 +1805,9 @@
       if(goals[index].current < goals[index].target){
         goals[index].current++;
         localStorage.setItem('goals_' + currentUser.phone, JSON.stringify(goals));
+        addGamificationXP(5, 'Progrès objectif');
         if(goals[index].current === goals[index].target){
+          addGamificationXP(20, 'Objectif atteint');
           alert('🎉 Félicitations ! Objectif atteint !');
         }
         showGoals({preventDefault: ()=>{}});
@@ -1877,6 +1883,8 @@
         date: new Date().toLocaleDateString('fr-FR')
       });
       localStorage.setItem('testimonies', JSON.stringify(testimonies));
+      updateUserStat('testimonies');
+      addGamificationXP(30, 'Témoignage partagé');
       showTestimonies({preventDefault: ()=>{}});
     }
 
@@ -1885,6 +1893,29 @@
       testimonies.splice(index, 1);
       localStorage.setItem('testimonies', JSON.stringify(testimonies));
       showTestimonies({preventDefault: ()=>{}});
+    }
+
+    // Gamification helpers
+    function updateUserStat(statName, increment = 1) {
+      const stats = JSON.parse(localStorage.getItem('userStats_' + currentUser.phone)) || {
+        prayers: 0, quizCompleted: 0, bibleReading: 0, donations: 0,
+        groupsJoined: 0, testimonies: 0, goalsCreated: 0
+      };
+      stats[statName] = (stats[statName] || 0) + increment;
+      localStorage.setItem('userStats_' + currentUser.phone, JSON.stringify(stats));
+    }
+    
+    function addGamificationXP(amount, reason) {
+      const currentXP = parseInt(localStorage.getItem('userXP_' + currentUser.phone)) || 0;
+      const newXP = currentXP + amount;
+      localStorage.setItem('userXP_' + currentUser.phone, newXP);
+      
+      const oldLevel = Math.floor(currentXP / 100) + 1;
+      const newLevel = Math.floor(newXP / 100) + 1;
+      if(newLevel > oldLevel) {
+        showToast(`🎉 Niveau ${newLevel} atteint !`);
+      }
+      showToast(`+${amount} XP - ${reason}`);
     }
 
     // Auto-save session every 30 seconds
