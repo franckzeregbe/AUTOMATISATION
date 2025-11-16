@@ -1,0 +1,165 @@
+<h2>🔔 Rappels de Prière</h2>
+
+<style>
+  .reminder-card {
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border-left: 4px solid #ff9800;
+  }
+  .time-input {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    margin: 8px 0;
+  }
+</style>
+
+<div style="margin: 20px 0;">
+  <p>Configurez des rappels pour vos moments de prière quotidiens.</p>
+  
+  <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+    <h3>➕ Ajouter un rappel</h3>
+    <input type="text" id="reminderTitle" placeholder="Titre du rappel (ex: Prière du matin)" class="time-input">
+    <input type="time" id="reminderTime" class="time-input">
+    <select id="reminderFrequency" class="time-input">
+      <option value="daily">Tous les jours</option>
+      <option value="weekdays">Jours de semaine</option>
+      <option value="weekends">Week-ends</option>
+      <option value="custom">Personnalisé</option>
+    </select>
+    <button onclick="addReminder()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%;">
+      ✅ Créer le rappel
+    </button>
+  </div>
+  
+  <div id="remindersList"></div>
+</div>
+
+<script>
+function loadReminders() {
+  const reminders = JSON.parse(localStorage.getItem('prayerReminders_' + currentUser.phone)) || [];
+  const container = document.getElementById('remindersList');
+  
+  if(reminders.length === 0) {
+    container.innerHTML = '<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucun rappel configuré</p>';
+    return;
+  }
+  
+  let html = '<h3>📋 Mes rappels</h3>';
+  reminders.forEach((reminder, i) => {
+    html += `
+      <div class="reminder-card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div style="flex: 1;">
+            <div style="font-weight: bold; font-size: 18px; margin-bottom: 8px;">${reminder.title}</div>
+            <div style="opacity: 0.8;">🕐 ${reminder.time}</div>
+            <div style="opacity: 0.7; font-size: 12px; margin-top: 5px;">
+              ${reminder.frequency === 'daily' ? 'Tous les jours' : 
+                reminder.frequency === 'weekdays' ? 'Jours de semaine' : 
+                reminder.frequency === 'weekends' ? 'Week-ends' : 'Personnalisé'}
+            </div>
+            <div style="margin-top: 10px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" ${reminder.enabled ? 'checked' : ''} onchange="toggleReminder(${i})" style="width: 18px; height: 18px;">
+                <span>Actif</span>
+              </label>
+            </div>
+          </div>
+          <button onclick="deleteReminder(${i})" style="background: #ff5252; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+            🗑️
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function addReminder() {
+  const title = document.getElementById('reminderTitle').value.trim();
+  const time = document.getElementById('reminderTime').value;
+  const frequency = document.getElementById('reminderFrequency').value;
+  
+  if(!title || !time) {
+    alert('⚠️ Veuillez remplir tous les champs');
+    return;
+  }
+  
+  const reminders = JSON.parse(localStorage.getItem('prayerReminders_' + currentUser.phone)) || [];
+  reminders.push({
+    title,
+    time,
+    frequency,
+    enabled: true,
+    created: new Date().toISOString()
+  });
+  
+  localStorage.setItem('prayerReminders_' + currentUser.phone, JSON.stringify(reminders));
+  
+  // Request notification permission
+  if('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+  
+  document.getElementById('reminderTitle').value = '';
+  document.getElementById('reminderTime').value = '';
+  loadReminders();
+  scheduleReminders();
+  alert('✅ Rappel créé avec succès !');
+}
+
+function toggleReminder(index) {
+  const reminders = JSON.parse(localStorage.getItem('prayerReminders_' + currentUser.phone)) || [];
+  reminders[index].enabled = !reminders[index].enabled;
+  localStorage.setItem('prayerReminders_' + currentUser.phone, JSON.stringify(reminders));
+  scheduleReminders();
+}
+
+function deleteReminder(index) {
+  if(!confirm('Supprimer ce rappel ?')) return;
+  const reminders = JSON.parse(localStorage.getItem('prayerReminders_' + currentUser.phone)) || [];
+  reminders.splice(index, 1);
+  localStorage.setItem('prayerReminders_' + currentUser.phone, JSON.stringify(reminders));
+  loadReminders();
+  scheduleReminders();
+}
+
+function scheduleReminders() {
+  // Check reminders every minute
+  const reminders = JSON.parse(localStorage.getItem('prayerReminders_' + currentUser.phone)) || [];
+  const now = new Date();
+  const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+  const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
+  
+  reminders.forEach(reminder => {
+    if(!reminder.enabled) return;
+    if(reminder.time !== currentTime) return;
+    
+    // Check frequency
+    if(reminder.frequency === 'weekdays' && (currentDay === 0 || currentDay === 6)) return;
+    if(reminder.frequency === 'weekends' && currentDay !== 0 && currentDay !== 6) return;
+    
+    // Show notification
+    if('Notification' in window && Notification.permission === 'granted') {
+      new Notification('🙏 ' + reminder.title, {
+        body: 'C\'est l\'heure de prier !',
+        icon: 'https://api.dicebear.com/7.x/icons/svg?seed=prayer',
+        badge: 'https://api.dicebear.com/7.x/icons/svg?seed=prayer'
+      });
+    } else {
+      alert('🙏 ' + reminder.title + '\n\nC\'est l\'heure de prier !');
+    }
+  });
+}
+
+// Check reminders every minute
+setInterval(scheduleReminders, 60000);
+
+loadReminders();
+</script>

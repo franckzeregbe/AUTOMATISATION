@@ -583,6 +583,7 @@
     <a class="menu-item" href="#" onclick="showGoals(event)"><span>🎯 Objectifs</span></a>
     <a class="menu-item" href="#" onclick="showTestimonies(event)"><span>💬 Témoignages</span></a>
     <a class="menu-item" href="#" data-path="sections/plan-lecture.html" onclick="navClick(event)"><span>📖 Plan de Lecture</span></a>
+    <a class="menu-item" href="#" data-path="sections/rappels.html" onclick="navClick(event)"><span>🔔 Rappels de Prière</span></a>
     <a class="menu-item" href="#" data-path="sections/parametres.html" onclick="navClick(event)"><svg aria-hidden><use href="#icon-settings"></use></svg> <span>Paramètres</span></a>
     <a class="menu-item" href="#" data-path="sections/admin.html" onclick="navClick(event)"><span>🔐 Admin</span></a>
     
@@ -1181,9 +1182,10 @@
           <div style="background: rgba(255,255,255,0.08); padding: 25px; border-radius: 10px; border-left: 4px solid #6a11cb;">
             <p style="font-size: 16px; line-height: 1.8; margin: 0;">${text}</p>
           </div>
-          <div style="text-align: center; margin-top: 20px;">
-            <button onclick="afficher('bible')" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin: 5px;">📖 Ouvrir la Bible</button>
-            <button onclick="addVerseToFavorites('${reference.replace(/'/g, "\\'")}', '${text.replace(/'/g, "\\'")}')" style="background: linear-gradient(135deg, #ff9800, #ff5722); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin: 5px;">⭐ Ajouter aux favoris</button>
+          <div style="text-align: center; margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+            <button onclick="afficher('bible')" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">📖 Ouvrir la Bible</button>
+            <button onclick="addVerseToFavorites('${reference.replace(/'/g, "\\'")}', '${text.replace(/'/g, "\\'")}')" style="background: linear-gradient(135deg, #ff9800, #ff5722); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">⭐ Favoris</button>
+            <button onclick="shareVerse('${reference.replace(/'/g, "\\'")}', '${text.replace(/'/g, "\\'")}')" style="background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">📤 Partager</button>
           </div>
         </div>
         <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour</button>
@@ -1203,6 +1205,24 @@
       });
       localStorage.setItem('favorites_' + currentUser.phone, JSON.stringify(favorites));
       alert('✅ Verset ajouté aux favoris !');
+    }
+    
+    function shareVerse(reference, text) {
+      const shareText = `📖 ${reference}\n\n"${text}"\n\n✨ Partagé depuis AUTOMATISATION`;
+      
+      if(navigator.share) {
+        navigator.share({
+          title: reference,
+          text: shareText
+        }).catch(() => {});
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(shareText).then(() => {
+          alert('✅ Verset copié dans le presse-papiers !');
+        }).catch(() => {
+          alert('⚠️ Impossible de copier le verset');
+        });
+      }
     }
     
     function selectSearchResult(key, type, action, verseData) {

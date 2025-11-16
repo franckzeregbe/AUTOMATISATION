@@ -227,6 +227,9 @@
       currentText = data.verses.map(v => v.text).join(' ');
       document.getElementById('audioControls').style.display = 'block';
       stopAudio();
+      
+      // Save to reading history
+      saveReadingHistory(book.fr, bibleCurrChapter);
     } catch(err) {
       viewer.innerHTML = `⚠️ Erreur de chargement. Vérifiez votre connexion Internet ou consultez un chapitre déjà téléchargé.<br><small>${err.message}</small>`;
       document.getElementById('audioControls').style.display = 'none';
@@ -276,6 +279,9 @@
       // Store text for audio
       currentText = data.verses.map(v => v.text).join(' ');
       stopAudio();
+      
+      // Save to reading history
+      saveReadingHistory(book.fr, chapter);
     } catch(err) {
       viewer.innerHTML = `⚠️ Erreur de chargement. Vérifiez votre connexion Internet ou consultez un chapitre déjà téléchargé.<br><small>${err.message}</small>`;
       document.getElementById('offlineStatus').textContent = '❌ Hors ligne';
@@ -288,6 +294,23 @@
     });
   }
 
+  function saveReadingHistory(bookName, chapter) {
+    const history = JSON.parse(localStorage.getItem('bibleHistory_' + currentUser.phone)) || [];
+    const entry = {
+      book: bookName,
+      chapter: chapter,
+      date: new Date().toISOString(),
+      timestamp: Date.now()
+    };
+    
+    // Remove duplicates and keep last 50 entries
+    const filtered = history.filter(h => !(h.book === bookName && h.chapter === chapter));
+    filtered.unshift(entry);
+    const limited = filtered.slice(0, 50);
+    
+    localStorage.setItem('bibleHistory_' + currentUser.phone, JSON.stringify(limited));
+  }
+  
   renderBibleBooks();
 
   // Audio functions
