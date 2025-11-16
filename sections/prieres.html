@@ -5,6 +5,7 @@
   .prayer-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #6a11cb; }
   .prayer-card h3 { margin: 0 0 10px 0; color: #ffeb3b; }
   .prayer-card p { margin: 8px 0; line-height: 1.6; }
+  .bible-ref { display: inline-block; margin-top: 10px; padding: 6px 12px; background: rgba(106,17,203,0.3); border-radius: 6px; font-size: 13px; color: #ffeb3b; font-style: italic; }
   .prayer-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
   .prayer-tab { padding: 10px 20px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: white; cursor: pointer; transition: all 0.3s; }
   .prayer-tab:hover { background: rgba(255,255,255,0.2); }
@@ -30,52 +31,52 @@
 <script>
 const prayers = {
   matin: [
-    { title: "Prière du matin", text: "Seigneur Jésus, merci pour cette nouvelle journée. Guide mes pas et que ta lumière éclaire mon chemin. Que ta volonté soit faite dans ma vie aujourd'hui. Amen." },
-    { title: "Louange matinale", text: "Père céleste, je te loue pour ta fidélité. Tu renouvelles tes compassions chaque matin. Remplis-moi de ta joie et de ta force pour ce jour. Au nom de Jésus, Amen." },
-    { title: "Consécration du jour", text: "Éternel Dieu, je consacre cette journée à ta gloire. Que mes paroles, mes pensées et mes actions te glorifient. Utilise-moi comme instrument de ta paix. Amen." },
-    { title: "Sagesse divine", text: "Seigneur, accorde-moi ta sagesse pour ce jour. Que ton Esprit me guide dans toutes mes décisions. Éclaire mon intelligence et fortifie mon cœur. Amen." }
+    { title: "Prière du matin", text: "Seigneur Jésus, merci pour cette nouvelle journée. Guide mes pas et que ta lumière éclaire mon chemin. Que ta volonté soit faite dans ma vie aujourd'hui. Amen.", ref: "Psaume 118:24" },
+    { title: "Louange matinale", text: "Père céleste, je te loue pour ta fidélité. Tu renouvelles tes compassions chaque matin. Remplis-moi de ta joie et de ta force pour ce jour. Au nom de Jésus, Amen.", ref: "Lamentations 3:22-23" },
+    { title: "Consécration du jour", text: "Éternel Dieu, je consacre cette journée à ta gloire. Que mes paroles, mes pensées et mes actions te glorifient. Utilise-moi comme instrument de ta paix. Amen.", ref: "Romains 12:1" },
+    { title: "Sagesse divine", text: "Seigneur, accorde-moi ta sagesse pour ce jour. Que ton Esprit me guide dans toutes mes décisions. Éclaire mon intelligence et fortifie mon cœur. Amen.", ref: "Jacques 1:5" }
   ],
   soir: [
-    { title: "Prière du soir", text: "Seigneur, merci pour ta protection aujourd'hui. Pardonne mes fautes et accorde-moi un repos paisible. Veille sur ma famille cette nuit. Amen." },
-    { title: "Reconnaissance", text: "Père, je te remercie pour toutes tes bénédictions. Tu as été fidèle tout au long de cette journée. Que ton nom soit glorifié. Amen." },
-    { title: "Repos en Dieu", text: "Éternel, je remets mon esprit entre tes mains. Accorde-moi un sommeil réparateur et des rêves paisibles. Que tes anges montent la garde autour de moi. Amen." },
-    { title: "Pardon et paix", text: "Seigneur Jésus, pardonne-moi pour mes erreurs d'aujourd'hui. Purifie mon cœur et renouvelle mon esprit. Que je m'endorme dans ta paix parfaite. Amen." }
+    { title: "Prière du soir", text: "Seigneur, merci pour ta protection aujourd'hui. Pardonne mes fautes et accorde-moi un repos paisible. Veille sur ma famille cette nuit. Amen.", ref: "Psaume 4:8" },
+    { title: "Reconnaissance", text: "Père, je te remercie pour toutes tes bénédictions. Tu as été fidèle tout au long de cette journée. Que ton nom soit glorifié. Amen.", ref: "1 Thessaloniciens 5:18" },
+    { title: "Repos en Dieu", text: "Éternel, je remets mon esprit entre tes mains. Accorde-moi un sommeil réparateur et des rêves paisibles. Que tes anges montent la garde autour de moi. Amen.", ref: "Psaume 91:11" },
+    { title: "Pardon et paix", text: "Seigneur Jésus, pardonne-moi pour mes erreurs d'aujourd'hui. Purifie mon cœur et renouvelle mon esprit. Que je m'endorme dans ta paix parfaite. Amen.", ref: "1 Jean 1:9" }
   ],
   famille: [
-    { title: "Bénédiction familiale", text: "Seigneur Jésus, bénis ma famille. Protège mes enfants, fortifie mon mariage, et que ta paix règne dans notre foyer. Que nous marchions ensemble dans ta lumière. Amen." },
-    { title: "Unité familiale", text: "Père céleste, crée l'unité dans ma famille. Guéris les blessures, restaure les relations brisées, et fais de notre maison un lieu de ton amour. Amen." },
-    { title: "Protection des enfants", text: "Seigneur, couvre mes enfants de ton sang précieux. Protège-les du mal, guide leurs pas, et fais d'eux des instruments de ta gloire. Qu'ils grandissent dans ta sagesse. Amen." },
-    { title: "Harmonie conjugale", text: "Père, fortifie mon mariage. Que l'amour, le respect et la compréhension règnent entre nous. Fais de notre union un témoignage de ton amour. Amen." }
+    { title: "Bénédiction familiale", text: "Seigneur Jésus, bénis ma famille. Protège mes enfants, fortifie mon mariage, et que ta paix règne dans notre foyer. Que nous marchions ensemble dans ta lumière. Amen.", ref: "Josué 24:15" },
+    { title: "Unité familiale", text: "Père céleste, crée l'unité dans ma famille. Guéris les blessures, restaure les relations brisées, et fais de notre maison un lieu de ton amour. Amen.", ref: "Psaume 133:1" },
+    { title: "Protection des enfants", text: "Seigneur, couvre mes enfants de ton sang précieux. Protège-les du mal, guide leurs pas, et fais d'eux des instruments de ta gloire. Qu'ils grandissent dans ta sagesse. Amen.", ref: "Proverbes 22:6" },
+    { title: "Harmonie conjugale", text: "Père, fortifie mon mariage. Que l'amour, le respect et la compréhension règnent entre nous. Fais de notre union un témoignage de ton amour. Amen.", ref: "Éphésiens 5:25" }
   ],
   travail: [
-    { title: "Faveur au travail", text: "Seigneur, accorde-moi ta faveur dans mon travail. Donne-moi la sagesse pour prendre de bonnes décisions et la force pour accomplir mes tâches. Que je sois une lumière pour mes collègues. Amen." },
-    { title: "Prospérité", text: "Père, ouvre les portes de la prospérité dans ma carrière. Que mes efforts portent du fruit et que je puisse être une bénédiction pour d'autres. Au nom de Jésus, Amen." },
-    { title: "Excellence professionnelle", text: "Éternel, donne-moi l'esprit d'excellence dans mon travail. Que je sois diligent, créatif et intègre. Fais de moi un exemple de ton caractère. Amen." },
-    { title: "Promotion divine", text: "Seigneur, tu es celui qui élève et qui abaisse. Accorde-moi la promotion qui vient de toi. Ouvre des portes que personne ne peut fermer. Amen." }
+    { title: "Faveur au travail", text: "Seigneur, accorde-moi ta faveur dans mon travail. Donne-moi la sagesse pour prendre de bonnes décisions et la force pour accomplir mes tâches. Que je sois une lumière pour mes collègues. Amen.", ref: "Colossiens 3:23" },
+    { title: "Prospérité", text: "Père, ouvre les portes de la prospérité dans ma carrière. Que mes efforts portent du fruit et que je puisse être une bénédiction pour d'autres. Au nom de Jésus, Amen.", ref: "Psaume 1:3" },
+    { title: "Excellence professionnelle", text: "Éternel, donne-moi l'esprit d'excellence dans mon travail. Que je sois diligent, créatif et intègre. Fais de moi un exemple de ton caractère. Amen.", ref: "Proverbes 22:29" },
+    { title: "Promotion divine", text: "Seigneur, tu es celui qui élève et qui abaisse. Accorde-moi la promotion qui vient de toi. Ouvre des portes que personne ne peut fermer. Amen.", ref: "Psaume 75:6-7" }
   ],
   guerison: [
-    { title: "Prière de guérison", text: "Seigneur Jésus, tu es le médecin des médecins. Touche mon corps de ta main guérisseuse. Par tes meurtrissures, je suis guéri. Restaure ma santé complètement. Amen." },
-    { title: "Force dans la maladie", text: "Père céleste, donne-moi la force dans cette épreuve. Que ta présence me console et que ta puissance me relève. Je crois en ta capacité de guérir. Amen." },
-    { title: "Guérison totale", text: "Au nom de Jésus, je déclare la guérison sur mon corps. Que toute maladie disparaisse, que toute douleur s'en aille. Je suis guéri par le sang de Jésus. Amen." },
-    { title: "Santé divine", text: "Seigneur, tu as promis que tu es l'Éternel qui me guérit. Je réclame cette promesse aujourd'hui. Restaure ma santé et renouvelle mes forces. Amen." }
+    { title: "Prière de guérison", text: "Seigneur Jésus, tu es le médecin des médecins. Touche mon corps de ta main guérisseuse. Par tes meurtrissures, je suis guéri. Restaure ma santé complètement. Amen.", ref: "Ésaïe 53:5" },
+    { title: "Force dans la maladie", text: "Père céleste, donne-moi la force dans cette épreuve. Que ta présence me console et que ta puissance me relève. Je crois en ta capacité de guérir. Amen.", ref: "Psaume 41:3" },
+    { title: "Guérison totale", text: "Au nom de Jésus, je déclare la guérison sur mon corps. Que toute maladie disparaisse, que toute douleur s'en aille. Je suis guéri par le sang de Jésus. Amen.", ref: "Jacques 5:15" },
+    { title: "Santé divine", text: "Seigneur, tu as promis que tu es l'Éternel qui me guérit. Je réclame cette promesse aujourd'hui. Restaure ma santé et renouvelle mes forces. Amen.", ref: "Exode 15:26" }
   ],
   protection: [
-    { title: "Bouclier divin", text: "Seigneur, tu es mon bouclier et ma forteresse. Protège-moi de tout mal, de tout danger visible et invisible. Que tes anges campent autour de moi. Amen." },
-    { title: "Sang de Jésus", text: "Je couvre ma vie, ma famille et mes biens du sang précieux de Jésus. Aucune arme forgée contre moi ne prospérera. Je suis protégé par le Tout-Puissant. Amen." },
-    { title: "Protection sur les routes", text: "Père céleste, protège-moi sur les routes. Que tes anges me précèdent et me suivent. Accorde-moi un voyage sûr et paisible. Amen." },
-    { title: "Sécurité divine", text: "Éternel, tu es mon refuge et ma citadelle. Je me cache sous l'ombre de tes ailes. Garde-moi de tout accident, de toute attaque de l'ennemi. Amen." }
+    { title: "Bouclier divin", text: "Seigneur, tu es mon bouclier et ma forteresse. Protège-moi de tout mal, de tout danger visible et invisible. Que tes anges campent autour de moi. Amen.", ref: "Psaume 91:1-2" },
+    { title: "Sang de Jésus", text: "Je couvre ma vie, ma famille et mes biens du sang précieux de Jésus. Aucune arme forgée contre moi ne prospérera. Je suis protégé par le Tout-Puissant. Amen.", ref: "Ésaïe 54:17" },
+    { title: "Protection sur les routes", text: "Père céleste, protège-moi sur les routes. Que tes anges me précèdent et me suivent. Accorde-moi un voyage sûr et paisible. Amen.", ref: "Psaume 121:8" },
+    { title: "Sécurité divine", text: "Éternel, tu es mon refuge et ma citadelle. Je me cache sous l'ombre de tes ailes. Garde-moi de tout accident, de toute attaque de l'ennemi. Amen.", ref: "Psaume 91:4" }
   ],
   delivrance: [
-    { title: "Liberté en Christ", text: "Seigneur Jésus, tu es venu pour libérer les captifs. Brise toute chaîne dans ma vie. Délivre-moi de toute oppression, de toute addiction, de tout lien maléfique. Amen." },
-    { title: "Victoire spirituelle", text: "Au nom de Jésus, je renonce à toute œuvre des ténèbres. Je brise tout pacte maléfique. Je suis libre par le sang de l'Agneau. Amen." },
-    { title: "Purification", text: "Seigneur, purifie mon cœur, mon esprit et mon âme. Lave-moi de toute souillure. Remplis-moi de ton Esprit Saint. Que ta lumière chasse toute ténèbre. Amen." },
-    { title: "Autorité en Christ", text: "Père, tu m'as donné autorité sur toute puissance de l'ennemi. Je lie toute force démoniaque. Je déclare ma victoire totale en Jésus-Christ. Amen." }
+    { title: "Liberté en Christ", text: "Seigneur Jésus, tu es venu pour libérer les captifs. Brise toute chaîne dans ma vie. Délivre-moi de toute oppression, de toute addiction, de tout lien maléfique. Amen.", ref: "Jean 8:36" },
+    { title: "Victoire spirituelle", text: "Au nom de Jésus, je renonce à toute œuvre des ténèbres. Je brise tout pacte maléfique. Je suis libre par le sang de l'Agneau. Amen.", ref: "2 Corinthiens 10:4" },
+    { title: "Purification", text: "Seigneur, purifie mon cœur, mon esprit et mon âme. Lave-moi de toute souillure. Remplis-moi de ton Esprit Saint. Que ta lumière chasse toute ténèbre. Amen.", ref: "Psaume 51:10" },
+    { title: "Autorité en Christ", text: "Père, tu m'as donné autorité sur toute puissance de l'ennemi. Je lie toute force démoniaque. Je déclare ma victoire totale en Jésus-Christ. Amen.", ref: "Luc 10:19" }
   ],
   finances: [
-    { title: "Prospérité financière", text: "Seigneur, tu es Jéhovah Jiré, mon pourvoyeur. Ouvre les écluses des cieux et déverse ta bénédiction financière sur ma vie. Que je ne manque de rien. Amen." },
-    { title: "Sagesse financière", text: "Père, donne-moi la sagesse pour gérer mes finances. Aide-moi à être un bon intendant de ce que tu me confies. Multiplie mes ressources. Amen." },
-    { title: "Percée financière", text: "Éternel, je déclare une percée financière dans ma vie. Ouvre des sources de revenus inattendues. Que ta faveur m'accompagne dans mes affaires. Amen." },
-    { title: "Libération des dettes", text: "Seigneur, libère-moi de toute dette. Donne-moi la capacité de rembourser ce que je dois. Fais de moi un prêteur et non un emprunteur. Amen." }
+    { title: "Prospérité financière", text: "Seigneur, tu es Jéhovah Jiré, mon pourvoyeur. Ouvre les écluses des cieux et déverse ta bénédiction financière sur ma vie. Que je ne manque de rien. Amen.", ref: "Malachie 3:10" },
+    { title: "Sagesse financière", text: "Père, donne-moi la sagesse pour gérer mes finances. Aide-moi à être un bon intendant de ce que tu me confies. Multiplie mes ressources. Amen.", ref: "Proverbes 3:9-10" },
+    { title: "Percée financière", text: "Éternel, je déclare une percée financière dans ma vie. Ouvre des sources de revenus inattendues. Que ta faveur m'accompagne dans mes affaires. Amen.", ref: "Philippiens 4:19" },
+    { title: "Libération des dettes", text: "Seigneur, libère-moi de toute dette. Donne-moi la capacité de rembourser ce que je dois. Fais de moi un prêteur et non un emprunteur. Amen.", ref: "Deutéronome 28:12" }
   ]
 };
 
@@ -90,6 +91,7 @@ function showPrayerCategory(category, evt) {
     <div class="prayer-card">
       <h3>${prayer.title}</h3>
       <p>${prayer.text}</p>
+      <div class="bible-ref">📖 ${prayer.ref}</div>
     </div>
   `).join('');
 }
