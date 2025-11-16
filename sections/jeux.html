@@ -150,6 +150,7 @@
   let currentQuestion = 0;
   let score = 0;
   let levelScores = [];
+  let usedQuestions = [];
 
   function showQuestion() {
     const quizDiv = document.getElementById("quiz");
@@ -191,6 +192,7 @@
         currentLevel++;
         currentQuestion = 0;
         score = 0;
+        usedQuestions = [];
         setTimeout(showQuestion, 4000);
       } else {
         document.getElementById("result").innerHTML +=
@@ -207,17 +209,41 @@
     if(correct) {
       score++;
       btn.style.background = "rgba(26,188,156,0.5)";
+      btn.innerHTML += " ✓";
+      
+      document.querySelectorAll(".options button").forEach(b => b.disabled = true);
+      setTimeout(() => {
+        usedQuestions.push(currentQuestion);
+        currentQuestion++;
+        showQuestion();
+      }, 1500);
     } else {
       btn.style.background = "rgba(231,76,60,0.5)";
+      btn.innerHTML += " ✗";
       let correctBtn = document.querySelectorAll(".options button")[questions[currentQuestion].answer];
-      correctBtn.style.background = "rgba(26,188,156,0.5)";
+      correctBtn.style.background = "rgba(26,188,156,0.3)";
+      correctBtn.innerHTML += " ✓";
+      
+      document.querySelectorAll(".options button").forEach(b => b.disabled = true);
+      
+      setTimeout(() => {
+        let availableQuestions = [];
+        for(let i = 0; i < questions.length; i++) {
+          if(!usedQuestions.includes(i) && i !== currentQuestion) {
+            availableQuestions.push(i);
+          }
+        }
+        
+        if(availableQuestions.length > 0) {
+          currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+          document.getElementById("result").innerHTML = "<span style='color:#e74c3c;'>❌ Mauvaise réponse ! Nouvelle question...</span>";
+        } else {
+          currentQuestion++;
+        }
+        
+        showQuestion();
+      }, 2000);
     }
-
-    document.querySelectorAll(".options button").forEach(b => b.disabled = true);
-    setTimeout(() => {
-      currentQuestion++;
-      showQuestion();
-    }, 1500);
   }
 
   function restartQuiz() {
@@ -225,6 +251,7 @@
     currentQuestion = 0;
     score = 0;
     levelScores = [];
+    usedQuestions = [];
     document.getElementById("result").innerHTML = "";
     document.getElementById("progress").style.width = "0%";
     document.getElementById("restartBtn").style.display = "none";
