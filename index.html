@@ -1835,6 +1835,37 @@
       }
     });
 
+    // Prevent pull-to-refresh on mobile
+    let lastTouchY = 0;
+    let preventPullToRefresh = false;
+
+    document.addEventListener('touchstart', (e) => {
+      lastTouchY = e.touches[0].clientY;
+      preventPullToRefresh = window.pageYOffset === 0;
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+      const touchY = e.touches[0].clientY;
+      const touchYDelta = touchY - lastTouchY;
+      lastTouchY = touchY;
+
+      if (preventPullToRefresh) {
+        // Prevent pull-to-refresh if at top and pulling down
+        if (touchYDelta > 0) {
+          e.preventDefault();
+          return false;
+        }
+      }
+    }, { passive: false });
+
+    // Prevent overscroll bounce
+    document.body.addEventListener('touchmove', (e) => {
+      if (e.target.closest('.main') || e.target.closest('.sidebar')) {
+        // Allow scrolling in main content and sidebar
+        return;
+      }
+    }, { passive: true });
+
     // initial load
     document.addEventListener('DOMContentLoaded', ()=>{ 
       document.getElementById('content').style.display = 'none';
