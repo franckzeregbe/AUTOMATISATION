@@ -79,10 +79,28 @@
     align-items: center;
     justify-content: center;
     font-size: 24px;
+    position: relative;
   }
   
   .voice-btn.recording {
     animation: pulse 1s infinite;
+    background: linear-gradient(135deg, #f44336, #e91e63);
+  }
+  
+  .audio-message {
+    background: rgba(255,255,255,0.08);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .audio-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
   }
   
   @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
@@ -136,15 +154,21 @@
   <div class="input-container">
     <input type="text" id="priereInput" placeholder="Ex: Seigneur Jésus, guéris mon enfant" onkeypress="if(event.key==='Enter') envoyerPriere()">
     <button onclick="envoyerPriere()">📤 Envoyer</button>
-    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Message vocal (nécessite HTTPS)">🎤</button>
+    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Reconnaissance vocale">🎤</button>
+    <button class="voice-btn" id="recordBtn" onclick="toggleRecording()" title="Enregistrer un message audio" style="background: linear-gradient(135deg, #4caf50, #66bb6a);">🎙️</button>
   </div>
-  <p id="voiceStatus" style="color: #ff5252; display: none; margin: 10px 0;">🔴 Enregistrement en cours...</p>
+  <p id="voiceStatus" style="color: #ff5252; display: none; margin: 10px 0; font-weight: bold;"></p>
+  <div id="audioPreview" style="display: none;"></div>
   <div id="reponse"></div>
 </div>
 
 <script>
 let recognition = null;
 let isRecording = false;
+let mediaRecorder = null;
+let audioChunks = [];
+let audioBlob = null;
+let recordingStream = null;
 
 function startConversation() {
   document.getElementById('greetingBox').style.display = 'none';
@@ -157,33 +181,24 @@ if (localStorage.getItem('agentGreeted') === 'true') {
 }
 
 async function toggleVoice() {
-  // Vérifier le support de la reconnaissance vocale
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('❌ Votre navigateur ne supporte pas la reconnaissance vocale. Utilisez Chrome ou Edge.');
-    return;
-  }
-
-  // Vérifier HTTPS (requis pour le micro)
-  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-    alert('⚠️ La reconnaissance vocale nécessite une connexion HTTPS sécurisée.\n\nVeuillez accéder à l\'application via:\nhttps://franckzeregbe.github.io/AUTOMATISATION\n\nOu utilisez la saisie texte.');
+    alert('❌ Reconnaissance vocale non supportée. Utilisez Chrome ou Edge.');
     return;
   }
 
   if (isRecording) {
-    stopRecording();
+    stopVoiceRecognition();
   } else {
-    // Demander la permission du microphone
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      startRecording();
+      startVoiceRecognition();
     } catch (error) {
-      alert('❌ Accès au microphone refusé. Veuillez autoriser l\'accès dans les paramètres de votre navigateur.');
-      console.error('Erreur microphone:', error);
+      alert('❌ Accès au microphone refusé.');
     }
   }
 }
 
-function startRecording() {
+function startVoiceRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
   recognition.lang = 'fr-FR';
@@ -193,48 +208,121 @@ function startRecording() {
   recognition.onstart = () => {
     isRecording = true;
     document.getElementById('voiceBtn').classList.add('recording');
+    document.getElementById('voiceStatus').textContent = '🎤 Parlez maintenant...';
     document.getElementById('voiceStatus').style.display = 'block';
   };
 
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
     document.getElementById('priereInput').value = transcript;
-    stopRecording();
+    stopVoiceRecognition();
   };
 
   recognition.onerror = (event) => {
-    console.error('Erreur reconnaissance vocale:', event.error);
-    let message = '❌ Erreur lors de l\'enregistrement.';
-    
-    if (event.error === 'not-allowed') {
-      message = '❌ Accès au microphone refusé. Autorisez l\'accès dans les paramètres.';
-    } else if (event.error === 'no-speech') {
-      message = '⚠️ Aucune parole détectée. Parlez plus fort.';
-    } else if (event.error === 'network') {
-      message = '❌ Erreur réseau. Vérifiez votre connexion.';
-    }
-    
+    let message = '❌ Erreur';
+    if (event.error === 'not-allowed') message = '❌ Microphone refusé';
+    else if (event.error === 'no-speech') message = '⚠️ Aucune parole détectée';
     alert(message);
-    stopRecording();
+    stopVoiceRecognition();
   };
 
-  recognition.onend = () => {
-    stopRecording();
-  };
-
+  recognition.onend = () => stopVoiceRecognition();
   recognition.start();
 }
 
-function stopRecording() {
-  if (recognition) {
-    recognition.stop();
-  }
+function stopVoiceRecognition() {
+  if (recognition) recognition.stop();
   isRecording = false;
   document.getElementById('voiceBtn').classList.remove('recording');
   document.getElementById('voiceStatus').style.display = 'none';
 }
 
+// Audio Recording Functions
+async function toggleRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopAudioRecording();
+  } else {
+    try {
+      await startAudioRecording();
+    } catch (error) {
+      alert('❌ Impossible d\'accéder au microphone.');
+    }
+  }
+}
+
+async function startAudioRecording() {
+  audioChunks = [];
+  recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(recordingStream);
+
+  mediaRecorder.ondataavailable = (event) => {
+    audioChunks.push(event.data);
+  };
+
+  mediaRecorder.onstop = () => {
+    audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+    displayAudioPreview();
+    recordingStream.getTracks().forEach(track => track.stop());
+  };
+
+  mediaRecorder.start();
+  document.getElementById('recordBtn').classList.add('recording');
+  document.getElementById('voiceStatus').textContent = '🔴 Enregistrement audio en cours... (Cliquez pour arrêter)';
+  document.getElementById('voiceStatus').style.display = 'block';
+}
+
+function stopAudioRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    document.getElementById('recordBtn').classList.remove('recording');
+    document.getElementById('voiceStatus').style.display = 'none';
+  }
+}
+
+function displayAudioPreview() {
+  const preview = document.getElementById('audioPreview');
+  const audioUrl = URL.createObjectURL(audioBlob);
+  
+  preview.innerHTML = `
+    <div class="audio-message">
+      <span>🎵 Message audio enregistré</span>
+      <audio controls src="${audioUrl}" style="flex: 1; max-width: 300px;"></audio>
+      <div class="audio-controls">
+        <button onclick="sendAudioMessage()" style="padding: 8px 16px; font-size: 13px;">📤 Envoyer</button>
+        <button onclick="cancelAudio()" style="padding: 8px 16px; font-size: 13px; background: #f44336;">❌ Annuler</button>
+      </div>
+    </div>
+  `;
+  preview.style.display = 'block';
+}
+
+function sendAudioMessage() {
+  if (!audioBlob) return;
+  
+  // Simuler l'envoi (dans une vraie app, vous enverriez à un serveur)
+  const reponseDiv = document.getElementById('reponse');
+  reponseDiv.innerHTML = `
+    <p class="compassion">🙏 J'ai reçu votre message audio.</p>
+    <p><em>"L'Éternel entend quand je crie à lui." - Psaume 4:3</em></p>
+    <p>Votre prière a été entendue. Dieu connaît les désirs de votre cœur et Il agit en votre faveur.</p>
+    <p class="signature">✨ Jésus revient bientôt</p>
+  `;
+  reponseDiv.classList.add('active');
+  
+  cancelAudio();
+  alert('✅ Message audio envoyé avec succès !');
+}
+
+function cancelAudio() {
+  document.getElementById('audioPreview').style.display = 'none';
+  document.getElementById('audioPreview').innerHTML = '';
+  audioBlob = null;
+  audioChunks = [];
+}
+
 function envoyerPriere() {
+  // Cacher l'aperçu audio si présent
+  if (audioBlob) cancelAudio();
   const input = document.getElementById("priereInput").value.trim().toLowerCase();
 
   const reponses = {
