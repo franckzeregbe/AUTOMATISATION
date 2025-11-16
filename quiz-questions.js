@@ -1,0 +1,1 @@
+﻿window.quizQuestions=[[{question:"Qui a construit l arche?",options:["Noé","Moïse","Abraham","David"],answer:0}]];
