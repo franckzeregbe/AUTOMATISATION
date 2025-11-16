@@ -17,7 +17,7 @@ AUTOMATISATION est une application web spirituelle professionnelle conçue pour 
 - 🎬 **Vidéos spirituelles** - 9 vidéos YouTube inspirantes
 - 🎮 **Quiz bibliques** - 4 niveaux progressifs (10-40 questions)
 - 📖 **Bible complète** - 3 versions (KJV, LS1910, Darby) avec audio
-- 💖 **Dons sécurisés** - 4 méthodes de paiement
+- 💖 **Dons sécurisés** - 5 méthodes de paiement (Orange Money, MTN, Wave CI, PayPal, Virement)
 - 🤖 **Agent de prière JOHN** - Assistant intelligent avec reconnaissance vocale
 
 ### Professionnelles

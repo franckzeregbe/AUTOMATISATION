@@ -121,20 +121,27 @@
   <div class="payment-card" onclick="showPaymentInfo('wave')">
     <div class="payment-logo">
       <svg viewBox="0 0 100 100" style="width: 60px; height: 60px;">
-        <defs>
-          <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#00D4AA;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#00A896;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <circle cx="50" cy="50" r="45" fill="url(#waveGradient)"/>
-        <path d="M25 50 Q30 35, 35 50 T45 50 Q50 35, 55 50 T65 50 Q70 35, 75 50" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
-        <text x="50" y="75" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">WAVE</text>
+        <rect width="100" height="100" rx="20" fill="#21C2A8"/>
+        <path d="M30 60 Q35 45, 40 60 T50 60 Q55 45, 60 60 T70 60" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <text x="50" y="85" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Wave CI</text>
       </svg>
     </div>
-    <h3>Wave</h3>
+    <h3>Wave Côte d'Ivoire</h3>
     <p>Sans frais, 100% gratuit</p>
     <span class="payment-badge">✓ 0% Frais</span>
+  </div>
+  
+  <div class="payment-card" onclick="showPaymentInfo('paypal')">
+    <div class="payment-logo">
+      <svg viewBox="0 0 100 100" style="width: 60px; height: 60px;">
+        <rect width="100" height="100" rx="15" fill="#003087"/>
+        <path d="M35 30 Q35 25, 40 25 L60 25 Q65 25, 65 30 L65 50 Q65 55, 60 55 L50 55 L48 65 Q47 70, 42 70 L35 70 Q30 70, 30 65 Z" fill="#009CDE"/>
+        <path d="M45 35 Q45 30, 50 30 L65 30 Q70 30, 70 35 L70 55 Q70 60, 65 60 L55 60 L53 70 Q52 75, 47 75 L40 75 Q35 75, 35 70 Z" fill="#012169"/>
+      </svg>
+    </div>
+    <h3>PayPal</h3>
+    <p>Paiement international</p>
+    <span class="payment-badge">✓ Mondial</span>
   </div>
   
   <div class="payment-card" onclick="showPaymentInfo('bank')">
@@ -259,20 +266,41 @@ function showPaymentInfo(method) {
       `
     },
     wave: {
-      title: '💚 Wave - Sans Frais !',
+      title: '💚 Wave Côte d\'Ivoire - Sans Frais !',
       content: `
         <p style="font-size: 16px; margin-bottom: 20px;">Donnez 100% de votre don, sans aucun frais :</p>
-        <div class="payment-number">+237 6XX XXX XXX</div>
+        <div class="payment-number">+225 XX XX XX XX XX</div>
         <ol class="steps-list" style="font-size: 15px; line-height: 2;">
-          <li>📱 Ouvrez l'application <strong>Wave</strong></li>
+          <li>📱 Ouvrez l'application <strong>Wave Côte d'Ivoire</strong></li>
           <li>💸 Appuyez sur <strong>"Envoyer"</strong></li>
-          <li>📞 Entrez le numéro ou scannez le QR code</li>
+          <li>📞 Entrez le numéro (+225) ou scannez le QR code</li>
           <li>💰 Saisissez le montant (0% de frais !)</li>
           <li>🔐 Confirmez avec votre code PIN</li>
           <li>✅ Transfert instantané et gratuit</li>
         </ol>
-        <p style="margin-top: 20px; padding: 15px; background: rgba(0,217,165,0.2); border-radius: 8px; font-size: 14px;">
-          💚 Avec Wave, 100% de votre don va directement à l'œuvre ! Aucun frais prélevé.
+        <p style="margin-top: 20px; padding: 15px; background: rgba(33,194,168,0.2); border-radius: 8px; font-size: 14px;">
+          💚 Avec Wave CI, 100% de votre don va directement à l'œuvre ! Aucun frais prélevé.
+        </p>
+      `
+    },
+    paypal: {
+      title: '💙 PayPal - Paiement International',
+      content: `
+        <p style="font-size: 16px; margin-bottom: 20px;">Donnez depuis n'importe où dans le monde :</p>
+        <div class="payment-number">dons@automatisation.com</div>
+        <ol class="steps-list" style="font-size: 15px; line-height: 2;">
+          <li>🌐 Connectez-vous à votre compte <strong>PayPal</strong></li>
+          <li>💸 Cliquez sur <strong>"Envoyer de l'argent"</strong></li>
+          <li>📧 Entrez l'email : <strong>dons@automatisation.com</strong></li>
+          <li>💰 Saisissez le montant en EUR, USD ou XOF</li>
+          <li>📝 Ajoutez une note (optionnel) : "Don AUTOMATISATION"</li>
+          <li>✅ Confirmez le paiement</li>
+        </ol>
+        <p style="margin-top: 20px; padding: 15px; background: rgba(0,48,135,0.2); border-radius: 8px; font-size: 14px;">
+          💙 PayPal accepte toutes les cartes bancaires et devises. Sécurisé et international.
+        </p>
+        <p style="margin-top: 15px; font-size: 13px; opacity: 0.8;">
+          📧 Reçu fiscal envoyé automatiquement par email après votre don.
         </p>
       `
     },
@@ -283,8 +311,8 @@ function showPaymentInfo(method) {
         <div style="background: rgba(255,255,255,0.08); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: left;">
           <p><strong>🏦 Banque :</strong> [Nom de la Banque]</p>
           <p><strong>👤 Titulaire :</strong> AUTOMATISATION - Œuvre Spirituelle</p>
-          <p><strong>🌍 Pays :</strong> Cameroun</p>
-          <div class="payment-number" style="margin: 15px 0;">IBAN: CM21 XXXX XXXX XXXX XXXX XXXX</div>
+          <p><strong>🌍 Pays :</strong> Côte d'Ivoire</p>
+          <div class="payment-number" style="margin: 15px 0;">IBAN: CI93 XXXX XXXX XXXX XXXX XXXX</div>
           <p><strong>💬 Libellé :</strong> "Don AUTOMATISATION - [Votre Nom]"</p>
         </div>
         <p style="font-size: 14px; opacity: 0.9; line-height: 1.8;">
