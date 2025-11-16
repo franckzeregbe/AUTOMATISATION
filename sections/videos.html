@@ -63,6 +63,14 @@
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(106,17,203,0.4);
   }
+  @media (max-width: 768px) {
+    .videos-grid { grid-template-columns: 1fr; gap: 15px; }
+    .video-thumbnail { height: 200px; }
+    .video-info h3 { font-size: 15px; }
+    .video-info p { font-size: 12px; }
+    .video-btn { padding: 8px 12px; font-size: 12px; min-width: 100px; }
+    .category-badge { font-size: 10px; padding: 3px 8px; }
+  }
 </style>
 
 <div class="videos-grid" id="videosGrid"></div>

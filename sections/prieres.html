@@ -10,6 +10,13 @@
   .prayer-tab { padding: 10px 20px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: white; cursor: pointer; transition: all 0.3s; }
   .prayer-tab:hover { background: rgba(255,255,255,0.2); }
   .prayer-tab.active { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+  @media (max-width: 768px) {
+    .prayer-tab { padding: 8px 12px; font-size: 13px; }
+    .prayer-card { padding: 15px; }
+    .prayer-card h3 { font-size: 16px; }
+    .prayer-card p { font-size: 14px; }
+    .bible-ref { font-size: 12px; padding: 5px 10px; }
+  }
 </style>
 
 <h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-prayer"></use></svg> <span>Prières du jour</span></h2>
