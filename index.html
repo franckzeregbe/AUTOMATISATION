@@ -967,7 +967,7 @@
       ]
     };
 
-    function globalSearch() {
+    async function globalSearch() {
       const input = document.getElementById('searchInput').value.toLowerCase().trim();
       const resultsDiv = document.getElementById('searchResults');
       
@@ -978,6 +978,25 @@
       }
       
       let results = [];
+      
+      // Recherche de versets bibliques (format: Jean 3:16, Psaume 23:1, etc.)
+      const versePattern = /([1-3]?\s?[a-zéèê]+)\s+(\d+)(?::(\d+))?/i;
+      const match = input.match(versePattern);
+      if(match) {
+        const bookName = match[1].trim();
+        const chapter = match[2];
+        const verse = match[3];
+        
+        // Rechercher le verset via l'API
+        try {
+          const verseResult = await searchBibleVerse(bookName, chapter, verse);
+          if(verseResult) {
+            results.push(verseResult);
+          }
+        } catch(e) {
+          console.log('Verset non trouvé');
+        }
+      }
       
       searchData.sections.forEach(item => {
         if(item.name.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input)) {
@@ -1011,18 +1030,21 @@
       if(results.length > 0) {
         resultsDiv.innerHTML = `
           <h4 style="margin:0 0 15px 0; font-size:14px; opacity:0.8;">🔍 ${results.length} résultat(s) trouvé(s)</h4>
-          ${results.map(r => `
-            <div onclick="selectSearchResult('${r.key || ''}', '${r.type}', '${r.action || ''}')" style="padding:12px; margin:8px 0; background:rgba(255,255,255,0.05); border-radius:8px; cursor:pointer; transition:all 0.2s; border-left:3px solid #6a11cb;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+          ${results.map(r => {
+            const verseDataStr = r.type === 'verse' ? JSON.stringify({reference: r.reference, fullText: r.fullText}).replace(/"/g, '&quot;') : '';
+            return `
+            <div onclick='selectSearchResult("${r.key || ''}", "${r.type}", "${r.action || ''}", ${r.type === 'verse' ? verseDataStr : 'null'})' style="padding:12px; margin:8px 0; background:rgba(255,255,255,0.05); border-radius:8px; cursor:pointer; transition:all 0.2s; border-left:3px solid ${r.type === 'verse' ? '#ffeb3b' : '#6a11cb'};" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
               <div style="display:flex; align-items:center; gap:10px;">
                 <span style="font-size:20px;">${r.icon || '✨'}</span>
                 <div style="flex:1;">
                   <div style="font-weight:600; margin-bottom:3px;">${r.name || r.text}</div>
                   <div style="font-size:12px; opacity:0.7;">${r.category}${r.desc ? ' • ' + r.desc : ''}</div>
+                  ${r.text && r.type === 'verse' ? `<div style="font-size:11px; opacity:0.6; margin-top:5px; font-style:italic;">${r.text}</div>` : ''}
                 </div>
                 <span style="opacity:0.5;">→</span>
               </div>
             </div>
-          `).join('')}
+          `}).join('')}
         `;
         resultsDiv.style.display = 'block';
       } else if(input.length > 2) {
@@ -1036,12 +1058,107 @@
       if(input) globalSearch();
     }
     
-    function selectSearchResult(key, type, action) {
+    async function searchBibleVerse(bookName, chapter, verse) {
+      const bibleBooks = {
+        'genese': 'GEN', 'genèse': 'GEN', 'exode': 'EXO', 'levitique': 'LEV', 'lévitique': 'LEV',
+        'nombres': 'NUM', 'deuteronome': 'DEU', 'deutéronome': 'DEU', 'josue': 'JOS', 'josué': 'JOS',
+        'juges': 'JDG', 'ruth': 'RUT', '1samuel': '1SA', '2samuel': '2SA', '1rois': '1KI', '2rois': '2KI',
+        '1chroniques': '1CH', '2chroniques': '2CH', 'esdras': 'EZR', 'nehemie': 'NEH', 'néhémie': 'NEH',
+        'esther': 'EST', 'job': 'JOB', 'psaume': 'PSA', 'psaumes': 'PSA', 'proverbes': 'PRO',
+        'ecclesiaste': 'ECC', 'ecclésiaste': 'ECC', 'cantique': 'SNG', 'esaie': 'ISA', 'ésaïe': 'ISA',
+        'jeremie': 'JER', 'jérémie': 'JER', 'lamentations': 'LAM', 'ezechiel': 'EZK', 'ézéchiel': 'EZK',
+        'daniel': 'DAN', 'osee': 'HOS', 'osée': 'HOS', 'joel': 'JOL', 'joël': 'JOL', 'amos': 'AMO',
+        'abdias': 'OBA', 'jonas': 'JON', 'michee': 'MIC', 'michée': 'MIC', 'nahum': 'NAM',
+        'habacuc': 'HAB', 'sophonie': 'ZEP', 'aggee': 'HAG', 'aggée': 'HAG', 'zacharie': 'ZEC',
+        'malachie': 'MAL', 'matthieu': 'MAT', 'marc': 'MRK', 'luc': 'LUK', 'jean': 'JHN',
+        'actes': 'ACT', 'romains': 'ROM', '1corinthiens': '1CO', '2corinthiens': '2CO',
+        'galates': 'GAL', 'ephesiens': 'EPH', 'éphésiens': 'EPH', 'philippiens': 'PHP',
+        'colossiens': 'COL', '1thessaloniciens': '1TH', '2thessaloniciens': '2TH',
+        '1timothee': '1TI', '1timothée': '1TI', '2timothee': '2TI', '2timothée': '2TI',
+        'tite': 'TIT', 'philemon': 'PHM', 'philémon': 'PHM', 'hebreux': 'HEB', 'hébreux': 'HEB',
+        'jacques': 'JAS', '1pierre': '1PE', '2pierre': '2PE', '1jean': '1JN', '2jean': '2JN',
+        '3jean': '3JN', 'jude': 'JUD', 'apocalypse': 'REV', 'revelation': 'REV', 'révélation': 'REV'
+      };
+      
+      const bookKey = bookName.toLowerCase().replace(/\s+/g, '');
+      const bookId = bibleBooks[bookKey];
+      
+      if(!bookId) return null;
+      
+      try {
+        const url = verse 
+          ? `https://bible-api.com/${bookId}+${chapter}:${verse}?translation=kjv`
+          : `https://bible-api.com/${bookId}+${chapter}?translation=kjv`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if(data.verses && data.verses.length > 0) {
+          const verseText = verse 
+            ? data.verses[0].text 
+            : data.verses.slice(0, 3).map(v => `${v.verse}. ${v.text}`).join(' ');
+          
+          return {
+            name: data.reference,
+            text: verseText.substring(0, 150) + (verseText.length > 150 ? '...' : ''),
+            fullText: verseText,
+            reference: data.reference,
+            icon: '📖',
+            category: 'Verset Biblique',
+            type: 'verse',
+            action: 'showVerse'
+          };
+        }
+      } catch(e) {
+        return null;
+      }
+      return null;
+    }
+    
+    function showVerseResult(reference, text) {
+      currentSection = 'verse';
+      document.getElementById('homeHeader').classList.add('hide');
+      document.getElementById('backButton').classList.add('show');
+      document.getElementById('verseOfDay').style.display = 'none';
+      document.getElementById('searchContainer').style.display = 'none';
+      
+      const content = `
+        <div style="background: linear-gradient(135deg, rgba(106,17,203,0.3), rgba(37,117,252,0.2)); padding: 30px; border-radius: 12px; margin: 20px 0;">
+          <h2 style="color: #ffeb3b; text-align: center; margin-bottom: 20px;">📖 ${reference}</h2>
+          <div style="background: rgba(255,255,255,0.08); padding: 25px; border-radius: 10px; border-left: 4px solid #6a11cb;">
+            <p style="font-size: 16px; line-height: 1.8; margin: 0;">${text}</p>
+          </div>
+          <div style="text-align: center; margin-top: 20px;">
+            <button onclick="afficher('bible')" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin: 5px;">📖 Ouvrir la Bible</button>
+            <button onclick="addVerseToFavorites('${reference.replace(/'/g, "\\'")}', '${text.replace(/'/g, "\\'")}')" style="background: linear-gradient(135deg, #ff9800, #ff5722); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin: 5px;">⭐ Ajouter aux favoris</button>
+          </div>
+        </div>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour</button>
+      `;
+      
+      document.getElementById('content').innerHTML = content;
+      document.getElementById('content').style.display = 'block';
+      document.querySelector('.sections').style.display = 'none';
+    }
+    
+    function addVerseToFavorites(reference, text) {
+      const favorites = JSON.parse(localStorage.getItem('favorites_' + currentUser.phone)) || [];
+      favorites.push({
+        type: 'Verset',
+        icon: '📖',
+        content: `${reference}: ${text.substring(0, 100)}...`
+      });
+      localStorage.setItem('favorites_' + currentUser.phone, JSON.stringify(favorites));
+      alert('✅ Verset ajouté aux favoris !');
+    }
+    
+    function selectSearchResult(key, type, action, verseData) {
       document.getElementById('searchResults').style.display = 'none';
       document.getElementById('searchInput').value = '';
       
-      if(action) {
-        // Actions spéciales
+      if(action === 'showVerse' && verseData) {
+        showVerseResult(verseData.reference, verseData.fullText);
+      } else if(action) {
         switch(action) {
           case 'home': afficherAccueil(); break;
           case 'stats': showStats({preventDefault: ()=>{}}); break;
