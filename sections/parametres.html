@@ -17,6 +17,32 @@
   <h3>🎨 Apparence</h3>
   <div class="settings-item">
     <div>
+      <div style="font-weight: bold;">Thème de couleur</div>
+      <div style="font-size: 12px; opacity: 0.7;">Choisissez votre thème préféré</div>
+    </div>
+    <select id="colorTheme" onchange="changeColorTheme()" style="padding: 8px 12px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+      <option value="purple">Violet (Défaut)</option>
+      <option value="blue">Bleu</option>
+      <option value="green">Vert</option>
+      <option value="orange">Orange</option>
+      <option value="red">Rouge</option>
+      <option value="dark">Noir</option>
+    </select>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div style="font-weight: bold;">Taille de police</div>
+      <div style="font-size: 12px; opacity: 0.7;">Ajuster la taille du texte</div>
+    </div>
+    <select id="fontSize" onchange="changeFontSize()" style="padding: 8px 12px; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+      <option value="small">Petit</option>
+      <option value="medium" selected>Moyen</option>
+      <option value="large">Grand</option>
+      <option value="xlarge">Très grand</option>
+    </select>
+  </div>
+  <div class="settings-item">
+    <div>
       <div style="font-weight: bold;">Mode sombre/clair</div>
       <div style="font-size: 12px; opacity: 0.7;">Changer le thème de l'application</div>
     </div>
@@ -131,6 +157,16 @@
       document.getElementById('themeToggle').classList.add('active');
     }
     
+    if(settings.colorTheme) {
+      document.getElementById('colorTheme').value = settings.colorTheme;
+      applyColorTheme(settings.colorTheme);
+    }
+    
+    if(settings.fontSize) {
+      document.getElementById('fontSize').value = settings.fontSize;
+      applyFontSize(settings.fontSize);
+    }
+    
     ['prayerNotif', 'verseNotif', 'autoPlay', 'childMode'].forEach(key => {
       if(settings[key]) {
         document.getElementById(key).classList.add('active');
@@ -148,6 +184,47 @@
     loadLiturgicalCalendar();
   }
 
+  function changeColorTheme() {
+    const theme = document.getElementById('colorTheme').value;
+    const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+    settings.colorTheme = theme;
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+    applyColorTheme(theme);
+    alert('✅ Thème appliqué ! Rechargez la page pour voir tous les changements.');
+  }
+  
+  function applyColorTheme(theme) {
+    const themes = {
+      purple: { bg1: '#6a11cb', bg2: '#2575fc' },
+      blue: { bg1: '#1e3c72', bg2: '#2a5298' },
+      green: { bg1: '#11998e', bg2: '#38ef7d' },
+      orange: { bg1: '#f46b45', bg2: '#eea849' },
+      red: { bg1: '#c31432', bg2: '#240b36' },
+      dark: { bg1: '#232526', bg2: '#414345' }
+    };
+    
+    const colors = themes[theme] || themes.purple;
+    document.body.style.background = `linear-gradient(to right, ${colors.bg1}, ${colors.bg2})`;
+  }
+  
+  function changeFontSize() {
+    const size = document.getElementById('fontSize').value;
+    const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+    settings.fontSize = size;
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+    applyFontSize(size);
+  }
+  
+  function applyFontSize(size) {
+    const sizes = {
+      small: '14px',
+      medium: '16px',
+      large: '18px',
+      xlarge: '20px'
+    };
+    document.body.style.fontSize = sizes[size] || sizes.medium;
+  }
+  
   function toggleTheme() {
     const toggle = document.getElementById('themeToggle');
     toggle.classList.toggle('active');
@@ -156,12 +233,12 @@
     settings.theme = toggle.classList.contains('active') ? 'light' : 'dark';
     localStorage.setItem('appSettings', JSON.stringify(settings));
     
-    // Appliquer le thème (à implémenter dans index.html)
     if(settings.theme === 'light') {
       document.body.style.background = 'linear-gradient(to right, #f5f5f5, #e0e0e0)';
       document.body.style.color = '#333';
     } else {
-      document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
+      const colorTheme = settings.colorTheme || 'purple';
+      applyColorTheme(colorTheme);
       document.body.style.color = 'white';
     }
   }

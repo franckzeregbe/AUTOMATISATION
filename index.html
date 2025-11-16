@@ -1975,8 +1975,41 @@
       container.innerHTML = html;
     }
     
+    // Apply user settings
+    function applyUserSettings() {
+      const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
+      
+      // Apply color theme
+      if(settings.colorTheme) {
+        const themes = {
+          purple: { bg1: '#6a11cb', bg2: '#2575fc' },
+          blue: { bg1: '#1e3c72', bg2: '#2a5298' },
+          green: { bg1: '#11998e', bg2: '#38ef7d' },
+          orange: { bg1: '#f46b45', bg2: '#eea849' },
+          red: { bg1: '#c31432', bg2: '#240b36' },
+          dark: { bg1: '#232526', bg2: '#414345' }
+        };
+        const colors = themes[settings.colorTheme] || themes.purple;
+        document.body.style.background = `linear-gradient(to right, ${colors.bg1}, ${colors.bg2})`;
+      }
+      
+      // Apply font size
+      if(settings.fontSize) {
+        const sizes = { small: '14px', medium: '16px', large: '18px', xlarge: '20px' };
+        document.body.style.fontSize = sizes[settings.fontSize] || sizes.medium;
+      }
+      
+      // Apply light/dark mode
+      if(settings.theme === 'light') {
+        document.body.style.background = 'linear-gradient(to right, #f5f5f5, #e0e0e0)';
+        document.body.style.color = '#333';
+      }
+    }
+    
     // initial load
     document.addEventListener('DOMContentLoaded', ()=>{ 
+      applyUserSettings();
+      
       document.getElementById('content').style.display = 'none';
       document.getElementById('content').innerHTML = '';
       document.querySelector('.sections').style.display = 'flex';
