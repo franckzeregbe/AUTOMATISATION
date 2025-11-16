@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -1011,7 +1011,7 @@
             <p><strong>Membre depuis :</strong> ${currentUser.joinDate}</p>
           </div>
         </div>
-        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour</button>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">← Retour</button>
       `;
       document.getElementById('content').innerHTML = profileHTML;
       document.querySelector('.sections').style.display='none';
@@ -1246,7 +1246,7 @@
             <button onclick="shareVerse('${reference.replace(/'/g, "\\'")}', '${text.replace(/'/g, "\\'")}')" style="background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">📤 Partager</button>
           </div>
         </div>
-        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour</button>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">← Retour</button>
       `;
       
       document.getElementById('content').innerHTML = content;
@@ -1458,7 +1458,7 @@
           <textarea id="ratingComment" placeholder="Partagez votre expérience..." style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; margin: 15px 0; min-height: 100px;"></textarea>
           <button onclick="submitRating()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-size: 16px;">Envoyer</button>
         </div>
-        <button onclick="afficherAccueil()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>
+        <button onclick="afficherAccueil()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">← Retour</button>
       `;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
@@ -1501,7 +1501,7 @@
           
           <p style="margin-top: 30px; opacity: 0.7;"><strong>Version 1.0 - 2024</strong></p>
         </div>
-        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour</button>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">← Retour</button>
       `;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
@@ -1548,7 +1548,7 @@
             <button onclick="sendContactMessage()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px; width: 100%;">Envoyer</button>
           </div>
         </div>
-        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour</button>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">← Retour</button>
       `;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
@@ -1622,7 +1622,7 @@
           
           <p style="text-align: center; opacity: 0.6; margin-top: 20px;">Version 1.0.0 - 2024</p>
         </div>
-        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour</button>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">← Retour</button>
       `;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
@@ -1677,7 +1677,7 @@
             <div>Jours de connexion</div>
           </div>
         </div>
-        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">← Retour</button>
       `;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
@@ -1718,7 +1718,7 @@
         });
         content += `</div>`;
       }
-      content += `<button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      content += `<button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">← Retour</button>`;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
     }
@@ -1771,7 +1771,7 @@
         });
       }
       
-      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">← Retour</button>`;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
     }
@@ -1847,7 +1847,7 @@
         });
       }
       
-      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">← Retour</button>`;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
     }
@@ -1931,7 +1931,7 @@
         });
       }
       
-      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Retour</button>`;
+      content += `</div><button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px;">← Retour</button>`;
       document.getElementById('content').innerHTML = content;
       document.querySelector('.sections').style.display='none';
     }
