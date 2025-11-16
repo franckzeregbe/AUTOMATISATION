@@ -161,8 +161,8 @@ async function toggleVoice() {
   }
 
   // Vérifier HTTPS (requis pour le micro)
-  if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-    alert('⚠️ La reconnaissance vocale nécessite une connexion HTTPS sécurisée.');
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    alert('⚠️ La reconnaissance vocale nécessite une connexion HTTPS sécurisée.\n\nVeuillez accéder à l\'application via:\nhttps://franckzeregbe.github.io/AUTOMATISATION\n\nOu utilisez la saisie texte.');
     return;
   }
 
