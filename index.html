@@ -219,6 +219,7 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
       margin-left: 0;
       width: 100%;
+      transition: none;
     }
 
     .main h1 { margin-top: 0; text-align: center; font-size: 24px; }
@@ -230,20 +231,19 @@
       .sidebar { left: -240px; }
       .sidebar.collapsed { left: -240px; }
       .sidebar:not(.collapsed) { left: 0; }
-      .main { padding: 60px 15px 15px 15px; margin-left: 0; }
+      .main { padding: 60px 15px 15px 15px; margin-left: 0; transition: none; }
       .main h1 { font-size: 20px; }
       .section { width: 150px; padding: 15px 12px; }
       .section-icon { width: 55px; height: 55px; }
       .icon-svg { width: 30px; height: 30px; }
       .menu-toggle { top: 10px; left: 10px; }
       #searchInput { max-width: 100%; font-size: 14px; }
-      .verse-box { padding: 15px; margin: 15px 0; }
-      #verseText { font-size: 15px !important; }
+      #verseOfDay { display: none !important; }
     }
 
     @media (min-width: 769px){
       .sidebar { left: 0 !important; }
-      .main { margin-left: 240px; width: calc(100% - 240px); }
+      .main { margin-left: 240px; width: calc(100% - 240px); transition: none; }
     }
 
     /* retain existing styles for sections and login */
@@ -388,7 +388,7 @@
       .back-button { top: 65px; left: 65px; width: 42px; height: 42px; }
     }
     .toast { position:fixed; top:20px; right:20px; background:#6a11cb; color:white; padding:15px 20px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:9999; animation:fadeInUp 0.3s; }
-    .verse-box { background:linear-gradient(135deg,rgba(106,17,203,0.2),rgba(37,117,252,0.2)); padding:20px; border-radius:12px; margin:20px 0; border-left:4px solid #6a11cb; animation:fadeInUp 0.8s; }
+    .verse-box { background:linear-gradient(135deg,rgba(106,17,203,0.95),rgba(37,117,252,0.95)); padding:15px; border-radius:12px; border-left:4px solid #ffeb3b; animation:fadeInUp 0.8s; backdrop-filter:blur(10px); }
     .streak-badge { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#ff9800,#ff5722); padding:8px 16px; border-radius:20px; font-weight:600; animation:pulse 2s infinite; }
   </style>
 </head>
@@ -497,10 +497,10 @@
     <p>Explorez les sections spirituelles, éducatives et interactives pour enrichir votre expérience.</p>
     </div>
 
-    <div id="verseOfDay" class="verse-box" style="display:none; text-align:center; max-width:700px; margin:20px auto;">
-      <h3 style="margin:0 0 15px 0; color:#ffeb3b;">📖 Verset du jour</h3>
-      <p id="verseText" style="font-style:italic; margin:15px 0; font-size:17px; line-height:1.6;"></p>
-      <p id="verseRef" style="opacity:0.9; margin:10px 0 0 0; font-weight:600; color:#ffeb3b;"></p>
+    <div id="verseOfDay" class="verse-box" style="display:none; position:fixed; right:20px; top:80px; max-width:280px; z-index:900; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+      <h3 style="margin:0 0 10px 0; color:#ffeb3b; font-size:14px;">📖 Verset du jour</h3>
+      <p id="verseText" style="font-style:italic; margin:10px 0; font-size:13px; line-height:1.5;"></p>
+      <p id="verseRef" style="opacity:0.9; margin:8px 0 0 0; font-weight:600; color:#ffeb3b; font-size:12px;"></p>
     </div>
 
     <div id="searchContainer" style="display:block;">
@@ -953,6 +953,7 @@
     // Toggle sidebar
     function toggleSidebar(){
       const sidebar = document.getElementById('sidebar');
+      const main = document.getElementById('main');
       sidebar.classList.toggle('collapsed');
       // Sur mobile, fermer automatiquement après sélection
       if(window.innerWidth <= 768) {
