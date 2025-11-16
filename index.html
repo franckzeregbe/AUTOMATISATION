@@ -908,44 +908,62 @@
 
     const searchData = {
       sections: [
-        {name: 'Prières', icon: '🙏', key: 'prieres', desc: '8 catégories de prières quotidiennes'},
-        {name: 'Vidéos', icon: '🎬', key: 'videos', desc: 'Vidéos spirituelles inspirantes'},
-        {name: 'Quiz biblique', icon: '🎮', key: 'jeux', desc: 'Testez vos connaissances bibliques'},
-        {name: 'Bible', icon: '📖', key: 'bible', desc: '3 versions avec audio'},
-        {name: 'Dons', icon: '💖', key: 'dons', desc: 'Soutenez lœuvre spirituelle'},
-        {name: 'Agent de prière', icon: '🤖', key: 'agent', desc: 'Assistant intelligent JOHN'},
-        {name: 'Rendez-vous', icon: '📅', key: 'rendez-vous', desc: 'Consultations spirituelles'},
-        {name: 'Paramètres', icon: '⚙️', key: 'parametres', desc: 'Personnalisez votre expérience'}
+        {name: 'Accueil', icon: '🏠', action: 'home', desc: 'Page d\'accueil', search: 'accueil home maison démarrage'},
+        {name: 'Prières', icon: '🙏', key: 'prieres', desc: '8 catégories de prières quotidiennes', search: 'priere prier intercession supplication'},
+        {name: 'Vidéos', icon: '🎬', key: 'videos', desc: 'Vidéos spirituelles inspirantes', search: 'video film youtube regarder'},
+        {name: 'Quiz biblique', icon: '🎮', key: 'jeux', desc: 'Testez vos connaissances bibliques', search: 'quiz jeu game test question connaissance'},
+        {name: 'Bible', icon: '📖', key: 'bible', desc: '3 versions avec audio', search: 'bible parole ecriture sainte testament verset chapitre livre'},
+        {name: 'Dons', icon: '💖', key: 'dons', desc: 'Soutenez l\'œuvre spirituelle', search: 'don donation offrande contribution soutien argent payer'},
+        {name: 'Agent JOHN', icon: '🤖', key: 'agent', desc: 'Assistant intelligent de prière', search: 'agent john assistant ia intelligence artificielle bot'},
+        {name: 'Rendez-vous', icon: '📅', key: 'rendez-vous', desc: 'Consultations spirituelles', search: 'rendez-vous rdv consultation rencontre appointment'},
+        {name: 'Mes Statistiques', icon: '📊', action: 'stats', desc: 'Suivi de vos activités', search: 'statistique stat progression suivi activité'},
+        {name: 'Favoris', icon: '⭐', action: 'favorites', desc: 'Vos contenus favoris', search: 'favori favorite préféré sauvegarde bookmark'},
+        {name: 'Mes Notes', icon: '📝', action: 'notes', desc: 'Notes bibliques personnelles', search: 'note annotation réflexion pensée écriture'},
+        {name: 'Objectifs', icon: '🎯', action: 'goals', desc: 'Objectifs spirituels', search: 'objectif but cible challenge défi'},
+        {name: 'Témoignages', icon: '💬', action: 'testimonies', desc: 'Témoignages de foi', search: 'témoignage témoin partage histoire expérience'},
+        {name: 'Paramètres', icon: '⚙️', key: 'parametres', desc: 'Personnalisez votre expérience', search: 'parametre setting configuration option préférence'},
+        {name: 'Mon Profil', icon: '👤', action: 'profile', desc: 'Informations personnelles', search: 'profil compte utilisateur info personnel'},
+        {name: 'À propos', icon: 'ℹ️', action: 'about', desc: 'À propos de l\'application', search: 'propos information aide help'},
+        {name: 'Contact', icon: '📧', action: 'contact', desc: 'Contactez-nous', search: 'contact email téléphone message support aide'}
       ],
       prayers: [
-        {name: 'Prière du matin', category: 'Prières', key: 'prieres', search: 'matin réveil journée'},
-        {name: 'Prière du soir', category: 'Prières', key: 'prieres', search: 'soir nuit repos sommeil'},
-        {name: 'Prière pour la famille', category: 'Prières', key: 'prieres', search: 'famille enfants époux mariage'},
-        {name: 'Prière pour le travail', category: 'Prières', key: 'prieres', search: 'travail emploi carrière business'},
-        {name: 'Prière de guérison', category: 'Prières', key: 'prieres', search: 'guérison santé maladie'},
-        {name: 'Prière de protection', category: 'Prières', key: 'prieres', search: 'protection sécurité danger'},
-        {name: 'Prière de délivrance', category: 'Prières', key: 'prieres', search: 'délivrance libération démon'},
-        {name: 'Prière pour les finances', category: 'Prières', key: 'prieres', search: 'finances argent prospérité richesse'}
+        {name: 'Prière du matin', category: 'Prières', key: 'prieres', search: 'matin réveil journée aube lever'},
+        {name: 'Prière du soir', category: 'Prières', key: 'prieres', search: 'soir nuit repos sommeil coucher'},
+        {name: 'Prière pour la famille', category: 'Prières', key: 'prieres', search: 'famille enfants époux mariage foyer'},
+        {name: 'Prière pour le travail', category: 'Prières', key: 'prieres', search: 'travail emploi carrière business boulot job'},
+        {name: 'Prière de guérison', category: 'Prières', key: 'prieres', search: 'guérison santé maladie soigner médecin'},
+        {name: 'Prière de protection', category: 'Prières', key: 'prieres', search: 'protection sécurité danger garde bouclier'},
+        {name: 'Prière de délivrance', category: 'Prières', key: 'prieres', search: 'délivrance libération démon combat spirituel'},
+        {name: 'Prière pour les finances', category: 'Prières', key: 'prieres', search: 'finances argent prospérité richesse abondance'}
       ],
       verses: [
-        {text: 'Jean 3:16', category: 'Versets', search: 'dieu aimé monde fils vie éternelle'},
-        {text: 'Philippiens 4:13', category: 'Versets', search: 'tout fortifie force'},
-        {text: 'Psaume 23:1', category: 'Versets', search: 'berger manquer rien'},
-        {text: 'Proverbes 3:5', category: 'Versets', search: 'confie sagesse coeur'},
-        {text: 'Matthieu 6:33', category: 'Versets', search: 'cherchez royaume justice'},
-        {text: 'Matthieu 28:19', category: 'Versets', search: 'allez nations disciples'},
-        {text: 'Marc 9:23', category: 'Versets', search: 'possible croit foi'}
+        {text: 'Jean 3:16', category: 'Bible', key: 'bible', search: 'jean dieu aimé monde fils vie éternelle salut'},
+        {text: 'Philippiens 4:13', category: 'Bible', key: 'bible', search: 'philippiens tout fortifie force capable'},
+        {text: 'Psaume 23:1', category: 'Bible', key: 'bible', search: 'psaume berger manquer rien david'},
+        {text: 'Proverbes 3:5', category: 'Bible', key: 'bible', search: 'proverbes confie sagesse coeur intelligence'},
+        {text: 'Matthieu 6:33', category: 'Bible', key: 'bible', search: 'matthieu cherchez royaume justice priorité'},
+        {text: 'Matthieu 28:19', category: 'Bible', key: 'bible', search: 'matthieu allez nations disciples mission'},
+        {text: 'Marc 9:23', category: 'Bible', key: 'bible', search: 'marc possible croit foi croire'},
+        {text: 'Genèse', category: 'Bible', key: 'bible', search: 'genese creation adam eve commencement'},
+        {text: 'Apocalypse', category: 'Bible', key: 'bible', search: 'apocalypse revelation fin temps jean'}
       ],
       features: [
-        {name: 'Quiz niveau 1', category: 'Quiz', key: 'jeux', search: 'quiz facile débutant 10 questions'},
-        {name: 'Quiz niveau 2', category: 'Quiz', key: 'jeux', search: 'quiz intermédiaire 15 questions'},
-        {name: 'Quiz niveau 3', category: 'Quiz', key: 'jeux', search: 'quiz avancé 30 questions'},
-        {name: 'Quiz niveau 4', category: 'Quiz', key: 'jeux', search: 'quiz expert difficile 40 questions'},
-        {name: 'Orange Money', category: 'Dons', key: 'dons', search: 'orange money paiement mobile'},
-        {name: 'MTN Mobile Money', category: 'Dons', key: 'dons', search: 'mtn mobile money paiement'},
+        {name: 'Quiz niveau 1', category: 'Quiz', key: 'jeux', search: 'quiz facile débutant 10 questions simple'},
+        {name: 'Quiz niveau 2', category: 'Quiz', key: 'jeux', search: 'quiz intermédiaire 15 questions moyen'},
+        {name: 'Quiz niveau 3', category: 'Quiz', key: 'jeux', search: 'quiz avancé 30 questions difficile'},
+        {name: 'Quiz niveau 4', category: 'Quiz', key: 'jeux', search: 'quiz expert difficile 40 questions hard'},
+        {name: 'Orange Money', category: 'Dons', key: 'dons', search: 'orange money paiement mobile om'},
+        {name: 'MTN Mobile Money', category: 'Dons', key: 'dons', search: 'mtn mobile money paiement momo'},
         {name: 'Wave CI', category: 'Dons', key: 'dons', search: 'wave gratuit sans frais'},
-        {name: 'PayPal', category: 'Dons', key: 'dons', search: 'paypal international carte'},
-        {name: 'Virement bancaire', category: 'Dons', key: 'dons', search: 'virement banque iban'}
+        {name: 'PayPal', category: 'Dons', key: 'dons', search: 'paypal international carte visa mastercard'},
+        {name: 'Virement bancaire', category: 'Dons', key: 'dons', search: 'virement banque iban transfert'},
+        {name: 'Prendre rendez-vous', category: 'Rendez-vous', key: 'rendez-vous', search: 'prendre rendez-vous rdv consultation réserver'},
+        {name: 'Mes rendez-vous', category: 'Rendez-vous', key: 'rendez-vous', search: 'mes rendez-vous liste historique'},
+        {name: 'Reconnaissance vocale', category: 'Agent', key: 'agent', search: 'voix vocal micro parler reconnaissance'},
+        {name: 'Message audio', category: 'Agent', key: 'agent', search: 'audio enregistrement message vocal'},
+        {name: 'Calendrier liturgique', category: 'Paramètres', key: 'parametres', search: 'calendrier fête liturgique pâques noël'},
+        {name: 'Mode sombre', category: 'Paramètres', key: 'parametres', search: 'mode sombre dark theme nuit'},
+        {name: 'Notifications', category: 'Paramètres', key: 'parametres', search: 'notification rappel alerte'}
       ]
     };
 
@@ -994,7 +1012,7 @@
         resultsDiv.innerHTML = `
           <h4 style="margin:0 0 15px 0; font-size:14px; opacity:0.8;">🔍 ${results.length} résultat(s) trouvé(s)</h4>
           ${results.map(r => `
-            <div onclick="selectSearchResult('${r.key || ''}', '${r.type}')" style="padding:12px; margin:8px 0; background:rgba(255,255,255,0.05); border-radius:8px; cursor:pointer; transition:all 0.2s; border-left:3px solid #6a11cb;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+            <div onclick="selectSearchResult('${r.key || ''}', '${r.type}', '${r.action || ''}')" style="padding:12px; margin:8px 0; background:rgba(255,255,255,0.05); border-radius:8px; cursor:pointer; transition:all 0.2s; border-left:3px solid #6a11cb;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
               <div style="display:flex; align-items:center; gap:10px;">
                 <span style="font-size:20px;">${r.icon || '✨'}</span>
                 <div style="flex:1;">
@@ -1018,10 +1036,24 @@
       if(input) globalSearch();
     }
     
-    function selectSearchResult(key, type) {
+    function selectSearchResult(key, type, action) {
       document.getElementById('searchResults').style.display = 'none';
       document.getElementById('searchInput').value = '';
-      if(key) {
+      
+      if(action) {
+        // Actions spéciales
+        switch(action) {
+          case 'home': afficherAccueil(); break;
+          case 'stats': showStats({preventDefault: ()=>{}}); break;
+          case 'favorites': showFavorites({preventDefault: ()=>{}}); break;
+          case 'notes': showNotes({preventDefault: ()=>{}}); break;
+          case 'goals': showGoals({preventDefault: ()=>{}}); break;
+          case 'testimonies': showTestimonies({preventDefault: ()=>{}}); break;
+          case 'profile': viewProfile(); break;
+          case 'about': showAbout({preventDefault: ()=>{}}); break;
+          case 'contact': contactUs({preventDefault: ()=>{}}); break;
+        }
+      } else if(key) {
         afficher(key);
       }
     }
