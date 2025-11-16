@@ -26,21 +26,14 @@
 
 <!-- Sélecteur de version -->
 <div style="margin: 15px 0; padding: 15px; background: rgba(106,17,203,0.2); border-radius: 10px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-    <div>
-      <label style="font-size: 16px; font-weight: bold; margin-right: 10px;">📖 Version:</label>
-      <select id="bibleVersionSelect" onchange="changeBibleVersion()" style="padding: 10px 20px; border-radius: 8px; background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.3); font-size: 15px; font-weight: bold; cursor: pointer;">
-        <option value="kjv">King James Version (KJV)</option>
-        <option value="lsg">Louis Segond 1910 (LSG)</option>
-        <option value="darby">Darby (FR)</option>
-      </select>
-    </div>
-    <button id="downloadBibleBtn" onclick="downloadFullBible()" style="padding: 10px 20px; background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
-      💾 Télécharger Bible complète
-    </button>
-  </div>
+  <label style="font-size: 16px; font-weight: bold; margin-right: 10px;">📖 Version:</label>
+  <select id="bibleVersionSelect" onchange="changeBibleVersion()" style="padding: 10px 20px; border-radius: 8px; background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.3); font-size: 15px; font-weight: bold; cursor: pointer;">
+    <option value="kjv">King James Version (KJV)</option>
+    <option value="lsg">Louis Segond 1910 (LSG)</option>
+    <option value="darby">Darby (FR)</option>
+  </select>
   <div style="margin-top: 10px; font-size: 13px; opacity: 0.9;">
-    <span id="offlineStatus">📶 Mode en ligne</span> • <span id="downloadProgress"></span>
+    <span id="offlineStatus">📶 Mode en ligne</span> • Les chapitres consultés sont automatiquement disponibles hors ligne
   </div>
 </div>
 
@@ -179,64 +172,6 @@
   }
 
   initBibleDB();
-
-  async function downloadFullBible() {
-    const version = document.getElementById('bibleVersionSelect').value;
-    const btn = document.getElementById('downloadBibleBtn');
-    const progress = document.getElementById('downloadProgress');
-    
-    if(!confirm(`Télécharger la Bible complète (${version.toUpperCase()}) ?\n\nCela peut prendre quelques minutes et utiliser environ 5-10 MB de stockage.`)) return;
-    
-    btn.disabled = true;
-    btn.textContent = '⏳ Téléchargement...';
-    btn.style.background = '#ff9800';
-    
-    let downloaded = 0;
-    let total = 0;
-    bibleBooks.forEach(b => total += b.chapters);
-    
-    try {
-      for(let i = 0; i < bibleBooks.length; i++) {
-        const book = bibleBooks[i];
-        progress.textContent = `Téléchargement ${book.fr}...`;
-        
-        for(let ch = 1; ch <= book.chapters; ch++) {
-          try {
-            const response = await fetch(`https://bible-api.com/${book.id}+${ch}?translation=${version}`);
-            const data = await response.json();
-            saveBibleChapter(book.id + '_' + version, ch, data);
-            downloaded++;
-            progress.textContent = `${downloaded}/${total} chapitres (${Math.round(downloaded/total*100)}%)`;
-            await new Promise(r => setTimeout(r, 100)); // Pause pour éviter surcharge API
-          } catch(e) {
-            console.error(`Erreur ${book.id} ${ch}:`, e);
-          }
-        }
-      }
-      
-      btn.textContent = '✅ Bible téléchargée';
-      btn.style.background = '#4caf50';
-      progress.textContent = `Bible complète disponible hors ligne (${downloaded} chapitres)`;
-      alert('✅ Bible complète téléchargée avec succès !\n\nVous pouvez maintenant lire hors ligne.');
-      
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.textContent = '💾 Télécharger Bible complète';
-        btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
-      }, 3000);
-    } catch(err) {
-      btn.disabled = false;
-      btn.textContent = '❌ Erreur';
-      btn.style.background = '#f44336';
-      progress.textContent = 'Erreur de téléchargement';
-      alert('⚠️ Erreur lors du téléchargement.\nVérifiez votre connexion Internet.');
-      
-      setTimeout(() => {
-        btn.textContent = '💾 Télécharger Bible complète';
-        btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
-      }, 3000);
-    }
-  }
 
   function renderBibleBooks() {
     const container = document.getElementById('bibleBooksContainer');
