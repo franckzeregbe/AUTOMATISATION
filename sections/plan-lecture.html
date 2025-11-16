@@ -1,0 +1,187 @@
+<h2>📖 Plan de Lecture Biblique</h2>
+
+<style>
+  .plan-card {
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border-left: 4px solid #6a11cb;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .plan-card:hover {
+    transform: translateX(5px);
+    background: rgba(255,255,255,0.12);
+  }
+  .plan-progress {
+    background: rgba(0,0,0,0.2);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px 0;
+  }
+  .plan-progress-bar {
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    height: 100%;
+    transition: width 0.3s;
+  }
+  .reading-item {
+    background: rgba(255,255,255,0.05);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reading-item.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+</style>
+
+<div style="margin: 20px 0;">
+  <p>Choisissez un plan de lecture pour approfondir votre connaissance de la Parole de Dieu.</p>
+  
+  <div class="plan-card" onclick="selectPlan('30days')">
+    <h3>📅 Plan 30 Jours</h3>
+    <p style="opacity: 0.8; margin: 10px 0;">Découvrez les passages essentiels de la Bible en un mois</p>
+    <div class="plan-progress">
+      <div class="plan-progress-bar" id="progress-30days" style="width: 0%"></div>
+    </div>
+    <p style="font-size: 12px; opacity: 0.7;" id="status-30days">0/30 jours complétés</p>
+  </div>
+  
+  <div class="plan-card" onclick="selectPlan('90days')">
+    <h3>📚 Plan 90 Jours</h3>
+    <p style="opacity: 0.8; margin: 10px 0;">Parcourez le Nouveau Testament en 3 mois</p>
+    <div class="plan-progress">
+      <div class="plan-progress-bar" id="progress-90days" style="width: 0%"></div>
+    </div>
+    <p style="font-size: 12px; opacity: 0.7;" id="status-90days">0/90 jours complétés</p>
+  </div>
+  
+  <div class="plan-card" onclick="selectPlan('365days')">
+    <h3>📖 Plan 1 An</h3>
+    <p style="opacity: 0.8; margin: 10px 0;">Lisez toute la Bible en une année</p>
+    <div class="plan-progress">
+      <div class="plan-progress-bar" id="progress-365days" style="width: 0%"></div>
+    </div>
+    <p style="font-size: 12px; opacity: 0.7;" id="status-365days">0/365 jours complétés</p>
+  </div>
+</div>
+
+<div id="planDetails" style="display: none;"></div>
+
+<script>
+const readingPlans = {
+  '30days': [
+    {day: 1, reading: 'Jean 1-3', title: 'La Parole faite chair'},
+    {day: 2, reading: 'Jean 4-6', title: 'Le pain de vie'},
+    {day: 3, reading: 'Jean 7-9', title: 'La lumière du monde'},
+    {day: 4, reading: 'Jean 10-12', title: 'Le bon berger'},
+    {day: 5, reading: 'Jean 13-15', title: 'Le dernier repas'},
+    {day: 6, reading: 'Jean 16-18', title: 'La prière sacerdotale'},
+    {day: 7, reading: 'Jean 19-21', title: 'Crucifixion et résurrection'},
+    {day: 8, reading: 'Genèse 1-3', title: 'La création'},
+    {day: 9, reading: 'Genèse 6-9', title: 'Noé et le déluge'},
+    {day: 10, reading: 'Genèse 12-15', title: 'L\'alliance avec Abraham'},
+    {day: 11, reading: 'Exode 1-4', title: 'Moïse et le buisson ardent'},
+    {day: 12, reading: 'Exode 12-14', title: 'La Pâque et l\'Exode'},
+    {day: 13, reading: 'Exode 19-20', title: 'Les dix commandements'},
+    {day: 14, reading: 'Psaume 1, 23, 91', title: 'Psaumes de confiance'},
+    {day: 15, reading: 'Psaume 51, 103, 139', title: 'Psaumes de louange'},
+    {day: 16, reading: 'Proverbes 1-3', title: 'La sagesse'},
+    {day: 17, reading: 'Proverbes 10-12', title: 'Paroles de sagesse'},
+    {day: 18, reading: 'Ésaïe 53, 61', title: 'Le serviteur souffrant'},
+    {day: 19, reading: 'Matthieu 5-7', title: 'Le sermon sur la montagne'},
+    {day: 20, reading: 'Matthieu 26-28', title: 'Passion et résurrection'},
+    {day: 21, reading: 'Marc 1-3', title: 'Le ministère de Jésus'},
+    {day: 22, reading: 'Luc 1-2', title: 'La naissance de Jésus'},
+    {day: 23, reading: 'Luc 15', title: 'Les paraboles de la grâce'},
+    {day: 24, reading: 'Actes 1-2', title: 'La Pentecôte'},
+    {day: 25, reading: 'Actes 9', title: 'La conversion de Paul'},
+    {day: 26, reading: 'Romains 3-5', title: 'Justification par la foi'},
+    {day: 27, reading: 'Romains 8', title: 'Vie dans l\'Esprit'},
+    {day: 28, reading: '1 Corinthiens 13', title: 'L\'amour'},
+    {day: 29, reading: 'Éphésiens 1-3', title: 'Richesses en Christ'},
+    {day: 30, reading: 'Apocalypse 21-22', title: 'Nouveaux cieux et nouvelle terre'}
+  ],
+  '90days': Array.from({length: 90}, (_, i) => ({
+    day: i + 1,
+    reading: `Jour ${i + 1}`,
+    title: 'Lecture du Nouveau Testament'
+  })),
+  '365days': Array.from({length: 365}, (_, i) => ({
+    day: i + 1,
+    reading: `Jour ${i + 1}`,
+    title: 'Lecture de toute la Bible'
+  }))
+};
+
+function loadPlanProgress() {
+  ['30days', '90days', '365days'].forEach(plan => {
+    const progress = JSON.parse(localStorage.getItem(`readingPlan_${plan}_${currentUser.phone}`)) || [];
+    const total = readingPlans[plan].length;
+    const completed = progress.length;
+    const percent = (completed / total) * 100;
+    
+    document.getElementById(`progress-${plan}`).style.width = percent + '%';
+    document.getElementById(`status-${plan}`).textContent = `${completed}/${total} jours complétés`;
+  });
+}
+
+function selectPlan(planId) {
+  const plan = readingPlans[planId];
+  const progress = JSON.parse(localStorage.getItem(`readingPlan_${planId}_${currentUser.phone}`)) || [];
+  
+  let html = `
+    <h3>📖 ${planId === '30days' ? 'Plan 30 Jours' : planId === '90days' ? 'Plan 90 Jours' : 'Plan 1 An'}</h3>
+    <div style="margin: 20px 0;">
+  `;
+  
+  plan.forEach(item => {
+    const isCompleted = progress.includes(item.day);
+    html += `
+      <div class="reading-item ${isCompleted ? 'completed' : ''}">
+        <div>
+          <div style="font-weight: bold;">Jour ${item.day}: ${item.title}</div>
+          <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">${item.reading}</div>
+        </div>
+        <button onclick="toggleReading('${planId}', ${item.day})" style="background: ${isCompleted ? '#4caf50' : '#6a11cb'}; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+          ${isCompleted ? '✓ Lu' : 'Marquer'}
+        </button>
+      </div>
+    `;
+  });
+  
+  html += `</div><button onclick="closePlanDetails()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Retour aux plans</button>`;
+  
+  document.getElementById('planDetails').innerHTML = html;
+  document.getElementById('planDetails').style.display = 'block';
+  document.querySelectorAll('.plan-card').forEach(c => c.style.display = 'none');
+}
+
+function toggleReading(planId, day) {
+  const key = `readingPlan_${planId}_${currentUser.phone}`;
+  let progress = JSON.parse(localStorage.getItem(key)) || [];
+  
+  if(progress.includes(day)) {
+    progress = progress.filter(d => d !== day);
+  } else {
+    progress.push(day);
+  }
+  
+  localStorage.setItem(key, JSON.stringify(progress));
+  selectPlan(planId);
+  loadPlanProgress();
+}
+
+function closePlanDetails() {
+  document.getElementById('planDetails').style.display = 'none';
+  document.querySelectorAll('.plan-card').forEach(c => c.style.display = 'block');
+}
+
+loadPlanProgress();
+</script>
