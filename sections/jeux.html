@@ -7,7 +7,8 @@
   .options button.correct { background: rgba(26,188,156,0.5) !important; }
   .options button.incorrect { background: rgba(231,76,60,0.5) !important; }
 </style>
-<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-game"></use></svg> <span>Quiz Biblique Évolutif</span></h2>
+<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-game"></use></svg> <span>Quiz Biblique - 5 Niveaux</span></h2>
+<p style="text-align:center; margin:10px 0; opacity:0.9;">📚 Niveau 1: Croyant (20Q) • Niveau 2: Disciple (40Q) • Niveau 3: Ouvrier (60Q) • Niveau 4: Pasteur (80Q) • Niveau 5: Docteur (100Q)</p>
 
 <style>
   .quiz-container {
@@ -202,8 +203,8 @@
 
   function getGrade(score, total) {
     let percent = (score / total) * 100;
-    if(percent < 50) return "Croyant";
-    else if(percent < 70) return "Disciple";
+    if(percent < 60) return "Croyant";
+    else if(percent < 75) return "Disciple";
     else if(percent < 85) return "Ouvrier";
     else if(percent < 95) return "Pasteur";
     else return "Docteur";
@@ -211,11 +212,11 @@
 
   function getMotivation(grade) {
     switch(grade) {
-      case "Croyant": return "Continue, chaque pas te rapproche de la vérité ✨";
-      case "Disciple": return "Tu avances bien, garde la foi 🙏";
-      case "Ouvrier": return "Tu sers avec fidélité, persévère 💪";
-      case "Pasteur": return "Tu conduis avec sagesse, reste humble 🌟";
-      case "Docteur": return "Excellence ! Tu es une source d'inspiration 📖🔥";
+      case "Croyant": return "Continue à étudier la Parole, tu progresses ✨";
+      case "Disciple": return "Bonne connaissance biblique, persévère 🙏";
+      case "Ouvrier": return "Tu maîtrises bien les Écritures, continue 💪";
+      case "Pasteur": return "Excellente connaissance, tu peux enseigner 🌟";
+      case "Docteur": return "Maîtrise exceptionnelle ! Tu es un érudit biblique 📖🔥";
       default: return "";
     }
   }
