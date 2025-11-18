@@ -1,3 +1,4 @@
+
 {
   "name": "automatisation",
   "version": "2.0.0",
@@ -5,7 +6,8 @@
   "scripts": {
     "start": "http-server public -p 8080 -o",
     "dev": "http-server public -p 8080",
-    "preview": "http-server public -p 8080"
+    "preview": "http-server public -p 8080",
+    "sync": "git add . && git commit -m 'feat: Ajout de la fonctionnalité Verset du Jour' && git push"
   },
   "dependencies": {
     "firebase": "^12.6.0",
