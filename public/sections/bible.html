@@ -145,40 +145,6 @@
   let currentUtterance = null;
   let isPaused = false;
   let currentText = '';
-  let bibleDB = null;
-
-  // Initialize IndexedDB for offline Bible storage
-  function initBibleDB() {
-    const request = indexedDB.open('BibleOfflineDB', 1);
-    request.onerror = () => console.error('IndexedDB error');
-    request.onsuccess = (e) => { bibleDB = e.target.result; };
-    request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('chapters')) {
-        db.createObjectStore('chapters', { keyPath: 'key' });
-      }
-    };
-  }
-
-  function saveBibleChapter(bookId, chapter, data) {
-    if (!bibleDB) return;
-    const transaction = bibleDB.transaction(['chapters'], 'readwrite');
-    const store = transaction.objectStore('chapters');
-    store.put({ key: `${bookId}_${chapter}`, data, timestamp: Date.now() });
-  }
-
-  function getBibleChapter(bookId, chapter) {
-    return new Promise((resolve, reject) => {
-      if (!bibleDB) { reject('DB not ready'); return; }
-      const transaction = bibleDB.transaction(['chapters'], 'readonly');
-      const store = transaction.objectStore('chapters');
-      const request = store.get(`${bookId}_${chapter}`);
-      request.onsuccess = () => resolve(request.result?.data);
-      request.onerror = () => reject('Not found');
-    });
-  }
-
-  initBibleDB();
 
   function renderBibleBooks() {
     const container = document.getElementById('bibleBooksContainer');
@@ -207,8 +173,7 @@
     viewer.innerHTML = '<em>Chargement...</em>';
 
     try {
-      // Utiliser le système hybride
-      const verses = await getBibleChapter(version, book.id, bibleCurrChapter);
+      const verses = await window.getBibleChapter(version, book.id, bibleCurrChapter);
       
       if (!verses || verses.length === 0) {
         throw new Error('Chapitre non disponible');
@@ -233,9 +198,9 @@
         html += `<div class="bible-verse" style="position: relative; padding-right: 120px;">
           <strong>${verse.verse}</strong>${verse.text}
           <div style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; gap: 5px;">
-            <button onclick="addVerseToFavorites('${book.fr}', ${bibleCurrChapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" style="background: rgba(255,193,7,0.8); border: none; padding: 4px 8px; border-radius: 4px; color: white; cursor: pointer; font-size: 11px;" title="Ajouter aux favoris">⭐</button>
-            <button onclick="addVerseNote('${book.fr}', ${bibleCurrChapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" style="background: rgba(76,175,80,0.8); border: none; padding: 4px 8px; border-radius: 4px; color: white; cursor: pointer; font-size: 11px;" title="Ajouter une note">📝</button>
-            <button onclick="shareVerse('${book.fr}', ${bibleCurrChapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" style="background: rgba(37,117,252,0.8); border: none; padding: 4px 8px; border-radius: 4px; color: white; cursor: pointer; font-size: 11px;" title="Partager">📤</button>
+            <button onclick="addVerseToFavorites('${book.fr}', ${bibleCurrChapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\'").replace(/"/g, '&quot;')}')" style="background: rgba(255,193,7,0.8); border: none; padding: 4px 8px; border-radius: 4px; color: white; cursor: pointer; font-size: 11px;" title="Ajouter aux favoris">⭐</button>
+            <button onclick="addVerseNote('${book.fr}', ${bibleCurrChapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\'").replace(/"/g, '&quot;')}')" style="background: rgba(76,175,80,0.8); border: none; padding: 4px 8px; border-radius: 4px; color: white; cursor: pointer; font-size: 11px;" title="Ajouter une note">📝</button>
+            <button onclick="shareVerse('${book.fr}', ${bibleCurrChapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\'").replace(/"/g, '&quot;')}')" style="background: rgba(37,117,252,0.8); border: none; padding: 4px 8px; border-radius: 4px; color: white; cursor: pointer; font-size: 11px;" title="Partager">📤</button>
           </div>
         </div>`;
       });
@@ -256,8 +221,8 @@
       viewer.innerHTML = `
         <div style="padding: 30px; text-align: center; background: rgba(255,82,82,0.1); border-radius: 12px; border: 2px solid rgba(255,82,82,0.3);">
           <h3 style="color: #ff5252; margin-bottom: 15px;">⚠️ Chapitre non disponible</h3>
-          <p style="margin-bottom: 20px;">Ce chapitre n'est pas encore disponible dans les données locales.</p>
-          <p style="font-size: 14px; opacity: 0.8;">Veuillez sélectionner un autre livre ou chapitre.</p>
+          <p style="margin-bottom: 20px;">Impossible de charger le chapitre. Vérifiez votre connexion ou réessayez.</p>
+          <p style="font-size: 14px; opacity: 0.8;">${err.message}</p>
         </div>
       `;
       document.getElementById('audioControls').style.display = 'none';
@@ -275,8 +240,7 @@
     viewer.innerHTML = '<em>Chargement...</em>';
 
     try {
-      // Utiliser le système hybride
-      const verses = await getBibleChapter(version, book.id, chapter);
+      const verses = await window.getBibleChapter(version, book.id, chapter);
       
       if (!verses || verses.length === 0) {
         throw new Error('Chapitre non disponible');
@@ -298,7 +262,7 @@
       data.verses.forEach(verse => {
         html += `<div class="bible-verse" style="position: relative; padding-right: 50px;">
           <strong>${verse.verse}</strong>${verse.text}
-          <button onclick="shareVerse('${book.fr}', ${chapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(37,117,252,0.8); border: none; padding: 6px 10px; border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">📤</button>
+          <button onclick="shareVerse('${book.fr}', ${chapter}, ${verse.verse}, '${verse.text.replace(/'/g, "\'").replace(/"/g, '&quot;')}')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(37,117,252,0.8); border: none; padding: 6px 10px; border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">📤</button>
         </div>`;
       });
       html += '</div>';
@@ -312,7 +276,7 @@
       // Save to reading history
       saveReadingHistory(book.fr, chapter);
     } catch(err) {
-      viewer.innerHTML = `⚠️ Chapitre non disponible dans les données locales.<br><small>${err.message}</small>`;
+      viewer.innerHTML = `⚠️ Impossible de charger le chapitre.<br><small>${err.message}</small>`;
       document.getElementById('offlineStatus').textContent = '❌ Non disponible';
     }
   }
