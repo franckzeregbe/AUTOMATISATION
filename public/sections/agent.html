@@ -191,6 +191,72 @@ function startConversation() {
   document.getElementById('greetingBox').style.display = 'none';
   document.getElementById('conversationBox').style.display = 'block';
   localStorage.setItem('agentGreeted', 'true');
+  loadChatHistory();
+  simulateOnlineUsers();
+}
+
+function toggleChatMode() {
+  chatMode = chatMode === 'ai' ? 'community' : 'ai';
+  const btn = document.getElementById('chatModeBtn');
+  btn.textContent = chatMode === 'ai' ? '🤖 Mode IA' : '👥 Mode Communauté';
+  btn.style.background = chatMode === 'ai' ? 'rgba(106,17,203,0.3)' : 'rgba(76,175,80,0.3)';
+}
+
+function simulateOnlineUsers() {
+  onlineUsersCount = Math.floor(Math.random() * 15) + 3;
+  document.getElementById('onlineUsers').textContent = `👥 ${onlineUsersCount} en ligne`;
+}
+
+function addMessageToChat(message, isUser = true, userName = null) {
+  const chatMessages = document.getElementById('chatMessages');
+  const messageDiv = document.createElement('div');
+  const time = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+  
+  if(isUser) {
+    const displayName = userName || (currentUser ? currentUser.fullname : 'Utilisateur');
+    const userIcon = currentUser?.profilePicture ? 
+      `<img src="${currentUser.profilePicture}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">` : 
+      '👤';
+    
+    messageDiv.innerHTML = `
+      <div style="display: flex; gap: 10px; margin: 10px 0; justify-content: flex-end;">
+        <div style="background: rgba(106,17,203,0.2); padding: 10px 15px; border-radius: 15px 15px 5px 15px; max-width: 70%;">
+          <div style="font-size: 11px; opacity: 0.7; margin-bottom: 5px;">${displayName} • ${time}</div>
+          <div>${message}</div>
+        </div>
+        <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #6a11cb, #2575fc); border-radius: 50%; font-size: 18px;">
+          ${userIcon}
+        </div>
+      </div>
+    `;
+  } else {
+    messageDiv.innerHTML = `
+      <div style="display: flex; gap: 10px; margin: 10px 0;">
+        <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ff9800, #ff5722); border-radius: 50%; font-size: 18px;">
+          🤖
+        </div>
+        <div style="background: rgba(255,152,0,0.2); padding: 10px 15px; border-radius: 15px 15px 15px 5px; max-width: 70%;">
+          <div style="font-size: 11px; opacity: 0.7; margin-bottom: 5px;">JOHN - IA Biblique • ${time}</div>
+          <div>${message}</div>
+        </div>
+      </div>
+    `;
+  }
+  
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function loadChatHistory() {
+  const sampleMessages = [
+    {text: "Bonjour ! Bienvenue dans le chat biblique 📖", isUser: false},
+    {text: "Que dit la Bible sur l'espoir ?", isUser: true, userName: "Marie"},
+    {text: "\"Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance.\" - Jérémie 29:11", isUser: false}
+  ];
+  
+  sampleMessages.forEach(msg => {
+    addMessageToChat(msg.text, msg.isUser, msg.userName);
+  });
 }
 
 if (localStorage.getItem('agentGreeted') === 'true') {
@@ -342,6 +408,26 @@ function cancelAudio() {
   document.getElementById('audioPreview').innerHTML = '';
   audioBlob = null;
   audioChunks = [];
+}
+
+async function envoyerMessage() {
+  const input = document.getElementById("priereInput").value.trim();
+  
+  if (!input) return;
+  
+  addMessageToChat(input, true);
+  document.getElementById("priereInput").value = '';
+  
+  if(chatMode === 'ai') {
+    setTimeout(async () => {
+      try {
+        const response = await getBiblicalResponse(input);
+        addMessageToChat(response, false);
+      } catch (error) {
+        addMessageToChat("\"Car je connais les projets que j'ai formés sur vous, dit l'Éternel\" - Jérémie 29:11 📖", false);
+      }
+    }, 1000);
+  }
 }
 
 async function envoyerPriere() {
