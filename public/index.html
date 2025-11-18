@@ -869,19 +869,30 @@
       verseDiv.style.display = 'block';
     }
 
-    window.addEventListener('load', ()=>{
+    // Initialisation immédiate pour éviter le décalage
+    (function initApp() {
       const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
       if(savedUser){ 
-        currentUser = JSON.parse(savedUser);
-        users = JSON.parse(localStorage.getItem('appUsers')) || [];
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('splash').style.display = 'none';
-        initializeApp();
+        try {
+          currentUser = JSON.parse(savedUser);
+          users = JSON.parse(localStorage.getItem('appUsers')) || [];
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('splash').style.display = 'none';
+          initializeApp();
+        } catch(e) {
+          localStorage.removeItem('currentUser');
+          sessionStorage.removeItem('currentUser');
+          showLogin();
+        }
       } else { 
-        document.getElementById('splash').style.display = 'none'; 
-        document.getElementById('loginScreen').style.display = 'flex'; 
+        showLogin();
       }
-    });
+    })();
+    
+    function showLogin() {
+      document.getElementById('splash').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+    }
 
     function login(){
       const fullname = document.getElementById('fullname').value.trim();
@@ -935,22 +946,30 @@
       loadProfilePicture();
       points = currentUser.points || 0; completed = currentUser.completed || 0;
       
-      const lastPage = localStorage.getItem('currentPage') || 'accueil';
+      // Restaurer la page précédente ou aller à l'accueil
+      const lastPage = localStorage.getItem('currentPage');
+      const lastSection = localStorage.getItem('currentSection');
       
-      if(lastPage !== 'accueil') {
-        afficher(lastPage);
+      if(lastSection && ['stats', 'favorites', 'notes', 'goals', 'testimonies'].includes(lastSection)) {
+        // Restaurer les sections spéciales
+        const actions = {
+          stats: showStats, 
+          favorites: showFavorites, 
+          notes: showNotes, 
+          goals: showGoals, 
+          testimonies: showTestimonies
+        };
+        setTimeout(() => actions[lastSection]({preventDefault: ()=>{}}), 100);
+      } else if(lastPage && lastPage !== 'accueil') {
+        // Restaurer les sections normales
+        setTimeout(() => afficher(lastPage), 100);
       } else {
-        document.getElementById('content').style.display = 'none';
-        document.getElementById('content').innerHTML = '';
-        document.querySelector('.sections').style.display = 'flex';
-        document.getElementById('homeHeader').classList.remove('hide');
-        document.getElementById('backButton').classList.remove('show');
-        document.getElementById('searchContainer').style.display = 'block';
+        // Aller à l'accueil
+        afficherAccueil();
       }
       
       updateStreak();
-      const s = document.getElementById('splash');
-      if(s) s.style.display='none';
+      document.getElementById('splash').style.display = 'none';
     }
 
     function logout(){
@@ -1391,6 +1410,7 @@
     function goBack(){
       currentSection = null;
       localStorage.setItem('currentPage', 'accueil');
+      localStorage.removeItem('currentSection');
       const contentDiv = document.getElementById('content');
       contentDiv.classList.add('hiding');
       
@@ -1409,6 +1429,7 @@
     function afficherAccueil(){ 
       currentSection = null;
       localStorage.setItem('currentPage', 'accueil');
+      localStorage.removeItem('currentSection');
       
       document.getElementById('content').innerHTML = '';
       document.getElementById('content').style.display = 'none';
@@ -1704,9 +1725,12 @@
     function showStats(e){
       e.preventDefault();
       currentSection = 'stats';
+      localStorage.setItem('currentSection', 'stats');
+      localStorage.setItem('currentPage', 'stats');
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
+        removeOverlay();
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
@@ -1749,9 +1773,12 @@
     function showFavorites(e){
       e.preventDefault();
       currentSection = 'favorites';
+      localStorage.setItem('currentSection', 'favorites');
+      localStorage.setItem('currentPage', 'favorites');
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
+        removeOverlay();
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
@@ -1796,9 +1823,12 @@
     function showNotes(e){
       e.preventDefault();
       currentSection = 'notes';
+      localStorage.setItem('currentSection', 'notes');
+      localStorage.setItem('currentPage', 'notes');
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
+        removeOverlay();
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
@@ -1860,9 +1890,12 @@
     function showGoals(e){
       e.preventDefault();
       currentSection = 'goals';
+      localStorage.setItem('currentSection', 'goals');
+      localStorage.setItem('currentPage', 'goals');
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
+        removeOverlay();
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
@@ -1953,9 +1986,12 @@
     function showTestimonies(e){
       e.preventDefault();
       currentSection = 'testimonies';
+      localStorage.setItem('currentSection', 'testimonies');
+      localStorage.setItem('currentPage', 'testimonies');
       document.getElementById('sidebar').classList.add('collapsed');
       if(window.innerWidth <= 768){
         document.body.style.overflow = 'auto';
+        removeOverlay();
       }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
