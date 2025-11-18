@@ -330,11 +330,88 @@ function cancelAudio() {
   audioChunks = [];
 }
 
-function envoyerPriere() {
+async function envoyerPriere() {
   if (audioBlob) cancelAudio();
-  const input = document.getElementById("priereInput").value.trim().toLowerCase();
+  const input = document.getElementById("priereInput").value.trim();
+  
+  if (!input) {
+    alert("Veuillez entrer une question.");
+    return;
+  }
+  
+  // Afficher le chargement
+  const reponseDiv = document.getElementById("reponse");
+  reponseDiv.innerHTML = `
+    <div style="text-align: center; padding: 20px;">
+      <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #6a11cb; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <p style="margin-top: 15px;">🤖 JOHN consulte la Bible...</p>
+    </div>
+  `;
+  reponseDiv.classList.add("active");
+  
+  try {
+    const response = await getBiblicalResponse(input);
+    displayBiblicalResponse(response, input);
+  } catch (error) {
+    console.error('Erreur IA:', error);
+    fallbackBiblicalResponse(input.toLowerCase());
+  }
+  
+  document.getElementById("priereInput").value = '';
+}
 
-  // Commandes de navigation
+// Fonction pour obtenir une réponse biblique via IA
+async function getBiblicalResponse(question) {
+  const apiKey = 'AIzaSyDIws2UWw4lJr-OueYaT8iy7aIH8b0_J3g'; // Clé Firebase existante
+  
+  const prompt = `Tu es JOHN, un assistant spirituel chrétien expert de la Bible. 
+Réponds UNIQUEMENT avec des versets bibliques précis et leur référence. 
+Question: ${question}
+
+Format de réponse:
+1. Verset biblique avec référence exacte
+2. Explication simple basée sur la Bible
+3. Application pratique chrétienne`;
+  
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{ text: prompt }]
+      }]
+    })
+  });
+  
+  if (!response.ok) throw new Error('API Error');
+  
+  const data = await response.json();
+  return data.candidates[0].content.parts[0].text;
+}
+
+// Afficher la réponse biblique
+function displayBiblicalResponse(aiResponse, originalQuestion) {
+  const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
+  const reponseDiv = document.getElementById("reponse");
+  
+  reponseDiv.innerHTML = `
+    <p class="compassion">📖 ${userName}, voici ce que dit la Bible :</p>
+    <div style="background: rgba(255,235,59,0.1); padding: 15px; border-left: 4px solid #ffeb3b; border-radius: 8px; margin: 15px 0;">
+      <strong style="color: #ffeb3b;">❓ Question :</strong> ${originalQuestion}<br><br>
+      <strong style="color: #ffeb3b;">📜 Réponse biblique :</strong><br>
+      <div style="line-height: 1.8; margin-top: 10px;">${aiResponse.replace(/\n/g, '<br>')}</div>
+    </div>
+    <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
+      🤖 <strong>JOHN - IA Biblique</strong> : Toutes mes réponses sont basées sur les Écritures saintes.
+    </p>
+    <p class="signature">✨ JOHN - Agent IA Biblique • Propulsé par Gemini AI</p>
+  `;
+}
+
+// Réponses de secours basées sur la Bible
+function fallbackBiblicalResponse(input) {
+
+  // Commandes de navigation (mode secours)
   const navCommands = {
     'priere': 'prieres', 'prieres': 'prieres',
     'video': 'videos', 'videos': 'videos',
