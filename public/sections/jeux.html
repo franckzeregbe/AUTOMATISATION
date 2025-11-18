@@ -222,9 +222,15 @@
     }
   }
 
-  if(typeof window.quizQuestions === 'undefined') {
-    document.getElementById("quiz").innerHTML = "<p style='color:#e74c3c;'>⚠️ Erreur de chargement des questions. Veuillez rafraîchir la page.</p>";
-  } else {
-    showQuestion();
+  // Attendre que les questions soient chargées
+  function initQuiz() {
+    if(typeof window.quizQuestions === 'undefined') {
+      document.getElementById("quiz").innerHTML = "<p style='color:#e74c3c;'>⚠️ Chargement des questions...</p>";
+      setTimeout(initQuiz, 100);
+    } else {
+      showQuestion();
+    }
   }
+  
+  initQuiz();
 </script>
