@@ -5,9 +5,21 @@
   .video-btn { transition: transform 0.15s ease, box-shadow 0.15s ease; }
   .video-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(0,0,0,0.18); }
   .category-badge { display: inline-block; padding: 4px 10px; background: rgba(106,17,203,0.3); border-radius: 12px; font-size: 11px; margin-bottom: 8px; }
+  .tab-btn:hover { background: linear-gradient(135deg, #6a11cb, #2575fc) !important; border: none !important; transform: translateY(-2px); }
 </style>
-<h2 class="section-heading"><svg class="icon-svg" aria-hidden="true"><use href="#icon-video"></use></svg> <span>🎬 Vidéos Spirituelles</span></h2>
-<p>Découvrez nos contenus vidéo éducatifs et inspirants - Cliquez pour regarder sur YouTube</p>
+<h2 class="section-heading">
+  <button onclick="afficherAccueil()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-right: 10px; display: flex; align-items: center; gap: 5px;">← Retour</button>
+  <svg class="icon-svg" aria-hidden="true"><use href="#icon-video"></use></svg> 
+  <span>🎬 Vidéos Spirituelles</span>
+</h2>
+<p>Découvrez nos contenus vidéo éducatifs et inspirants pour toute la famille</p>
+
+<div class="category-tabs" style="display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+  <button onclick="showCategory('all')" id="tab-all" class="tab-btn active" style="padding: 10px 20px; background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s;">🎬 Tous</button>
+  <button onclick="showCategory('enfants')" id="tab-enfants" class="tab-btn" style="padding: 10px 20px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;">👶 Enfants</button>
+  <button onclick="showCategory('adultes')" id="tab-adultes" class="tab-btn" style="padding: 10px 20px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;">👥 Adultes</button>
+  <button onclick="showCategory('famille')" id="tab-famille" class="tab-btn" style="padding: 10px 20px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;">👨‍👩‍👧‍👦 Famille</button>
+</div>
 
 <style>
   .videos-grid {
@@ -77,70 +89,158 @@
 
 <script>
 const videos = [
-  {
-    titre: "Amazing Grace - Chant chrétien puissant",
-    categorie: "Louange",
-    url: "https://www.youtube.com/watch?v=CDdvReNKKuk",
-    videoId: "CDdvReNKKuk",
-    description: "Un des hymnes chrétiens les plus célèbres et touchants"
-  },
+  // ENFANTS
   {
     titre: "La Bible pour les enfants - Histoire de Noé",
-    categorie: "Éducation",
+    categorie: "Histoire Biblique",
+    public: "enfants",
     url: "https://www.youtube.com/watch?v=Lu2XFKL8eZg",
     videoId: "Lu2XFKL8eZg",
-    description: "Histoire biblique animée pour les enfants"
+    description: "L'arche de Noé racontée de façon ludique et éducative",
+    age: "3-10 ans"
   },
   {
-    titre: "Quel est le sens de la vie ? - Message puissant",
+    titre: "David et Goliath - Animation pour enfants",
+    categorie: "Histoire Biblique",
+    public: "enfants",
+    url: "https://www.youtube.com/watch?v=VI8F1nBYfWg",
+    videoId: "VI8F1nBYfWg",
+    description: "L'histoire de David qui vainc le géant Goliath",
+    age: "4-12 ans"
+  },
+  {
+    titre: "Jésus aime les petits enfants - Chant",
+    categorie: "Louange Enfants",
+    public: "enfants",
+    url: "https://www.youtube.com/watch?v=2-3dmZHeWlk",
+    videoId: "2-3dmZHeWlk",
+    description: "Chant chrétien joyeux pour les tout-petits",
+    age: "2-8 ans"
+  },
+  {
+    titre: "Les 10 Commandements pour enfants",
+    categorie: "Éducation",
+    public: "enfants",
+    url: "https://www.youtube.com/watch?v=TBTNMYoFg_A",
+    videoId: "TBTNMYoFg_A",
+    description: "Apprendre les commandements de Dieu de façon simple",
+    age: "6-12 ans"
+  },
+  {
+    titre: "Moïse et les 10 plaies d'Égypte",
+    categorie: "Histoire Biblique",
+    public: "enfants",
+    url: "https://www.youtube.com/watch?v=3-lW4bF_1Vg",
+    videoId: "3-lW4bF_1Vg",
+    description: "L'histoire de Moïse et la libération d'Égypte",
+    age: "5-12 ans"
+  },
+  {
+    titre: "Jésus et les enfants - Histoire animée",
+    categorie: "Nouveau Testament",
+    public: "enfants",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    videoId: "dQw4w9WgXcQ",
+    description: "Jésus accueille et bénit les petits enfants",
+    age: "3-10 ans"
+  },
+
+  // ADULTES
+  {
+    titre: "La puissance de la prière - Enseignement",
     categorie: "Enseignement",
-    url: "https://www.youtube.com/watch?v=zzcCWEb-tyk",
-    videoId: "zzcCWEb-tyk",
-    description: "Réflexion profonde sur le sens de notre existence"
+    public: "adultes",
+    url: "https://www.youtube.com/watch?v=yk_WJPjjVDE",
+    videoId: "yk_WJPjjVDE",
+    description: "Comment développer une vie de prière efficace",
+    duree: "45 min"
   },
   {
     titre: "Témoignage : De la drogue à Jésus",
     categorie: "Témoignage",
+    public: "adultes",
     url: "https://www.youtube.com/watch?v=Kppx4bzfAaE",
     videoId: "Kppx4bzfAaE",
-    description: "Témoignage bouleversant de transformation par la foi"
-  },
-  {
-    titre: "Comment prier efficacement ?",
-    categorie: "Enseignement",
-    url: "https://www.youtube.com/watch?v=yk_WJPjjVDE",
-    videoId: "yk_WJPjjVDE",
-    description: "Guide pratique pour une vie de prière puissante"
-  },
-  {
-    titre: "Hillsong - Oceans (Where Feet May Fail)",
-    categorie: "Louange",
-    url: "https://www.youtube.com/watch?v=dy9nwe9_xzw",
-    videoId: "dy9nwe9_xzw",
-    description: "Chant de louange moderne et inspirant"
+    description: "Témoignage puissant de transformation par la foi",
+    duree: "25 min"
   },
   {
     titre: "Les signes du retour de Jésus",
     categorie: "Prophétique",
+    public: "adultes",
     url: "https://www.youtube.com/watch?v=tapQ47VHAd8",
     videoId: "tapQ47VHAd8",
-    description: "Étude sur les prophéties bibliques du retour du Christ"
+    description: "Étude approfondie sur les prophéties bibliques",
+    duree: "1h 15min"
   },
   {
-    titre: "La puissance du pardon",
+    titre: "Vaincre la dépression par la foi",
     categorie: "Encouragement",
+    public: "adultes",
     url: "https://www.youtube.com/watch?v=GJcPVB-we7g",
     videoId: "GJcPVB-we7g",
-    description: "Message sur la libération par le pardon"
+    description: "Message d'espoir pour ceux qui traversent l'épreuve",
+    duree: "35 min"
   },
   {
-    titre: "Versets bibliques pour l'encouragement",
-    categorie: "Éducation",
+    titre: "Le mariage selon la Bible",
+    categorie: "Vie Chrétienne",
+    public: "adultes",
+    url: "https://www.youtube.com/watch?v=zzcCWEb-tyk",
+    videoId: "zzcCWEb-tyk",
+    description: "Principes bibliques pour un mariage épanoui",
+    duree: "50 min"
+  },
+  {
+    titre: "La gestion des finances selon Dieu",
+    categorie: "Vie Pratique",
+    public: "adultes",
     url: "https://www.youtube.com/watch?v=Vhq7jzn7Rqo",
     videoId: "Vhq7jzn7Rqo",
-    description: "Compilation de versets pour fortifier votre foi"
+    description: "Principes bibliques pour gérer l'argent",
+    duree: "40 min"
+  },
+
+  // FAMILLE
+  {
+    titre: "Culte familial - Comment l'organiser",
+    categorie: "Vie Familiale",
+    public: "famille",
+    url: "https://www.youtube.com/watch?v=CDdvReNKKuk",
+    videoId: "CDdvReNKKuk",
+    description: "Guide pratique pour des moments spirituels en famille",
+    duree: "20 min"
+  },
+  {
+    titre: "Éduquer ses enfants selon la Bible",
+    categorie: "Parentalité",
+    public: "famille",
+    url: "https://www.youtube.com/watch?v=dy9nwe9_xzw",
+    videoId: "dy9nwe9_xzw",
+    description: "Principes bibliques pour l'éducation des enfants",
+    duree: "30 min"
+  },
+  {
+    titre: "Chants de Noël en famille",
+    categorie: "Louange Famille",
+    public: "famille",
+    url: "https://www.youtube.com/watch?v=2-3dmZHeWlk",
+    videoId: "2-3dmZHeWlk",
+    description: "Cantiques de Noël à chanter ensemble",
+    duree: "15 min"
+  },
+  {
+    titre: "Prières du soir en famille",
+    categorie: "Prière Famille",
+    public: "famille",
+    url: "https://www.youtube.com/watch?v=TBTNMYoFg_A",
+    videoId: "TBTNMYoFg_A",
+    description: "Moments de prière à partager avant le coucher",
+    duree: "10 min"
   }
 ];
+
+let currentCategory = 'all';
 
 function shareVideo(title, url) {
   const shareText = `🎬 ${title}\n\n${url}\n\n✨ Partagé depuis AUTOMATISATION`;
@@ -154,15 +254,42 @@ function downloadVideo(videoId, title) {
   alert(`📥 Redirection vers le téléchargeur...\n\nVous pouvez télécharger "${title}" depuis le site ouvert.`);
 }
 
+function showCategory(category) {
+  currentCategory = category;
+  
+  // Update tab styles
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.style.background = 'rgba(255,255,255,0.1)';
+    btn.style.border = '1px solid rgba(255,255,255,0.2)';
+  });
+  document.getElementById(`tab-${category}`).style.background = 'linear-gradient(135deg, #6a11cb, #2575fc)';
+  document.getElementById(`tab-${category}`).style.border = 'none';
+  
+  renderVideos();
+}
+
 function renderVideos() {
   const grid = document.getElementById('videosGrid');
-  grid.innerHTML = videos.map((video, i) => `
+  const filteredVideos = currentCategory === 'all' ? videos : videos.filter(v => v.public === currentCategory);
+  
+  if (filteredVideos.length === 0) {
+    grid.innerHTML = '<p style="text-align: center; opacity: 0.7; margin: 40px 0;">Aucune vidéo dans cette catégorie pour le moment.</p>';
+    return;
+  }
+  
+  grid.innerHTML = filteredVideos.map((video, i) => {
+    const ageOrDuration = video.age || video.duree || '';
+    const publicIcon = video.public === 'enfants' ? '👶' : video.public === 'adultes' ? '👥' : '👨‍👩‍👧‍👦';
+    
+    return `
     <div class="video-card" style="animation: fadeInUp 0.5s ease ${i * 0.1}s both;">
       <div style="position: relative; cursor: pointer;" onclick="window.open('${video.url}', '_blank')">
         <img src="https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg" 
              alt="${video.titre}" 
              class="video-thumbnail">
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: rgba(255,0,0,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">▶️</div>
+        <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 12px; font-size: 12px;">${publicIcon} ${video.public}</div>
+        ${ageOrDuration ? `<div style="position: absolute; top: 10px; right: 10px; background: rgba(106,17,203,0.8); padding: 4px 8px; border-radius: 12px; font-size: 11px;">${ageOrDuration}</div>` : ''}
       </div>
       <div class="video-info">
         <span class="category-badge">${video.categorie}</span>
@@ -170,12 +297,13 @@ function renderVideos() {
         <p>${video.description}</p>
         <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
           <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="video-btn" style="flex: 1; text-align: center; min-width: 120px;" onclick="event.stopPropagation()">📺 Regarder</a>
-          <button onclick="event.stopPropagation(); shareVideo('${video.titre.replace(/'/g, "\\'")}',' ${video.url}')" style="padding: 10px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 14px; backdrop-filter: blur(10px);">📤 Partager</button>
-          <button onclick="event.stopPropagation(); downloadVideo('${video.videoId}', '${video.titre.replace(/'/g, "\\'")}')" style="padding: 10px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 14px; backdrop-filter: blur(10px);">📥 Télécharger</button>
+          <button onclick="event.stopPropagation(); shareVideo('${video.titre.replace(/'/g, "\\'")}',' ${video.url}')" style="padding: 10px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 14px; backdrop-filter: blur(10px);">📤</button>
+          <button onclick="event.stopPropagation(); downloadVideo('${video.videoId}', '${video.titre.replace(/'/g, "\\'")}')" style="padding: 10px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 14px; backdrop-filter: blur(10px);">📥</button>
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 renderVideos();
