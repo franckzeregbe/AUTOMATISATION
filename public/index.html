@@ -1040,32 +1040,179 @@
 
     function viewProfile(){
       currentSection = 'profile';
+      localStorage.setItem('currentSection', 'profile');
+      localStorage.setItem('currentPage', 'profile');
+      document.getElementById('sidebar').classList.add('collapsed');
+      if(window.innerWidth <= 768){
+        document.body.style.overflow = 'auto';
+        removeOverlay();
+      }
       document.getElementById('homeHeader').classList.add('hide');
       document.getElementById('backButton').classList.add('show');
       document.getElementById('searchContainer').style.display = 'none';
       const verseDiv = document.getElementById('verseOfDay');
       if(verseDiv) verseDiv.style.display = 'none';
       
+      const userStats = JSON.parse(localStorage.getItem('userStats_' + currentUser.phone)) || {prayers: 0, quizCompleted: 0, bibleReading: 0, donations: 0};
+      const userXP = parseInt(localStorage.getItem('userXP_' + currentUser.phone)) || 0;
+      const userLevel = Math.floor(userXP / 100) + 1;
+      const xpToNext = 100 - (userXP % 100);
+      const joinDate = currentUser.joinDate || new Date().toLocaleDateString('fr-FR');
+      const lastLogin = currentUser.lastLogin ? new Date(currentUser.lastLogin).toLocaleDateString('fr-FR') : 'Aujourd\'hui';
+      
       const profileHTML = `
-        <h2>👤 Mon Profil</h2>
-        <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; margin: 20px 0; text-align: center;">
-          <div style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px; background: linear-gradient(135deg, #6a11cb, #2575fc); display: flex; align-items: center; justify-content: center; font-size: 60px; overflow: hidden; border: 4px solid rgba(255,255,255,0.2); cursor: pointer;" onclick="changeProfilePicture()">
+        <h2>👤 Mon Profil Spirituel</h2>
+        
+        <!-- Photo et infos principales -->
+        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0; text-align: center;">
+          <div style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 15px; background: linear-gradient(135deg, #6a11cb, #2575fc); display: flex; align-items: center; justify-content: center; font-size: 60px; overflow: hidden; border: 4px solid rgba(255,255,255,0.2); cursor: pointer; position: relative;" onclick="changeProfilePicture()">
             ${currentUser.profilePicture ? `<img src="${currentUser.profilePicture}" style="width: 100%; height: 100%; object-fit: cover;" />` : '👤'}
+            <div style="position: absolute; bottom: 0; right: 0; background: #6a11cb; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border: 3px solid white; cursor: pointer;">📷</div>
           </div>
-          <button onclick="changeProfilePicture()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; margin-bottom: 20px;">📷 Changer la photo</button>
-          <div style="text-align: left; margin-top: 20px;">
-            <p><strong>Nom complet :</strong> ${currentUser.fullname}</p>
-            <p><strong>Téléphone :</strong> ${currentUser.phone}</p>
-            ${currentUser.email ? `<p><strong>Email :</strong> ${currentUser.email}</p>` : ''}
-            <p><strong>Points totaux :</strong> ${points} 🎉</p>
-            <p><strong>Sections visitées :</strong> ${completed} ✅</p>
-            <p><strong>Membre depuis :</strong> ${currentUser.joinDate}</p>
+          <h3 style="margin: 10px 0; color: #ffeb3b;">${currentUser.fullname}</h3>
+          <p style="opacity: 0.8; margin: 5px 0;">${currentUser.phone}</p>
+          ${currentUser.email ? `<p style="opacity: 0.7; margin: 5px 0;">${currentUser.email}</p>` : ''}
+          <div style="background: rgba(106,17,203,0.2); padding: 10px; border-radius: 8px; margin: 15px 0;">
+            <span style="font-size: 24px;">🏆</span>
+            <div style="font-weight: bold; color: #ffeb3b;">Niveau ${userLevel}</div>
+            <div style="font-size: 12px; opacity: 0.8;">${userXP} XP • ${xpToNext} XP pour niveau suivant</div>
           </div>
         </div>
-        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">← Retour</button>
+        
+        <!-- Statistiques spirituelles -->
+        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+          <h3 style="margin: 0 0 15px 0; color: #ffeb3b;">📊 Mes Statistiques Spirituelles</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
+            <div style="text-align: center; padding: 15px; background: rgba(106,17,203,0.2); border-radius: 8px;">
+              <div style="font-size: 24px;">🙏</div>
+              <div style="font-size: 20px; font-weight: bold; margin: 5px 0;">${userStats.prayers}</div>
+              <div style="font-size: 12px; opacity: 0.8;">Prières</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(37,117,252,0.2); border-radius: 8px;">
+              <div style="font-size: 24px;">🎮</div>
+              <div style="font-size: 20px; font-weight: bold; margin: 5px 0;">${userStats.quizCompleted}</div>
+              <div style="font-size: 12px; opacity: 0.8;">Quiz</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(76,175,80,0.2); border-radius: 8px;">
+              <div style="font-size: 24px;">📖</div>
+              <div style="font-size: 20px; font-weight: bold; margin: 5px 0;">${userStats.bibleReading}</div>
+              <div style="font-size: 12px; opacity: 0.8;">Chapitres</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: rgba(255,152,0,0.2); border-radius: 8px;">
+              <div style="font-size: 24px;">🔥</div>
+              <div style="font-size: 20px; font-weight: bold; margin: 5px 0;">${currentUser.streak || 0}</div>
+              <div style="font-size: 12px; opacity: 0.8;">Jours</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Informations du compte -->
+        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+          <h3 style="margin: 0 0 15px 0; color: #ffeb3b;">ℹ️ Informations du Compte</h3>
+          <div style="display: grid; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <span style="opacity: 0.8;">Membre depuis</span>
+              <span style="font-weight: bold;">${joinDate}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <span style="opacity: 0.8;">Dernière connexion</span>
+              <span style="font-weight: bold;">${lastLogin}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <span style="opacity: 0.8;">Points totaux</span>
+              <span style="font-weight: bold; color: #ffeb3b;">${points} 🎉</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <span style="opacity: 0.8;">Sections visitées</span>
+              <span style="font-weight: bold;">${completed} ✅</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+              <span style="opacity: 0.8;">Statut</span>
+              <span style="font-weight: bold; color: #4caf50;">${currentUser.isAdmin ? '👑 Administrateur' : '👤 Membre'}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Actions du profil -->
+        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 20px 0;">
+          <h3 style="margin: 0 0 15px 0; color: #ffeb3b;">⚙️ Actions du Profil</h3>
+          <div style="display: grid; gap: 10px;">
+            <button onclick="changeProfilePicture()" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; text-align: left;">📷 Changer la photo de profil</button>
+            <button onclick="editProfile()" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; text-align: left;">✏️ Modifier mes informations</button>
+            <button onclick="exportData()" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; text-align: left;">📤 Exporter mes données</button>
+            <button onclick="resetStats()" style="background: rgba(255,152,0,0.2); color: white; border: 1px solid rgba(255,152,0,0.3); padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; text-align: left;">🔄 Réinitialiser les statistiques</button>
+          </div>
+        </div>
+        
+        <button onclick="afficherAccueil()" style="background: #6a11cb; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 20px;">← Retour à l'accueil</button>
       `;
       document.getElementById('content').innerHTML = profileHTML;
+      document.getElementById('content').style.display = 'block';
       document.querySelector('.sections').style.display='none';
+    }
+    
+    function editProfile() {
+      const newName = prompt('Nouveau nom complet:', currentUser.fullname);
+      const newEmail = prompt('Nouvel email (optionnel):', currentUser.email || '');
+      
+      if(newName && newName.trim()) {
+        currentUser.fullname = newName.trim();
+        currentUser.email = newEmail ? newEmail.trim() : '';
+        
+        // Mettre à jour l'affichage
+        document.getElementById('userDisplayName').textContent = currentUser.fullname;
+        document.getElementById('userName').textContent = currentUser.fullname;
+        document.getElementById('sidebarUsername').textContent = currentUser.fullname;
+        
+        // Sauvegarder
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
+        localStorage.setItem('appUsers', JSON.stringify(users));
+        
+        showToast('✅ Profil mis à jour !');
+        viewProfile(); // Rafraîchir l'affichage
+      }
+    }
+    
+    function exportData() {
+      const userData = {
+        profile: currentUser,
+        stats: JSON.parse(localStorage.getItem('userStats_' + currentUser.phone)) || {},
+        xp: localStorage.getItem('userXP_' + currentUser.phone) || 0,
+        favorites: JSON.parse(localStorage.getItem('favorites_' + currentUser.phone)) || [],
+        notes: JSON.parse(localStorage.getItem('notes_' + currentUser.phone)) || [],
+        goals: JSON.parse(localStorage.getItem('goals_' + currentUser.phone)) || []
+      };
+      
+      const dataStr = JSON.stringify(userData, null, 2);
+      const dataBlob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(dataBlob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `AUTOMATISATION_${currentUser.fullname}_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      
+      showToast('📤 Données exportées !');
+    }
+    
+    function resetStats() {
+      if(confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser toutes vos statistiques ?\n\nCette action est irréversible.')) {
+        localStorage.removeItem('userStats_' + currentUser.phone);
+        localStorage.removeItem('userXP_' + currentUser.phone);
+        currentUser.points = 0;
+        currentUser.completed = 0;
+        currentUser.streak = 0;
+        points = 0;
+        completed = 0;
+        
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        users = users.map(u => u.phone === currentUser.phone ? currentUser : u);
+        localStorage.setItem('appUsers', JSON.stringify(users));
+        
+        showToast('🔄 Statistiques réinitialisées !');
+        viewProfile(); // Rafraîchir l'affichage
+      }
     }
 
     const searchData = {
