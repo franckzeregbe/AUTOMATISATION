@@ -621,11 +621,19 @@
     
     <div class="menu-divider"></div>
     
-    <a class="menu-item" href="#" onclick="showStats(event)"><span>📊 Statistiques</span></a>
-    <a class="menu-item" href="#" onclick="showFavorites(event)"><span>⭐ Favoris</span></a>
-    <a class="menu-item" href="#" onclick="showNotes(event)"><span>📝 Notes</span></a>
-    <a class="menu-item" href="#" onclick="showGoals(event)"><span>🎯 Objectifs</span></a>
-    <a class="menu-item" href="#" data-path="sections/gamification.html" onclick="navClick(event)"><span>🏆 Gamification</span></a>
+    <div>
+      <div class="menu-section-header" onclick="toggleMenuSection(event)">
+        <span>👤 Espace Perso</span>
+        <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z" fill="white"/></svg>
+      </div>
+      <div class="menu-section-content">
+        <a class="menu-item" href="#" onclick="showStats(event)"><span>📊 Statistiques</span></a>
+        <a class="menu-item" href="#" onclick="showFavorites(event)"><span>⭐ Favoris</span></a>
+        <a class="menu-item" href="#" onclick="showNotes(event)"><span>📝 Notes</span></a>
+        <a class="menu-item" href="#" onclick="showGoals(event)"><span>🎯 Objectifs</span></a>
+        <a class="menu-item" href="#" data-path="sections/gamification.html" onclick="navClick(event)"><span>🏆 Gamification</span></a>
+      </div>
+    </div>
     
     <div class="menu-divider"></div>
     
@@ -765,14 +773,15 @@
         removeOverlay();
       }
       
-      // Fermer le menu déroulant des sections
-      const menuHeader = document.querySelector('.menu-section-header');
-      const menuContent = document.querySelector('.menu-section-content');
-      if(menuHeader && menuContent){
-        menuHeader.classList.remove('expanded');
-        menuContent.classList.remove('expanded');
-        localStorage.setItem('menuSectionExpanded', 'false');
-      }
+      // Fermer les menus déroulants des sections
+      const menuHeaders = document.querySelectorAll('.menu-section-header');
+      const menuContents = document.querySelectorAll('.menu-section-content');
+      menuHeaders.forEach((header, i) => {
+        header.classList.remove('expanded');
+        if(menuContents[i]) menuContents[i].classList.remove('expanded');
+      });
+      localStorage.setItem('menuSectionExpanded', 'false');
+      localStorage.setItem('menuPersoExpanded', 'false');
       
       // Navigation avec délai pour animation fluide
       setTimeout(() => {
@@ -1479,7 +1488,13 @@
       const content = header.nextElementSibling;
       header.classList.toggle('expanded');
       content.classList.toggle('expanded');
-      localStorage.setItem('menuSectionExpanded', header.classList.contains('expanded'));
+      
+      // Sauvegarder l'état selon la section
+      if(header.textContent.includes('Sections Spirituelles')){
+        localStorage.setItem('menuSectionExpanded', header.classList.contains('expanded'));
+      } else if(header.textContent.includes('Espace Perso')){
+        localStorage.setItem('menuPersoExpanded', header.classList.contains('expanded'));
+      }
     }
 
     function rateApp(e){ 
@@ -2164,12 +2179,21 @@
       } else if(localStorage.getItem('sidebarCollapsed') === 'true'){
         document.getElementById('sidebar').classList.add('collapsed');
       }
+      // Restaurer l'état des sections du menu
       if(localStorage.getItem('menuSectionExpanded') === 'true'){
         const header = document.querySelector('.menu-section-header');
         const content = document.querySelector('.menu-section-content');
         if(header && content){
           header.classList.add('expanded');
           content.classList.add('expanded');
+        }
+      }
+      if(localStorage.getItem('menuPersoExpanded') === 'true'){
+        const headers = document.querySelectorAll('.menu-section-header');
+        const contents = document.querySelectorAll('.menu-section-content');
+        if(headers[1] && contents[1]){
+          headers[1].classList.add('expanded');
+          contents[1].classList.add('expanded');
         }
       }
     });
