@@ -1,0 +1,189 @@
+<h2>📖 Plan de Lecture Biblique</h2>
+
+<div style="margin: 20px 0;">
+  <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+    <button onclick="showBibleFavorites()" style="background: linear-gradient(135deg, #ff9800, #ff5722); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;">⭐ Mes Favoris</button>
+    <button onclick="showBibleNotes()" style="background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;">📝 Mes Notes</button>
+    <button onclick="showReadingHistory()" style="background: linear-gradient(135deg, #2196f3, #42a5f5); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;">📚 Historique</button>
+    <button onclick="showReadingPlans()" style="background: linear-gradient(135deg, #9c27b0, #ba68c8); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;">📅 Plans</button>
+  </div>
+</div>
+
+<div id="planContent">
+  <div style="text-align: center; padding: 40px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+    <h3>📖 Votre Compagnon de Lecture</h3>
+    <p>Organisez votre lecture biblique avec nos outils :</p>
+    <ul style="text-align: left; max-width: 400px; margin: 20px auto;">
+      <li>⭐ Sauvegardez vos versets favoris</li>
+      <li>📝 Ajoutez des notes personnelles</li>
+      <li>📚 Suivez votre historique de lecture</li>
+      <li>📅 Choisissez un plan de lecture</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+function showBibleFavorites() {
+  const userId = localStorage.getItem('userPhone') || 'guest';
+  const favorites = JSON.parse(localStorage.getItem('bibleFavorites_' + userId)) || [];
+  
+  let html = '<h3>⭐ Mes Versets Favoris</h3>';
+  
+  if (favorites.length === 0) {
+    html += '<p style="text-align: center; opacity: 0.7; padding: 40px;">Aucun verset favori pour le moment.<br>Ajoutez des versets depuis la section Bible!</p>';
+  } else {
+    html += '<div style="display: grid; gap: 15px; margin-top: 20px;">';
+    favorites.reverse().forEach((fav, i) => {
+      html += `
+        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 4px solid #ffeb3b;">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <div style="font-weight: bold; color: #ffeb3b; margin-bottom: 8px;">📖 ${fav.book} ${fav.chapter}:${fav.verse}</div>
+              <div style="opacity: 0.9; line-height: 1.6;">"${fav.text}"</div>
+              <div style="font-size: 11px; opacity: 0.6; margin-top: 10px;">${new Date(fav.date).toLocaleDateString('fr-FR')}</div>
+            </div>
+            <button onclick="removeFavorite(${favorites.length - 1 - i})" style="background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+  
+  document.getElementById('planContent').innerHTML = html;
+}
+
+function showBibleNotes() {
+  const userId = localStorage.getItem('userPhone') || 'guest';
+  const notes = JSON.parse(localStorage.getItem('bibleNotes_' + userId)) || [];
+  
+  let html = '<h3>📝 Mes Notes Bibliques</h3>';
+  
+  if (notes.length === 0) {
+    html += '<p style="text-align: center; opacity: 0.7; padding: 40px;">Aucune note pour le moment.<br>Ajoutez des notes depuis la section Bible!</p>';
+  } else {
+    html += '<div style="display: grid; gap: 15px; margin-top: 20px;">';
+    notes.reverse().forEach((note, i) => {
+      html += `
+        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 4px solid #4caf50;">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <div style="font-weight: bold; color: #4caf50; margin-bottom: 8px;">📖 ${note.book} ${note.chapter}:${note.verse}</div>
+              <div style="opacity: 0.8; font-style: italic; margin-bottom: 10px; font-size: 14px;">"${note.text}"</div>
+              <div style="background: rgba(76,175,80,0.1); padding: 10px; border-radius: 6px; margin-bottom: 8px;">
+                <strong>Ma note:</strong> ${note.note}
+              </div>
+              <div style="font-size: 11px; opacity: 0.6;">${new Date(note.date).toLocaleDateString('fr-FR')}</div>
+            </div>
+            <button onclick="removeNote(${notes.length - 1 - i})" style="background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+  
+  document.getElementById('planContent').innerHTML = html;
+}
+
+function showReadingHistory() {
+  const userId = localStorage.getItem('userPhone') || 'guest';
+  const history = JSON.parse(localStorage.getItem('bibleHistory_' + userId)) || [];
+  
+  let html = '<h3>📚 Historique de Lecture</h3>';
+  
+  if (history.length === 0) {
+    html += '<p style="text-align: center; opacity: 0.7; padding: 40px;">Aucun historique pour le moment.<br>Commencez à lire la Bible!</p>';
+  } else {
+    html += '<div style="display: grid; gap: 10px; margin-top: 20px;">';
+    history.slice(0, 20).forEach(entry => {
+      html += `
+        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: bold;">📖 ${entry.book} - Chapitre ${entry.chapter}</div>
+            <div style="font-size: 12px; opacity: 0.7;">${new Date(entry.date).toLocaleDateString('fr-FR')}</div>
+          </div>
+          <button onclick="openBibleChapter('${entry.book}', ${entry.chapter})" style="background: #6a11cb; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Relire</button>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+  
+  document.getElementById('planContent').innerHTML = html;
+}
+
+function showReadingPlans() {
+  let html = `
+    <h3>📅 Plans de Lecture</h3>
+    <div style="display: grid; gap: 15px; margin-top: 20px;">
+      <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+        <h4 style="color: #6a11cb; margin-top: 0;">📖 Bible en 1 an</h4>
+        <p>Lisez toute la Bible en 365 jours avec des portions quotidiennes équilibrées.</p>
+        <button onclick="startReadingPlan('yearly')" style="background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Commencer</button>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+        <h4 style="color: #ff9800; margin-top: 0;">⚡ Nouveau Testament en 30 jours</h4>
+        <p>Découvrez la vie de Jésus et les enseignements apostoliques en un mois.</p>
+        <button onclick="startReadingPlan('nt30')" style="background: linear-gradient(135deg, #ff9800, #ff5722); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Commencer</button>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+        <h4 style="color: #4caf50; margin-top: 0;">🎯 Psaumes et Proverbes</h4>
+        <p>Sagesse quotidienne avec un psaume et un proverbe par jour.</p>
+        <button onclick="startReadingPlan('wisdom')" style="background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Commencer</button>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('planContent').innerHTML = html;
+}
+
+function removeFavorite(index) {
+  const userId = localStorage.getItem('userPhone') || 'guest';
+  const favorites = JSON.parse(localStorage.getItem('bibleFavorites_' + userId)) || [];
+  favorites.splice(index, 1);
+  localStorage.setItem('bibleFavorites_' + userId, JSON.stringify(favorites));
+  showBibleFavorites();
+}
+
+function removeNote(index) {
+  const userId = localStorage.getItem('userPhone') || 'guest';
+  const notes = JSON.parse(localStorage.getItem('bibleNotes_' + userId)) || [];
+  notes.splice(index, 1);
+  localStorage.setItem('bibleNotes_' + userId, JSON.stringify(notes));
+  showBibleNotes();
+}
+
+function openBibleChapter(book, chapter) {
+  // Rediriger vers la section Bible avec le livre et chapitre spécifiés
+  window.location.href = '#bible';
+  setTimeout(() => {
+    if (typeof loadBibleBook === 'function') {
+      // Trouver l'index du livre
+      const bookIndex = bibleBooks.findIndex(b => b.fr === book);
+      if (bookIndex !== -1) {
+        loadBibleBook(bookIndex);
+      }
+    }
+  }, 500);
+}
+
+function startReadingPlan(planType) {
+  const userId = localStorage.getItem('userPhone') || 'guest';
+  const plans = JSON.parse(localStorage.getItem('readingPlans_' + userId)) || [];
+  
+  const planData = {
+    type: planType,
+    startDate: new Date().toISOString(),
+    currentDay: 1,
+    completed: false
+  };
+  
+  plans.push(planData);
+  localStorage.setItem('readingPlans_' + userId, JSON.stringify(plans));
+  
+  alert('✅ Plan de lecture commencé! Vous recevrez des rappels quotidiens.');
+}
+</script>

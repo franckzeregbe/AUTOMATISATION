@@ -1,0 +1,538 @@
+{
+  "GEN": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Au commencement Dieu créa les cieux et la terre."
+      },
+      {
+        "verse": 27,
+        "text": "Et Dieu créa l'homme à son image; il le créa à l'image de Dieu; il les créa mâle et femelle."
+      }
+    ]
+  },
+  "PSA": {
+    "23": [
+      {
+        "verse": 1,
+        "text": "L'Éternel est mon berger; je ne manquerai de rien."
+      },
+      {
+        "verse": 4,
+        "text": "Même quand je marcherais par la vallée de l'ombre de la mort, je ne craindrai aucun mal; car tu es avec moi: ta houlette et ton bâton, ce sont eux qui me consolent."
+      }
+    ]
+  },
+  "JHN": {
+    "3": [
+      {
+        "verse": 16,
+        "text": "Car Dieu a tant aimé le monde, qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse pas, mais qu'il ait la vie éternelle."
+      }
+    ]
+  },
+  "PHP": {
+    "4": [
+      {
+        "verse": 13,
+        "text": "Je puis toutes choses en celui qui me fortifie."
+      }
+    ]
+  },
+  "EXO": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Exode - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "LEV": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Lévitique - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "NUM": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Nombres - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "DEU": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Deutéronome - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JOS": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Josué - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JDG": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Juges - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "RUT": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Ruth - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1SA": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Samuel - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2SA": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Samuel - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1KI": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Rois - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2KI": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Rois - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1CH": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Chroniques - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2CH": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Chroniques - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "EZR": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Esdras - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "NEH": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Néhémie - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "EST": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Esther - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JOB": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Job - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "PRO": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Proverbes - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "ECC": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Ecclésiaste - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "SNG": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Cantique - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "ISA": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Ésaïe - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JER": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Jérémie - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "LAM": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Lamentations - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "EZK": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Ézéchiel - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "DAN": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Daniel - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "HOS": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Osée - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JOL": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Joël - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "AMO": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Amos - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "OBA": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Abdias - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JON": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Jonas - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "MIC": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Michée - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "NAM": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Nahum - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "HAB": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Habacuc - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "ZEP": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Sophonie - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "HAG": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Aggée - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "ZEC": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Zacharie - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "MAL": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Malachie - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "MAT": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Matthieu - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "MRK": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Marc - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "LUK": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Luc - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "ACT": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Actes - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "ROM": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Romains - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1CO": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Corinthiens - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2CO": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Corinthiens - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "GAL": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Galates - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "EPH": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Éphésiens - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "COL": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Colossiens - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1TH": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Thessaloniciens - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2TH": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Thessaloniciens - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1TI": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Timothée - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2TI": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Timothée - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "TIT": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Tite - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "PHM": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Philémon - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "HEB": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Hébreux - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JAS": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Jacques - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1PE": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Pierre - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2PE": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Pierre - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "1JN": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 1 Jean - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "2JN": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 2 Jean - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "3JN": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre 3 Jean - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "JUD": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Jude - Version Darby en cours d'ajout."
+      }
+    ]
+  },
+  "REV": {
+    "1": [
+      {
+        "verse": 1,
+        "text": "Début du livre Apocalypse - Version Darby en cours d'ajout."
+      }
+    ]
+  }
+}

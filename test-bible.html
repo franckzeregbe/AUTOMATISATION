@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Bible</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>Test de la Section Bible</h1>
+    <div id="results"></div>
+
+    <script src="bible-data.js"></script>
+    <script>
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            document.getElementById('results').appendChild(div);
+        }
+
+        // Test du chargement des données
+        setTimeout(() => {
+            if (typeof window.bibleData !== 'undefined' && window.bibleData) {
+                addResult('✅ Bible data chargée avec succès', 'success');
+                
+                // Test des versions
+                if (window.bibleData.lsg) {
+                    addResult('✅ Version Louis Segond disponible', 'success');
+                } else {
+                    addResult('❌ Version Louis Segond manquante', 'error');
+                }
+                
+                if (window.bibleData.darby) {
+                    addResult('✅ Version Darby disponible', 'success');
+                } else {
+                    addResult('❌ Version Darby manquante', 'error');
+                }
+                
+                // Test des livres
+                const lsgBooks = Object.keys(window.bibleData.lsg || {});
+                const darbyBooks = Object.keys(window.bibleData.darby || {});
+                
+                addResult(`📚 LSG: ${lsgBooks.length} livres disponibles: ${lsgBooks.join(', ')}`, 'info');
+                addResult(`📚 Darby: ${darbyBooks.length} livres disponibles: ${darbyBooks.join(', ')}`, 'info');
+                
+                // Test des chapitres
+                if (window.bibleData.lsg.GEN && window.bibleData.lsg.GEN[1]) {
+                    const verses = window.bibleData.lsg.GEN[1];
+                    addResult(`📖 Genèse 1 (LSG): ${verses.length} versets`, 'success');
+                    addResult(`Premier verset: "${verses[0].text}"`, 'info');
+                }
+                
+                if (window.bibleData.darby.GEN && window.bibleData.darby.GEN[1]) {
+                    const verses = window.bibleData.darby.GEN[1];
+                    addResult(`📖 Genèse 1 (Darby): ${verses.length} versets`, 'success');
+                    addResult(`Premier verset: "${verses[0].text}"`, 'info');
+                }
+                
+            } else {
+                addResult('❌ Erreur: Bible data non chargée', 'error');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

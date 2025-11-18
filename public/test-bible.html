@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test Bible</title></head>
+<body>
+<h1>Test Bible Data</h1>
+<div id="result"></div>
+<script src="bible-data.js"></script>
+<script>
+  const result = document.getElementById('result');
+  if (window.bibleData) {
+    result.innerHTML = '<p style="color:green">✅ Bible data chargée!</p>';
+    result.innerHTML += '<p>Versions: ' + Object.keys(window.bibleData).join(', ') + '</p>';
+    result.innerHTML += '<p>Livres LSG: ' + Object.keys(window.bibleData.lsg).join(', ') + '</p>';
+  } else {
+    result.innerHTML = '<p style="color:red">❌ Bible data non chargée</p>';
+  }
+</script>
+</body>
+</html>

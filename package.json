@@ -1,0 +1,16 @@
+{
+  "name": "automatisation",
+  "version": "2.0.0",
+  "description": "Votre compagnon spirituel quotidien",
+  "scripts": {
+    "start": "http-server public -p 8080 -o",
+    "dev": "http-server public -p 8080",
+    "preview": "http-server public -p 8080"
+  },
+  "dependencies": {
+    "firebase": "^12.6.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

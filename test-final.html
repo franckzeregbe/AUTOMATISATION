@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Final - Bible AUTOMATISATION</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; }
+        .test-section { background: rgba(255,255,255,0.1); padding: 20px; margin: 15px 0; border-radius: 10px; }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .info { color: #2196f3; }
+        button { background: #6a11cb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #2575fc; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🔬 Test Final - Section Bible AUTOMATISATION</h1>
+    
+    <div class="test-section">
+        <h2>📚 Tests Disponibles</h2>
+        <button onclick="testBibleData()">Test Données Bible</button>
+        <button onclick="testSyncManager()">Test Synchronisation</button>
+        <button onclick="testFavorites()">Test Favoris</button>
+        <button onclick="testNotes()">Test Notes</button>
+        <button onclick="testAPI()">Test API Bible</button>
+        <button onclick="runAllTests()">🚀 Tous les Tests</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script src="bible-data.js"></script>
+    <script src="sync-manager.js"></script>
+    <script>
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function testBibleData() {
+            log('🔍 Test des données Bible...', 'info');
+            
+            if (typeof loadBibleData === 'function') {
+                const loaded = await loadBibleData();
+                if (loaded) {
+                    log('✅ Données Bible chargées avec succès', 'success');
+                    
+                    const lsgBooks = Object.keys(window.bibleData.lsg || {});
+                    const darbyBooks = Object.keys(window.bibleData.darby || {});
+                    
+                    log(`📖 LSG: ${lsgBooks.length} livres (${lsgBooks.slice(0,5).join(', ')}...)`, 'info');
+                    log(`📖 Darby: ${darbyBooks.length} livres (${darbyBooks.slice(0,5).join(', ')}...)`, 'info');
+                } else {
+                    log('❌ Erreur lors du chargement des données Bible', 'error');
+                }
+            } else {
+                log('❌ Fonction loadBibleData non trouvée', 'error');
+            }
+        }
+
+        function testSyncManager() {
+            log('🔄 Test du gestionnaire de synchronisation...', 'info');
+            
+            if (typeof window.syncManager !== 'undefined') {
+                log('✅ SyncManager initialisé', 'success');
+                
+                const status = window.syncManager.getSyncStatus();
+                log(`📡 Statut: ${status.isOnline ? 'En ligne' : 'Hors ligne'}`, 'info');
+                log(`📊 Queue: ${status.queueLength} éléments`, 'info');
+                log(`🕒 Dernière sync: ${status.lastSync || 'Jamais'}`, 'info');
+            } else {
+                log('❌ SyncManager non trouvé', 'error');
+            }
+        }
+
+        function testFavorites() {
+            log('⭐ Test du système de favoris...', 'info');
+            
+            // Simuler l'ajout d'un favori
+            const testFavorite = {
+                id: 'test_fav',
+                book: 'Jean',
+                chapter: 3,
+                verse: 16,
+                text: 'Car Dieu a tant aimé le monde...',
+                date: new Date().toISOString()
+            };
+            
+            const favorites = [testFavorite];
+            localStorage.setItem('bibleFavorites_test', JSON.stringify(favorites));
+            
+            const saved = JSON.parse(localStorage.getItem('bibleFavorites_test'));
+            if (saved && saved.length > 0) {
+                log('✅ Système de favoris fonctionnel', 'success');
+                log(`📝 Favori test: ${saved[0].book} ${saved[0].chapter}:${saved[0].verse}`, 'info');
+            } else {
+                log('❌ Erreur système de favoris', 'error');
+            }
+        }
+
+        function testNotes() {
+            log('📝 Test du système de notes...', 'info');
+            
+            const testNote = {
+                id: 'test_note',
+                book: 'Psaume',
+                chapter: 23,
+                verse: 1,
+                text: 'L\'Éternel est mon berger...',
+                note: 'Note de test - très inspirant!',
+                date: new Date().toISOString()
+            };
+            
+            const notes = [testNote];
+            localStorage.setItem('bibleNotes_test', JSON.stringify(notes));
+            
+            const saved = JSON.parse(localStorage.getItem('bibleNotes_test'));
+            if (saved && saved.length > 0) {
+                log('✅ Système de notes fonctionnel', 'success');
+                log(`📝 Note test: ${saved[0].book} ${saved[0].chapter}:${saved[0].verse}`, 'info');
+            } else {
+                log('❌ Erreur système de notes', 'error');
+            }
+        }
+
+        async function testAPI() {
+            log('🌐 Test de l\'API Bible...', 'info');
+            
+            if (typeof fetchFromBibleAPI === 'function') {
+                try {
+                    const verses = await fetchFromBibleAPI('JHN', 3);
+                    if (verses && verses.length > 0) {
+                        log('✅ API Bible accessible', 'success');
+                        log(`📖 Récupéré: ${verses.length} versets de Jean 3`, 'info');
+                    } else {
+                        log('⚠️ API Bible non disponible (mode hors ligne)', 'info');
+                    }
+                } catch (error) {
+                    log('⚠️ API Bible non accessible', 'info');
+                }
+            } else {
+                log('❌ Fonction fetchFromBibleAPI non trouvée', 'error');
+            }
+        }
+
+        async function runAllTests() {
+            log('🚀 Lancement de tous les tests...', 'info');
+            document.getElementById('results').innerHTML = '';
+            
+            await testBibleData();
+            testSyncManager();
+            testFavorites();
+            testNotes();
+            await testAPI();
+            
+            log('🎉 Tests terminés!', 'success');
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('🔄 Initialisation des tests...', 'info');
+                testSyncManager();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
