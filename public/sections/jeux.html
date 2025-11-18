@@ -88,23 +88,17 @@
 let currentLevel = 0;
 let currentQuestion = 0;
 let score = 0;
-let usedQuestions = [];
 let answering = false;
 
-const quizQuestions = [
-[{question:"Qui a construit l'arche?",options:["Noé","Moïse","Abraham","David"],answer:0},
-{question:"Combien de jours Dieu a-t-il créé le monde?",options:["5","6","7","8"],answer:1},
-{question:"Qui a été avalé par un gros poisson?",options:["Jonas","Pierre","Paul","Jean"],answer:0},
-{question:"Quel est le premier livre de la Bible?",options:["Exode","Genèse","Lévitique","Nombres"],answer:1},
-{question:"Qui a trahi Jésus?",options:["Pierre","Jean","Judas","Thomas"],answer:2}],
-[{question:"Qui a été la première femme?",options:["Sara","Ève","Rachel","Rebecca"],answer:1},
-{question:"Quel apôtre a douté de la résurrection?",options:["Pierre","Jean","Thomas","Philippe"],answer:2},
-{question:"Qui a écrit l'Apocalypse?",options:["Pierre","Paul","Jean","Jacques"],answer:2}]
-];
-
 function showQuestion() {
+  if(!window.quizQuestions) {
+    document.getElementById("quiz").innerHTML = "<p>Chargement...</p>";
+    setTimeout(showQuestion, 100);
+    return;
+  }
+  
   const quizDiv = document.getElementById("quiz");
-  let questions = quizQuestions[currentLevel];
+  let questions = window.quizQuestions[currentLevel];
   
   if(currentQuestion < questions.length) {
     const q = questions[currentQuestion];
@@ -112,7 +106,16 @@ function showQuestion() {
     document.getElementById("progress").style.width = ((currentQuestion + 1) / questions.length) * 100 + "%";
   } else {
     document.getElementById("result").innerHTML = `Niveau ${currentLevel + 1} terminé! Score: ${score}/${questions.length}`;
-    document.getElementById("restartBtn").style.display = "block";
+    if(currentLevel < window.quizQuestions.length - 1) {
+      setTimeout(() => {
+        currentLevel++;
+        currentQuestion = 0;
+        score = 0;
+        showQuestion();
+      }, 2000);
+    } else {
+      document.getElementById("restartBtn").style.display = "block";
+    }
   }
 }
 
@@ -120,7 +123,7 @@ function checkAnswer(selected, btn) {
   if(answering) return;
   answering = true;
   
-  let questions = quizQuestions[currentLevel];
+  let questions = window.quizQuestions[currentLevel];
   let correct = selected === questions[currentQuestion].answer;
   
   document.querySelectorAll(".options button").forEach(b => b.disabled = true);
