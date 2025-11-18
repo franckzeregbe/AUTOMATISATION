@@ -84,153 +84,70 @@
   <button id="restartBtn" onclick="restartQuiz()" style="display:none;">Rejouer</button>
 </div>
 
-<script src="quiz-questions.js"></script>
 <script>
+let currentLevel = 0;
+let currentQuestion = 0;
+let score = 0;
+let usedQuestions = [];
+let answering = false;
+
+const quizQuestions = [
+[{question:"Qui a construit l'arche?",options:["Noé","Moïse","Abraham","David"],answer:0},
+{question:"Combien de jours Dieu a-t-il créé le monde?",options:["5","6","7","8"],answer:1},
+{question:"Qui a été avalé par un gros poisson?",options:["Jonas","Pierre","Paul","Jean"],answer:0},
+{question:"Quel est le premier livre de la Bible?",options:["Exode","Genèse","Lévitique","Nombres"],answer:1},
+{question:"Qui a trahi Jésus?",options:["Pierre","Jean","Judas","Thomas"],answer:2}],
+[{question:"Qui a été la première femme?",options:["Sara","Ève","Rachel","Rebecca"],answer:1},
+{question:"Quel apôtre a douté de la résurrection?",options:["Pierre","Jean","Thomas","Philippe"],answer:2},
+{question:"Qui a écrit l'Apocalypse?",options:["Pierre","Paul","Jean","Jacques"],answer:2}]
+];
+
+function showQuestion() {
+  const quizDiv = document.getElementById("quiz");
+  let questions = quizQuestions[currentLevel];
   
-  let currentLevel = 0;
-  let currentQuestion = 0;
-  let score = 0;
-  let usedQuestions = [];
-  let answering = false;
-
-  function showQuestion() {
-    const quizDiv = document.getElementById("quiz");
-    quizDiv.innerHTML = "";
-
-    let questions = window.quizQuestions[currentLevel];
-    if(currentQuestion < questions.length) {
-      const q = questions[currentQuestion];
-      quizDiv.innerHTML = "<div class='question'>" + q.question + "</div>";
-
-      const optionsDiv = document.createElement("div");
-      optionsDiv.className = "options";
-
-      q.options.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.textContent = opt;
-        btn.onclick = () => checkAnswer(i, btn);
-        optionsDiv.appendChild(btn);
-      });
-
-      quizDiv.appendChild(optionsDiv);
-
-      let progressPercent = ((currentQuestion + 1) / questions.length) * 100;
-      document.getElementById("progress").style.width = progressPercent + "%";
-      document.getElementById("restartBtn").style.display = "none";
-    } else {
-      let grade = getGrade(score, questions.length);
-      let message = getMotivation(grade);
-      document.getElementById("result").innerHTML =
-        "Niveau " + (currentLevel + 1) + " terminé 🎉<br>Score : " + score + "/" + questions.length +
-        " | Grade : <strong>" + grade + "</strong><br>" + message;
-
-      if(currentLevel < window.quizQuestions.length - 1) {
-        document.getElementById("result").innerHTML +=
-          "<br><br><small>Passage au niveau suivant dans 4 secondes...</small>";
-        setTimeout(() => {
-          currentLevel++;
-          currentQuestion = 0;
-          score = 0;
-          usedQuestions = [];
-          showQuestion();
-        }, 4000);
-      } else {
-        document.getElementById("result").innerHTML +=
-          "<br><br><strong>🏆 Tous les niveaux complétés !</strong>";
-        document.getElementById("restartBtn").style.display = "block";
-      }
-    }
+  if(currentQuestion < questions.length) {
+    const q = questions[currentQuestion];
+    quizDiv.innerHTML = `<div class='question'>${q.question}</div><div class='options'>${q.options.map((opt, i) => `<button onclick='checkAnswer(${i}, this)'>${opt}</button>`).join('')}</div>`;
+    document.getElementById("progress").style.width = ((currentQuestion + 1) / questions.length) * 100 + "%";
+  } else {
+    document.getElementById("result").innerHTML = `Niveau ${currentLevel + 1} terminé! Score: ${score}/${questions.length}`;
+    document.getElementById("restartBtn").style.display = "block";
   }
+}
 
-  function checkAnswer(selected, btn) {
-    if(answering) return;
-    answering = true;
-
-    let questions = window.quizQuestions[currentLevel];
-    let correct = selected === questions[currentQuestion].answer;
-    
-    document.querySelectorAll(".options button").forEach(b => b.disabled = true);
-    
-    if(correct) {
-      score++;
-      btn.classList.add('correct');
-      btn.innerHTML += " ✓";
-      
-      setTimeout(() => {
-        usedQuestions.push(currentQuestion);
-        currentQuestion++;
-        answering = false;
-        showQuestion();
-      }, 4000);
-    } else {
-      btn.classList.add('incorrect');
-      btn.innerHTML += " ✗";
-      let correctBtn = document.querySelectorAll(".options button")[questions[currentQuestion].answer];
-      correctBtn.classList.add('correct');
-      correctBtn.innerHTML += " ✓ (Bonne réponse)";
-      
-      setTimeout(() => {
-        let availableQuestions = [];
-        for(let i = 0; i < questions.length; i++) {
-          if(!usedQuestions.includes(i) && i !== currentQuestion) {
-            availableQuestions.push(i);
-          }
-        }
-        
-        if(availableQuestions.length > 0) {
-          currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-          document.getElementById("result").innerHTML = "<span style='color:#e74c3c;'>❌ Mauvaise réponse ! Nouvelle question...</span>";
-        } else {
-          currentQuestion++;
-        }
-        
-        answering = false;
-        showQuestion();
-      }, 4000);
-    }
+function checkAnswer(selected, btn) {
+  if(answering) return;
+  answering = true;
+  
+  let questions = quizQuestions[currentLevel];
+  let correct = selected === questions[currentQuestion].answer;
+  
+  document.querySelectorAll(".options button").forEach(b => b.disabled = true);
+  
+  if(correct) {
+    score++;
+    btn.style.background = "green";
+  } else {
+    btn.style.background = "red";
   }
-
-  function restartQuiz() {
-    currentLevel = 0;
-    currentQuestion = 0;
-    score = 0;
-    usedQuestions = [];
+  
+  setTimeout(() => {
+    currentQuestion++;
     answering = false;
-    document.getElementById("result").innerHTML = "";
-    document.getElementById("progress").style.width = "0%";
-    document.getElementById("restartBtn").style.display = "none";
     showQuestion();
-  }
+  }, 1500);
+}
 
-  function getGrade(score, total) {
-    let percent = (score / total) * 100;
-    if(percent < 60) return "Croyant";
-    else if(percent < 75) return "Disciple";
-    else if(percent < 85) return "Ouvrier";
-    else if(percent < 95) return "Pasteur";
-    else return "Docteur";
-  }
+function restartQuiz() {
+  currentLevel = 0;
+  currentQuestion = 0;
+  score = 0;
+  answering = false;
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("restartBtn").style.display = "none";
+  showQuestion();
+}
 
-  function getMotivation(grade) {
-    switch(grade) {
-      case "Croyant": return "Continue à étudier la Parole, tu progresses ✨";
-      case "Disciple": return "Bonne connaissance biblique, persévère 🙏";
-      case "Ouvrier": return "Tu maîtrises bien les Écritures, continue 💪";
-      case "Pasteur": return "Excellente connaissance, tu peux enseigner 🌟";
-      case "Docteur": return "Maîtrise exceptionnelle ! Tu es un érudit biblique 📖🔥";
-      default: return "";
-    }
-  }
-
-  // Attendre que les questions soient chargées
-  function initQuiz() {
-    if(typeof window.quizQuestions === 'undefined') {
-      document.getElementById("quiz").innerHTML = "<p style='color:#e74c3c;'>⚠️ Chargement des questions...</p>";
-      setTimeout(initQuiz, 100);
-    } else {
-      showQuestion();
-    }
-  }
-  
-  initQuiz();
+showQuestion();
 </script>
