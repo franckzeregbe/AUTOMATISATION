@@ -5,24 +5,26 @@ let bibleAPI = {
   cache: new Map()
 };
 
-// Fonction pour charger les données Bible locales
+// Fonction pour charger les données Bible depuis Firebase
 async function loadBibleData() {
   try {
-    const [lsgResponse, darbyResponse] = await Promise.all([
-      fetch('bible-lsg-complete.json'),
-      fetch('bible-darby-complete.json')
+    const [lsgResponse, darbyResponse, frResponse] = await Promise.all([
+      fetch('https://automatisation-e8348-default-rtdb.firebaseio.com/bibles/lsg.json'),
+      fetch('https://automatisation-e8348-default-rtdb.firebaseio.com/bibles/darby.json'),
+      fetch('https://automatisation-e8348-default-rtdb.firebaseio.com/bibles/french.json')
     ]);
     
-    const [lsgData, darbyData] = await Promise.all([
+    const [lsgData, darbyData, frData] = await Promise.all([
       lsgResponse.json(),
-      darbyResponse.json()
+      darbyResponse.json(),
+      frResponse.json()
     ]);
     
-    bibleData = { lsg: lsgData, darby: darbyData };
-    console.log('✅ Bible locale chargée:', Object.keys(lsgData).length, 'livres');
+    bibleData = { lsg: lsgData, darby: darbyData, french: frData };
+    console.log('✅ Bible Firebase chargée:', Object.keys(lsgData || {}).length, 'livres');
     return true;
   } catch (error) {
-    console.error('❌ Erreur chargement Bible:', error);
+    console.error('❌ Erreur chargement Bible Firebase:', error);
     bibleData = {
       lsg: { GEN: { 1: [{ verse: 1, text: "Au commencement, Dieu créa les cieux et la terre." }] } },
       darby: { GEN: { 1: [{ verse: 1, text: "Au commencement Dieu créa les cieux et la terre." }] } }
