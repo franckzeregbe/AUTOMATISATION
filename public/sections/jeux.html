@@ -90,10 +90,23 @@ let currentQuestion = 0;
 let score = 0;
 let answering = false;
 
+// Charger les questions depuis Firebase Storage
+async function loadQuizQuestions() {
+  try {
+    const response = await fetch('https://firebasestorage.googleapis.com/v0/b/automatisation-e8348.firebasestorage.app/o/quiz-questions.js?alt=media');
+    const scriptText = await response.text();
+    eval(scriptText);
+    showQuestion();
+  } catch (error) {
+    console.error('Erreur chargement quiz:', error);
+    document.getElementById("quiz").innerHTML = "<p style='color:red'>Erreur de chargement</p>";
+  }
+}
+
 function showQuestion() {
   if(!window.quizQuestions) {
     document.getElementById("quiz").innerHTML = "<p>Chargement...</p>";
-    setTimeout(showQuestion, 100);
+    loadQuizQuestions();
     return;
   }
   
