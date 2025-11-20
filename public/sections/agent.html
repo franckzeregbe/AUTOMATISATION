@@ -177,6 +177,63 @@
 </div>
 
 <script>
+// --- CONFIGURATION DE L'AGENT JOHN ---
+const agentJohnConfig = {
+  nom: "Intercesseur JOHN",
+  role: "Agent spirituel biblique",
+  mission: "Encourager, prier, enseigner la Parole de Dieu et assister l'utilisateur dans l'application.",
+  signature_options: [
+    "Jésus revient bientôt",
+    "Que la paix de Dieu soit avec vous.",
+    "Demeurez béni(e).",
+    "Fraternellement en Christ."
+  ],
+  style: {
+    ton: "doux, biblique, encourageant, empathique",
+    langue: "français",
+    format: "mobile-friendly",
+    references: "versets bibliques avec explication simple et pertinente"
+  },
+  actions: [
+    "Donner des versets bibliques adaptés à une situation.",
+    "Proposer et guider dans des prières personnalisées.",
+    "Répondre aux questions spirituelles avec la Bible comme base.",
+    "Encourager les familles et les individus.",
+    "Suggérer des jeux, vidéos ou plans de lecture bibliques.",
+    "Aider l'utilisateur à naviguer vers une section (Prières, Bible, Quiz...).",
+    "Aider à prendre un rendez-vous pour une consultation.",
+    "Aider à définir, suivre ou marquer comme atteints les objectifs spirituels.",
+    "Aider à créer, retrouver ou supprimer une note personnelle."
+  ],
+  prompt_base: "Tu es Intercesseur JOHN, un agent spirituel biblique. Ta mission est d'encourager, prier et enseigner la Parole de Dieu avec douceur et vérité. Tu assistes aussi les utilisateurs dans l'application. Tu réponds avec des versets bibliques, des explications simples et des encouragements. Termine tes messages par une signature encourageante et biblique comme 'Jésus revient bientôt' lorsque cela est approprié au contexte.",
+  exemples: {
+    maman_fatiguee: {
+      question: "JOHN, je suis une maman épuisée, que dit la Bible ?",
+      reponse: "Chère sœur, je comprends votre fatigue. Accrochez-vous à cette promesse : 'Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos.' (Matthieu 11:28). Le Seigneur voit vos efforts. Voulez-vous que nous priions ensemble à ce sujet ?\n\nQue la paix de Dieu soit avec vous."
+    },
+    prise_de_rdv: {
+      question: "Je veux parler à quelqu'un, comment faire ?",
+      reponse: "Bien sûr. Je peux vous aider à prendre un rendez-vous pour une consultation spirituelle. Voulez-vous que je vous guide vers la section des rendez-vous maintenant ?\n\nDemeurez béni(e)."
+    },
+    aide_navigation: {
+      question: "Où se trouvent les jeux ?",
+      reponse: "Avec joie ! Je vous ouvre la section des jeux bibliques. Que l'Esprit Saint vous éclaire en vous amusant ! \n\nJésus revient bientôt."
+    }
+  },
+  interactions_contextuelles: {
+    fin_lecture_chapitre: {
+      trigger: "L'utilisateur vient de terminer la lecture d'un chapitre.",
+      prompt: "Félicitations pour avoir terminé ce chapitre ! C'est une excellente nourriture pour l'âme. Souhaitez-vous ajouter une note ou une méditation personnelle sur ce que vous venez de lire ?"
+    },
+    quiz_difficile: {
+      trigger: "L'utilisateur a échoué à un quiz plusieurs fois.",
+      prompt: "Ne vous découragez pas, l'important est de persévérer dans la connaissance de la Parole. 'Car la parole de Dieu est vivante et efficace...' (Hébreux 4:12). Voulez-vous un indice ou essayer un autre niveau ? "
+    }
+  }
+};
+// --- FIN DE LA CONFIGURATION ---
+
+
 let recognition = null;
 let isRecording = false;
 let mediaRecorder = null;
@@ -186,6 +243,11 @@ let recordingStream = null;
 let chatMode = 'ai'; // 'ai' ou 'community'
 let chatMessages = [];
 let onlineUsersCount = 0;
+
+function getSignature() {
+  const signatures = agentJohnConfig.signature_options;
+  return signatures[Math.floor(Math.random() * signatures.length)];
+}
 
 function startConversation() {
   document.getElementById('greetingBox').style.display = 'none';
@@ -236,7 +298,7 @@ function addMessageToChat(message, isUser = true, userName = null) {
           👨‍💼
         </div>
         <div style="background: rgba(255,152,0,0.2); padding: 10px 15px; border-radius: 15px 15px 15px 5px; max-width: 70%;">
-          <div style="font-size: 11px; opacity: 0.7; margin-bottom: 5px;">JOHN - IA Biblique • ${time}</div>
+          <div style="font-size: 11px; opacity: 0.7; margin-bottom: 5px;">${agentJohnConfig.nom} • ${time}</div>
           <div>${message}</div>
         </div>
       </div>
@@ -251,7 +313,7 @@ function loadChatHistory() {
   const sampleMessages = [
     {text: "Bonjour ! Bienvenue dans le chat biblique 📖", isUser: false},
     {text: "Que dit la Bible sur l'espoir ?", isUser: true, userName: "Marie"},
-    {text: "\"Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance.\" - Jérémie 29:11", isUser: false}
+    {text: `"${agentJohnConfig.exemples.maman_fatiguee.réponse}"`, isUser: false}
   ];
   
   sampleMessages.forEach(msg => {
@@ -299,6 +361,7 @@ function startVoiceRecognition() {
     const transcript = event.results[0][0].transcript;
     document.getElementById('priereInput').value = transcript;
     stopVoiceRecognition();
+    envoyerMessage(); // Envoyer le message après la transcription
   };
 
   recognition.onerror = (event) => {
@@ -320,95 +383,6 @@ function stopVoiceRecognition() {
   document.getElementById('voiceStatus').style.display = 'none';
 }
 
-// Audio Recording Functions
-async function toggleRecording() {
-  if (mediaRecorder && mediaRecorder.state === 'recording') {
-    stopAudioRecording();
-  } else {
-    try {
-      await startAudioRecording();
-    } catch (error) {
-      alert('❌ Impossible d\'accéder au microphone.');
-    }
-  }
-}
-
-async function startAudioRecording() {
-  audioChunks = [];
-  recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  mediaRecorder = new MediaRecorder(recordingStream);
-
-  mediaRecorder.ondataavailable = (event) => {
-    audioChunks.push(event.data);
-  };
-
-  mediaRecorder.onstop = () => {
-    audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-    displayAudioPreview();
-    recordingStream.getTracks().forEach(track => track.stop());
-  };
-
-  mediaRecorder.start();
-  document.getElementById('recordBtn').classList.add('recording');
-  document.getElementById('voiceStatus').textContent = '🔴 Enregistrement audio en cours... (Cliquez pour arrêter)';
-  document.getElementById('voiceStatus').style.display = 'block';
-}
-
-function stopAudioRecording() {
-  if (mediaRecorder && mediaRecorder.state === 'recording') {
-    mediaRecorder.stop();
-    document.getElementById('recordBtn').classList.remove('recording');
-    document.getElementById('voiceStatus').style.display = 'none';
-  }
-}
-
-function displayAudioPreview() {
-  const preview = document.getElementById('audioPreview');
-  const audioUrl = URL.createObjectURL(audioBlob);
-  
-  preview.innerHTML = `
-    <div class="audio-message">
-      <span>🎵 Message audio enregistré</span>
-      <audio controls src="${audioUrl}" style="flex: 1; max-width: 300px;"></audio>
-      <div class="audio-controls">
-        <button onclick="sendAudioMessage()" style="padding: 8px 16px; font-size: 13px;">📤 Envoyer</button>
-        <button onclick="cancelAudio()" style="padding: 8px 16px; font-size: 13px; background: #f44336;">❌ Annuler</button>
-      </div>
-    </div>
-  `;
-  preview.style.display = 'block';
-}
-
-function sendAudioMessage() {
-  if (!audioBlob) return;
-  
-  // Simuler l'envoi (dans une vraie app, vous enverriez à un serveur)
-  const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
-  const reponseDiv = document.getElementById('reponse');
-  reponseDiv.innerHTML = `
-    <p class="compassion">📖 ${userName}, j'ai reçu et analysé votre message audio.</p>
-    <p style="background: rgba(255,235,59,0.1); padding: 15px; border-left: 4px solid #ffeb3b; border-radius: 8px; margin: 15px 0;">
-      <strong style="color: #ffeb3b;">📜 Verset biblique :</strong><br>
-      <em style="font-size: 16px; line-height: 1.8;">"L'Éternel entend quand je crie à lui." - Psaume 4:3</em>
-    </p>
-    <p><strong>💡 Encouragement biblique :</strong><br>La Bible nous assure que Dieu écoute nos prières. Il connaît les désirs de votre cœur et agit selon Sa volonté parfaite. Continuez à Lui faire confiance et à méditer Sa Parole.</p>
-    <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
-      📖 <strong>JOHN - IA Biblique</strong> : Toutes mes réponses sont basées sur les Écritures. Posez-moi d'autres questions bibliques.
-    </p>
-    <p class="signature">✨ JOHN - Agent IA Biblique • "Ta parole est une lampe à mes pieds" (Psaume 119:105)</p>
-  `;
-  reponseDiv.classList.add('active');
-  
-  cancelAudio();
-  alert('✅ Message audio envoyé avec succès !');
-}
-
-function cancelAudio() {
-  document.getElementById('audioPreview').style.display = 'none';
-  document.getElementById('audioPreview').innerHTML = '';
-  audioBlob = null;
-  audioChunks = [];
-}
 
 async function envoyerMessage() {
   const input = document.getElementById("priereInput").value.trim();
@@ -419,59 +393,43 @@ async function envoyerMessage() {
   document.getElementById("priereInput").value = '';
   
   if(chatMode === 'ai') {
-    setTimeout(async () => {
-      try {
-        const response = await getBiblicalResponse(input);
-        addMessageToChat(response, false);
-      } catch (error) {
-        addMessageToChat("\"Car je connais les projets que j'ai formés sur vous, dit l'Éternel\" - Jérémie 29:11 📖", false);
-      }
-    }, 1000);
-  }
-}
+      // Afficher le chargement
+    addMessageToChat('<div style="display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid #6a11cb; border-radius: 50%; animation: spin 1s linear infinite;"></div>', false);
 
-async function envoyerPriere() {
-  if (audioBlob) cancelAudio();
-  const input = document.getElementById("priereInput").value.trim();
-  
-  if (!input) {
-    alert("Veuillez entrer une question.");
-    return;
+    try {
+        const response = await getBiblicalResponse(input);
+        const lastMessage = document.getElementById('chatMessages').lastChild;
+        lastMessage.querySelector('div:last-child > div:last-child').innerHTML = response; // Update the loading message
+      } catch (error) {
+        console.error('Erreur IA:', error);
+        const fallbackResponse = fallbackBiblicalResponse(input);
+        const lastMessage = document.getElementById('chatMessages').lastChild;
+        lastMessage.querySelector('div:last-child > div:last-child').innerHTML = fallbackResponse;
+      }
   }
-  
-  // Afficher le chargement
-  const reponseDiv = document.getElementById("reponse");
-  reponseDiv.innerHTML = `
-    <div style="text-align: center; padding: 20px;">
-      <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #6a11cb; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-      <p style="margin-top: 15px;">🤖 JOHN consulte la Bible...</p>
-    </div>
-  `;
-  reponseDiv.classList.add("active");
-  
-  try {
-    const response = await getBiblicalResponse(input);
-    displayBiblicalResponse(response, input);
-  } catch (error) {
-    console.error('Erreur IA:', error);
-    fallbackBiblicalResponse(input.toLowerCase());
-  }
-  
-  document.getElementById("priereInput").value = '';
 }
 
 // Fonction pour obtenir une réponse biblique via IA
 async function getBiblicalResponse(question) {
   const apiKey = 'AIzaSyDIws2UWw4lJr-OueYaT8iy7aIH8b0_J3g'; // Clé Firebase existante
   
-  const prompt = `Tu es JOHN, un assistant spirituel chrétien expert de la Bible. 
-Réponds UNIQUEMENT avec des versets bibliques précis et leur référence. 
-Question: ${question}
+  const prompt = `
+    ${agentJohnConfig.prompt_base}
 
-Format de réponse:
-1. Verset biblique avec référence exacte
-2. Explication simple basée sur la Bible
-3. Application pratique chrétienne`;
+    Style de réponse attendu :
+    - Ton : ${agentJohnConfig.style.ton}
+    - Langue : ${agentJohnConfig.style.langue}
+    - Format : ${agentJohnConfig.style.format}
+    - Références : ${agentJohnConfig.style.références}
+    - Proactivité: Si possible, termine en posant une question ouverte pour continuer la conversation (ex: "Voulez-vous prier à ce sujet?").
+
+    Exemples:
+    - Question: "${agentJohnConfig.exemples.maman_fatiguee.question}" -> Réponse: "${agentJohnConfig.exemples.maman_fatiguee.reponse}"
+    - Question: "${agentJohnConfig.exemples.prise_de_rdv.question}" -> Réponse: "${agentJohnConfig.exemples.prise_de_rdv.reponse}"
+    - Question: "${agentJohnConfig.exemples.aide_navigation.question}" -> Réponse: "${agentJohnConfig.exemples.aide_navigation.reponse}"
+
+    Question de l'utilisateur: "${question}"
+  `;
   
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
     method: 'POST',
@@ -486,186 +444,89 @@ Format de réponse:
   if (!response.ok) throw new Error('API Error');
   
   const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
+  const text = data.candidates[0].content.parts[0].text;
+  return text.replace(/\n/g, '<br>');
 }
 
-// Afficher la réponse biblique
-function displayBiblicalResponse(aiResponse, originalQuestion) {
-  const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
-  const reponseDiv = document.getElementById("reponse");
-  
-  reponseDiv.innerHTML = `
-    <p class="compassion">📖 ${userName}, voici ce que dit la Bible :</p>
-    <div style="background: rgba(255,235,59,0.1); padding: 15px; border-left: 4px solid #ffeb3b; border-radius: 8px; margin: 15px 0;">
-      <strong style="color: #ffeb3b;">❓ Question :</strong> ${originalQuestion}<br><br>
-      <strong style="color: #ffeb3b;">📜 Réponse biblique :</strong><br>
-      <div style="line-height: 1.8; margin-top: 10px;">${aiResponse.replace(/\n/g, '<br>')}</div>
-    </div>
-    <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
-      🤖 <strong>JOHN - IA Biblique</strong> : Toutes mes réponses sont basées sur les Écritures saintes.
-    </p>
-    <p class="signature">✨ JOHN - Agent IA Biblique • Propulsé par Gemini AI</p>
-  `;
-}
 
 // Réponses de secours basées sur la Bible
 function fallbackBiblicalResponse(input) {
+    const lowerInput = input.toLowerCase();
 
-  // Commandes de navigation (mode secours)
-  const navCommands = {
-    'priere': 'prieres', 'prieres': 'prieres',
-    'video': 'videos', 'videos': 'videos',
-    'quiz': 'jeux', 'jeu': 'jeux', 'jeux': 'jeux',
-    'bible': 'bible',
-    'don': 'dons', 'dons': 'dons', 'donner': 'dons',
-    'rendez-vous': 'rendez-vous', 'rdv': 'rendez-vous',
-    'statistique': 'stats', 'stats': 'stats',
-    'favori': 'favorites', 'favoris': 'favorites',
-    'note': 'notes', 'notes': 'notes',
-    'objectif': 'goals', 'objectifs': 'goals',
-    'temoignage': 'testimonies', 'témoignages': 'testimonies',
-    'communaute': 'communaute', 'communauté': 'communaute',
-    'parametre': 'parametres', 'paramètres': 'parametres'
-  };
+    // Commandes de navigation (mode secours)
+    const navCommands = {
+        'prière': 'prieres', 'prieres': 'prieres',
+        'vidéo': 'videos', 'videos': 'videos',
+        'quiz': 'jeux', 'jeu': 'jeux', 'jeux': 'jeux',
+        'bible': 'bible',
+        'don': 'dons', 'dons': 'dons', 'donner': 'dons',
+        'rendez-vous': 'rendez-vous', 'rdv': 'rendez-vous',
+        'statistique': 'stats', 'stats': 'stats',
+        'favori': 'favorites', 'favoris': 'favorites',
+        'note': 'notes', 'notes': 'notes',
+        'objectif': 'goals', 'objectifs': 'goals',
+        'témoignage': 'testimonies', 'témoignages': 'testimonies',
+        'communauté': 'communaute',
+        'paramètre': 'parametres', 'paramètres': 'parametres'
+    };
 
-  // Vérifier si c'est une commande de navigation
-  for (const [keyword, section] of Object.entries(navCommands)) {
-    if (input.includes(keyword)) {
-      const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
-      const reponseDiv = document.getElementById("reponse");
-      reponseDiv.innerHTML = `
-        <p class="compassion">✨ ${userName}, je vous guide vers la section demandée !</p>
-        <p style="background: rgba(255,235,59,0.1); padding: 15px; border-radius: 8px; margin: 15px 0;">
-          <strong style="color: #ffeb3b;">📍 Navigation :</strong><br>
-          Je vous redirige vers <strong>${keyword}</strong>...
-        </p>
-        <p class="signature">✨ JOHN - Votre guide dans l'application</p>
-      `;
-      reponseDiv.classList.add("active");
-      setTimeout(() => {
-        if(['stats','favorites','notes','goals','testimonies'].includes(section)) {
-          const actions = {stats: showStats, favorites: showFavorites, notes: showNotes, goals: showGoals, testimonies: showTestimonies};
-          actions[section]({preventDefault: ()=>{}});
-        } else {
-          afficher(section);
+    for (const [keyword, section] of Object.entries(navCommands)) {
+        if (lowerInput.includes(keyword)) {
+            setTimeout(() => {
+                if (['stats', 'favorites', 'notes', 'goals', 'testimonies'].includes(section)) {
+                    const actions = { stats: showStats, favorites: showFavorites, notes: showNotes, goals: showGoals, testimonies: showTestimonies };
+                    if(actions[section]) actions[section]({ preventDefault: () => {} });
+                } else {
+                    afficher(section);
+                }
+            }, 1200);
+            return `Avec joie ! Je vous guide vers la section <strong>"${keyword}"</strong>. ${getSignature()}`;
         }
-      }, 1500);
-      document.getElementById("priereInput").value = '';
-      return;
     }
-  }
 
-  // Aide sur l'application
-  if (input.includes('aide') || input.includes('comment') || input.includes('utiliser') || input.includes('fonctionner')) {
-    const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
-    const reponseDiv = document.getElementById("reponse");
-    reponseDiv.innerHTML = `
-      <p class="compassion">📖 ${userName}, voici comment utiliser l'application :</p>
-      <div style="background: rgba(255,235,59,0.1); padding: 15px; border-radius: 8px; margin: 15px 0;">
-        <strong style="color: #ffeb3b;">🎯 Sections disponibles :</strong><br>
-        • <strong>Prières</strong> : 8 catégories de prières quotidiennes<br>
-        • <strong>Bible</strong> : 3 versions avec audio et mode hors ligne<br>
-        • <strong>Vidéos</strong> : Contenus spirituels inspirants<br>
-        • <strong>Quiz</strong> : 5 niveaux pour tester vos connaissances<br>
-        • <strong>Dons</strong> : Soutenez l'œuvre (5 méthodes)<br>
-        • <strong>Communauté</strong> : Groupes, demandes de prière, événements<br>
-        • <strong>Statistiques</strong> : Suivez votre progression spirituelle
-      </div>
-      <p><strong>💡 Astuce :</strong> Dites-moi simplement où vous voulez aller ! Exemples :<br>
-      "Emmène-moi aux prières", "Je veux lire la Bible", "Montre-moi mes statistiques"</p>
-      <p class="signature">✨ JOHN - Votre guide spirituel et assistant d'application</p>
-    `;
-    reponseDiv.classList.add("active");
-    document.getElementById("priereInput").value = '';
-    return;
-  }
+    if (lowerInput.includes('aide') || lowerInput.includes('comment') || lowerInput.includes('utiliser')) {
+        return `
+            <p>Bien sûr, voici comment je peux vous aider :</p>
+            <ul>
+                <li>📖 Posez-moi une question sur la Bible.</li>
+                <li>🙏 Demandez-moi de prier pour un sujet.</li>
+                <li>🧭 Dites-moi où vous voulez aller, par exemple : "Va aux <strong>prières</strong>", "Montre-moi les <strong>vidéos</strong>", ou "Je veux faire un <strong>quiz</strong>".</li>
+            </ul>
+            <p>${getSignature()}</p>
+        `;
+    }
 
-  const reponses = {
-    guerison: [
-      "Il a pris nos infirmités, et il s'est chargé de nos maladies. (Matthieu 8:17)",
-      "Mais il était blessé pour nos péchés, brisé pour nos iniquités; le châtiment qui nous donne la paix est tombé sur lui, et c'est par ses meurtrissures que nous sommes guéris. (Ésaïe 53:5)",
-      "Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse; reconnais-le dans toutes tes voies, et il aplanira tes sentiers. (Proverbes 3:5-6)"
-    ],
-    famille: [
-      "Moi et ma maison, nous servirons l'Éternel. (Josué 24:15)",
-      "Crois au Seigneur Jésus, et tu seras sauvé, toi et ta famille. (Actes 16:31)",
-      "Instruis l'enfant selon la voie qu'il doit suivre; et quand il sera vieux, il ne s'en détournera pas. (Proverbes 22:6)"
-    ],
-    foi: [
-      "Ayant les regards sur Jésus, le chef et le consommateur de la foi. (Hébreux 12:2)",
-      "Jésus lui dit: Je suis la résurrection et la vie. Celui qui croit en moi vivra, quand même il serait mort. (Jean 11:25)",
-      "Jésus lui dit: Si tu peux croire, tout est possible à celui qui croit. (Marc 9:23)"
-    ],
-    combat: [
-      "Il a dépouillé les dominations et les autorités, et les a livrées publiquement en spectacle, en triomphant d'elles par la croix. (Colossiens 2:15)",
-      "Revêtez-vous de toutes les armes de Dieu, afin de pouvoir tenir ferme contre les ruses du diable. (Éphésiens 6:11)",
-      "Soumettez-vous donc à Dieu; résistez au diable, et il fuira loin de vous. (Jacques 4:7)"
-    ],
-    paix: [
-      "Car un enfant nous est né, un fils nous est donné, et on l'appellera... Prince de la paix. (Ésaïe 9:6)",
-      "Je vous laisse la paix, je vous donne ma paix. Je ne vous donne pas comme le monde donne. (Jean 14:27)",
-      "Ne vous inquiétez de rien; mais en toute chose faites connaître vos besoins à Dieu par des prières et des supplications, avec des actions de grâces. (Philippiens 4:6)"
-    ]
-  };
+    const reponses = {
+        guerison: "Il a pris nos infirmités, et il s'est chargé de nos maladies. (Matthieu 8:17)",
+        famille: "Moi et ma maison, nous servirons l'Éternel. (Josué 24:15)",
+        foi: "Ayant les regards sur Jésus, le chef et le consommateur de la foi. (Hébreux 12:2)",
+        combat: "Revêtez-vous de toutes les armes de Dieu, afin de pouvoir tenir ferme contre les ruses du diable. (Éphésiens 6:11)",
+        paix: "Je vous laisse la paix, je vous donne ma paix. (Jean 14:27)"
+    };
 
-  let theme = "foi";
-  if (input.includes("guéri") || input.includes("maladie") || input.includes("santé")) theme = "guerison";
-  else if (input.includes("famille") || input.includes("enfant") || input.includes("mariage")) theme = "famille";
-  else if (input.includes("combat") || input.includes("ennemi") || input.includes("lutte")) theme = "combat";
-  else if (input.includes("paix") || input.includes("calme") || input.includes("repos")) theme = "paix";
+    let theme = "foi";
+    if (lowerInput.includes("guéri") || lowerInput.includes("maladie")) theme = "guerison";
+    else if (lowerInput.includes("famille") || lowerInput.includes("enfant")) theme = "famille";
+    else if (lowerInput.includes("combat") || lowerInput.includes("peur")) theme = "combat";
+    else if (lowerInput.includes("paix") || lowerInput.includes("triste")) theme = "paix";
 
-  const paroles = reponses[theme];
-  const parole = paroles[Math.floor(Math.random() * paroles.length)];
-  
-  const guides = {
-    guerison: [
-      `Ce verset rappelle que la guérison est possible et que Dieu voit ta douleur. <br>Garde confiance aujourd'hui; fais un petit pas concret vers le soin (repos, médecin, prière).`,
-      `Ce passage affirme que la souffrance n'est pas ton dernier mot. <br>Porte cette espérance dans ton cœur et accepte l'aide autour de toi.`
-    ],
-    famille: [
-      `Ce verset t'encourage à placer Jésus au centre de ta maison. <br>Recherche la paix en pratiquant le pardon et en priant ensemble.`,
-      `La parole renforce les liens familiaux lorsqu'on s'appuie sur la foi. <br>Parle avec douceur, aime intentionnellement et demande la bénédiction de Dieu.`
-    ],
-    foi: [
-      `Ce verset te rappelle que la foi soutient les jours difficiles. <br>Tiens-toi ferme dans la prière et avance par petits pas de confiance.`,
-      `La foi ouvre des chemins là où tu vois des barrières. <br>Confie tes peurs à Dieu et agis avec espérance aujourd'hui.`
-    ],
-    combat: [
-      `Ce passage te rappelle que tu n'es pas seul dans la bataille. <br>Revêts-toi de courage, prie pour force, et appuie-toi sur les promesses de Dieu.`,
-      `La victoire est déjà proclamée par la croix; tiens-toi ferme. <br>Affirme la parole, refuse la peur et cherche le soutien des frères et sœurs.`
-    ],
-    paix: [
-      `Ce verset apporte une paix qui dépasse la compréhension. <br>Respire profondément, confie tes inquiétudes à Jésus et accueille sa paix.`,
-      `La paix est un don; laisse-la habiter ton cœur aujourd'hui. <br>Prends un moment pour te recueillir et permettre à Dieu de calmer ta tempête.`
-    ]
-  };
+    return `${reponses[theme]}<br><br>${getSignature()}`;
+}
 
-  function makeMessage(theme, verse) {
-    const arr = guides[theme] || guides['foi'];
-    const guide = arr[Math.floor(Math.random() * arr.length)];
-    const userName = currentUser ? currentUser.fullname.split(' ')[0] : 'ami(e)';
-    return `
-      <p class="compassion">📖 ${userName}, voici ce que la Bible dit sur ta préoccupation :</p>
-      <p style="background: rgba(255,235,59,0.1); padding: 15px; border-left: 4px solid #ffeb3b; border-radius: 8px; margin: 15px 0;">
-        <strong style="color: #ffeb3b;">📜 Verset biblique :</strong><br>
-        <em style="font-size: 16px; line-height: 1.8;">${verse}</em>
-      </p>
-      <p><strong>💡 Application pratique :</strong><br>${guide}</p>
-      <p style="margin-top: 15px; padding: 12px; background: rgba(106,17,203,0.2); border-radius: 8px; font-size: 14px;">
-        📖 <strong>JOHN - IA Biblique & Guide</strong> : Je réponds à vos questions bibliques et je vous guide dans l'application. 
-        Dites "aide" pour découvrir toutes les fonctionnalités ou nommez une section pour y accéder directement.
-      </p>
-      <p class="signature">✨ JOHN - Agent IA Biblique & Assistant • "Ta parole est une lampe à mes pieds" (Psaume 119:105)</p>
-    `;
-  }
-
-  if (input) {
-    const reponseDiv = document.getElementById("reponse");
-    reponseDiv.innerHTML = makeMessage(theme, parole);
-    reponseDiv.classList.add("active");
-    document.getElementById("priereInput").value = '';
-  } else {
-    alert("Veuillez entrer une prière.");
+/**
+ * Exemple de fonction pour gérer les interactions contextuelles.
+ * Appelez cette fonction depuis votre application lorsque l'événement se produit.
+ * 
+ * @param {string} triggerKey - La clé du trigger (ex: 'fin_lecture_chapitre').
+ */
+function handleContextualTrigger(triggerKey) {
+  const interaction = agentJohnConfig.interactions_contextuelles[triggerKey];
+  if (interaction) {
+    // Affichez le prompt de manière non intrusive, par ex. une petite bulle ou un toast.
+    console.log(`[Agent JOHN Proactif] Trigger: ${interaction.trigger}`);
+    // Ici, vous pourriez afficher une modale ou un message discret
+    // alert(`Message de JOHN : ${interaction.prompt}`);
+    addMessageToChat(interaction.prompt, false);
   }
 }
 </script>
