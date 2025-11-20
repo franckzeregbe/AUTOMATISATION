@@ -117,3 +117,67 @@ body {
 .drawer-nav button{background:transparent;border:0;padding:10px;border-radius:8px;text-align:left;cursor:pointer}
 .drawer hr{border:none;border-top:1px solid #eee;margin:12px 0}
 
+
+/* --- Responsive Design for Mobile --- */
+
+/* Pour les tablettes et les appareils plus petits */
+@media (max-width: 768px) {
+  .header {
+    padding: 30px 15px;
+  }
+
+  .header h1 {
+    font-size: 2em;
+  }
+
+  .section {
+    width: 40%; /* Deux colonnes sur les tablettes */
+    margin: 10px;
+  }
+}
+
+/* Pour les téléphones portables */
+@media (max-width: 480px) {
+  body {
+    padding-bottom: 80px; /* Ajustement pour des boutons potentiellement plus grands dans la barre de vue */
+  }
+
+  .header {
+    padding: 20px 10px;
+  }
+
+  .header h1 {
+    font-size: 1.8em;
+  }
+
+  .header input {
+    width: 95%;
+  }
+
+  .sections {
+    margin: 20px 0;
+  }
+
+  .section {
+    width: 90%; /* Une colonne sur les téléphones */
+    margin: 10px auto;
+    padding: 15px;
+    transform: scale(1); /* Désactive l'effet de survol sur les appareils tactiles */
+  }
+
+  .section:hover {
+    transform: scale(1.03); /* Un effet plus subtil pour les appareils qui pourraient avoir un curseur */
+  }
+  
+  .view-bar {
+      padding: 5px;
+  }
+
+  .vb-btn {
+    padding: 10px 14px; /* Cibles de pression plus grandes */
+  }
+
+  .drawer {
+    width: 85vw; /* Fait en sorte que le tiroir ne prenne pas toute la largeur de l'écran */
+  }
+}
